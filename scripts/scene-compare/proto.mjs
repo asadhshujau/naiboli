@@ -12,7 +12,8 @@ const script = html.match(/<script type="text\/x-dc" data-dc-script[^>]*>([\s\S]
 const clouds = script.match(/this\._clouds = (\[[^;]*\]);/)[1];
 const fixtures = fs.readFileSync(path.join(out, 'fixtures.json'), 'utf8');
 const figtree = 'file://' + path.join(root, 'node_modules/@expo-google-fonts/figtree/700Bold/Figtree_700Bold.ttf');
-const chrome = process.env.CHROME || '/usr/bin/google-chrome';
+const CHROMES = ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/usr/bin/google-chrome', '/usr/bin/chromium'];
+const chrome = process.env.CHROME || CHROMES.find((p) => fs.existsSync(p)) || CHROMES[0];
 
 const page = (sc) => `<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>@font-face{font-family:Figtree;font-weight:700;src:url(${figtree})}html,body{margin:0;padding:0;overflow:hidden;background:#000}canvas{display:block}</style>

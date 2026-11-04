@@ -83,7 +83,7 @@ export function Splash({ ready, onDone }: Props) {
 
   const rootStyle = useAnimatedStyle(() => ({ opacity: 1 - out.get(), transform: [{ scale: 1 + 0.05 * outScale.get() }] }));
   const shellStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: SIZE * 0.035 }, { rotate: `${-150 * (1 - spin.get())}deg` }, { scale: 0.25 + 0.75 * spin.get() }],
+    transform: [{ rotate: `${-150 * (1 - spin.get())}deg` }, { scale: 0.25 + 0.75 * spin.get() }],
   }));
   const naibStyle = useAnimatedStyle(() => ({ opacity: naib.get(), transform: [{ translateY: 12 * (1 - naibY.get()) }] }));
   const liStyle = useAnimatedStyle(() => ({ opacity: li.get(), transform: [{ translateY: 12 * (1 - liY.get()) }] }));

@@ -63,7 +63,7 @@ export function WxSheet({ wx, focus, onClose }: Props) {
     </Focusable>,
     <Focusable key="uv" k="uv" focus={focus} style={s.stat}>
       <StatLabel icon="light_mode">UV index</StatLabel>
-      <View style={s.statValueRow}>
+      <View style={[s.statValueRow, s.gap6]}>
         <Text style={s.statValue}>{wx.uv}</Text>
         <Text style={s.unit}>{wx.uvWord}</Text>
       </View>
@@ -162,15 +162,16 @@ export function WxSheet({ wx, focus, onClose }: Props) {
             <Text style={T.fig(600, 13, { color: C.secondary })}>{wx.sunLine}</Text>
           </View>
           <View style={s.arc} onLayout={(e) => setArcW(e.nativeEvent.layout.width)}>
+            {/* CSS overflow:visible: the box extends 3 units down so the sun at the horizon isn't clipped */}
             {arcW ? (
-              <Svg width={arcW} height={(arcW * 92) / 300} viewBox="0 0 300 92" style={s.visible}>
+              <Svg width={arcW} height={(arcW * 95) / 300} viewBox="0 0 300 95">
                 <Path d="M 12 84 Q 150 -36 288 84" fill="none" stroke={C.arc} strokeWidth={2} strokeDasharray="4 5" />
                 <Line x1={0} y1={84} x2={300} y2={84} stroke={C.arc} strokeWidth={1.5} />
                 <Circle cx={wx.sunX} cy={wx.sunY} r={9} opacity={wx.sunO} fill={C.sun} stroke="#FFFFFF" strokeWidth={3} />
               </Svg>
             ) : null}
           </View>
-          <View style={s.riseSet}>
+          <View style={[s.riseSet, { marginTop: 6 - (arcW * 3) / 300 }]}>
             <View>
               <Text style={P.eyebrow}>Sunrise</Text>
               <Text style={s.time}>{wx.rise}</Text>
@@ -222,7 +223,6 @@ const s = StyleSheet.create({
   px16: { paddingHorizontal: 16 },
   w24: { width: 24 },
   right: { alignItems: 'flex-end' },
-  visible: { overflow: 'visible' },
   warn: { marginTop: 16, padding: 16, borderRadius: 24, backgroundColor: C.warnBg, flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
   warnBody: { marginTop: 4, ...T.fig(500, 14, { lh: 1.45, color: C.warnBody }) },
   hero: { marginTop: 16, borderRadius: 28, padding: 20 },
@@ -247,6 +247,7 @@ const s = StyleSheet.create({
   grid: { marginTop: 12, gap: 10 },
   gridRow: { flexDirection: 'row', gap: 10 },
   stat: { flex: 1, minWidth: 0, padding: 16, borderRadius: 24, backgroundColor: C.card, gap: 4 },
+  gap6: { gap: 6 },
   statValueRow: { flexDirection: 'row', alignItems: 'baseline', gap: 4, marginTop: 8 },
   statValue: T.bric(800, 32, { lh: 1, ls: -0.03, color: C.ink }),
   unit: T.fig(600, 13, { color: C.secondary }),

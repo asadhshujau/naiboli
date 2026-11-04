@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GlassView } from '@/scene/glass';
 import type { View as VM } from '@/state/view';
+import { BalancedText } from '@/ui/BalancedText';
 import { T } from '@/ui/fonts';
 import { Icon } from '@/ui/Icon';
 import { ShellLogo } from '@/ui/ShellLogo';
@@ -23,7 +24,8 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning }: Props) {
   const shadow = hud.shadow ? HUD_TEXT_SHADOW : null;
   return (
     <View style={[s.root, { paddingTop: insets.top + 4 }]} pointerEvents="box-none">
-      <View style={s.row} pointerEvents="box-none">
+      {/* the chip row catches every tap (gaps included); the texts below let taps through to the scene */}
+      <View style={s.row}>
         <GlassView id="hud-menu" blur={12} radius={22} style={[s.circle, { backgroundColor: hud.chip }]}>
           <Pressable onPress={onMenu} style={s.fill} accessibilityRole="button" accessibilityLabel="Menu">
             <ShellLogo size={22} />
@@ -32,13 +34,13 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning }: Props) {
         <GlassView id="hud-island" blur={12} radius={22} style={[s.chip, { backgroundColor: hud.chip }]}>
           <Pressable onPress={onIsland} style={[s.chipInner, s.islandPad]} accessibilityRole="button" accessibilityLabel={`Island: ${v.loc}. Change island`}>
             <Icon name="location_on" size={20} color={hud.ink} fill />
-            <Text style={[T.fig(600, 15), { color: hud.ink }]} numberOfLines={1}>
+            <Text style={[T.fig(600, 15), s.shrink, { color: hud.ink }]} numberOfLines={1}>
               {v.loc}
             </Text>
             <Icon name="expand_more" size={20} color={hud.ink} />
           </Pressable>
         </GlassView>
-        <View style={s.spacer} pointerEvents="none" />
+        <View style={s.spacer} />
         <GlassView id="hud-temp" blur={12} radius={22} style={[s.chip, { backgroundColor: hud.chip }]}>
           <Pressable onPress={onTemp} style={[s.chipInner, s.tempPad]} accessibilityRole="button" accessibilityLabel={`Temperature ${v.now.temp} degrees`}>
             <Icon name={v.now.icon} size={22} color={hud.ink} fill />
@@ -46,14 +48,13 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning }: Props) {
           </Pressable>
         </GlassView>
       </View>
-      <Text style={[s.eyebrow, T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
-      <Text
-        style={[s.head, T.bric(800, 40, { lh: 0.98, ls: -0.04 }), { color: hud.ink }, shadow]}
-        textBreakStrategy="balanced"
-        lineBreakStrategyIOS="push-out">
-        {v.head}
-      </Text>
-      <Text style={[s.sub, T.fig(500, 16, { lh: 1.35 }), { color: hud.sub }, shadow]}>{v.sub}</Text>
+      <View pointerEvents="none">
+        <Text style={[s.eyebrow, T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
+        <BalancedText style={[s.head, T.bric(800, 40, { lh: 0.98, ls: -0.04 }), { color: hud.ink }, shadow]}>{v.head}</BalancedText>
+        <Text style={[s.sub, T.fig(500, 16, { lh: 1.35 }), { color: hud.sub }, shadow]} lineBreakStrategyIOS="standard">
+          {v.sub}
+        </Text>
+      </View>
       {v.hasWarning && v.warning ? (
         <Pressable onPress={onWarning} style={s.warn} accessibilityRole="button" accessibilityLabel={`Warning: ${v.warning.short}`}>
           <Icon name="warning" size={19} color={C.warnChipInk} fill />
@@ -74,6 +75,7 @@ const s = StyleSheet.create({
   islandPad: { gap: 6, paddingLeft: 10, paddingRight: 12 },
   tempPad: { gap: 4, paddingLeft: 10, paddingRight: 14 },
   spacer: { flex: 1 },
+  shrink: { flexShrink: 1 },
   eyebrow: { marginTop: 22 },
   head: { marginTop: 8 },
   sub: { marginTop: 8, maxWidth: 300 },

@@ -11,8 +11,26 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | 1 | Data layer, types, tests | ✅ done (`92ea374`) |
 | 2 | Scene canvas, scrubber, bottom panel, top HUD | ✅ done (`c85e8a9`) |
 | 3 | Info bubbles and all bottom sheets | ✅ done (`d72a164`) |
-| 4 | Location / first-run flow, persistence, splash | ✅ done (this commit) |
-| 5 | Polish: side-by-side with the prototype, list of unmatched differences | ⏭ **resume here** |
+| 4 | Location / first-run flow, persistence, splash | ✅ done (`0e4e0f8`) |
+| 5 | Polish: side-by-side with the prototype, list of unmatched differences | ✅ done (this commit) |
+| — | EAS build test by the user, then the fix round | ⏭ **next** |
+
+## Pending — start here when asked "what's pending?"
+All 5 phases are done. Next steps, in order:
+1. **User tests an EAS build** (development or preview profile — Phase 4 changed native config, so Expo Go is not
+   representative). Nothing has been checked on a device yet.
+2. **Fix round**, from the user's findings plus the known items below.
+
+Known issues to bring up (reported by the user or found without a device):
+- **Splash wordmark doesn't show** (reported 2026-11-04, seen in Expo Go): "naib", the shell and "li" never appear
+  and don't animate; "FORECAST FOR FUN" does. Likely cause: `src/ui/Splash.tsx` renders the animated parts only
+  after measuring an invisible copy of the wordmark (`onLayout` of the inline shell view inside the Text, plus the
+  Text width). If the inline view's `onLayout` never fires (Expo Go / platform), nothing renders. Fix idea: render
+  the parts with a computed fallback position (Bricolage baseline ≈ 0.83 em at line-height 1) and only refine
+  from measurement, or animate the static `Wordmark` as a whole plus the shell. Re-check in the EAS build first.
+- Device checks (see "Open items" below): big text with line-height < 1 (92 px / .84 verdict and temperature,
+  40 px / .98 headline) clipping on Android; wordmark shell on the baseline (menu); `BalancedText` on iOS;
+  sheet drag vs scroll; keyboard lift on Android; coarse-only location on Android; glass blur positions.
 
 ## Decisions already made
 - iOS and Android only (no web target).
@@ -63,8 +81,32 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 - `app.json`: expo-location plugin (When-In-Use string only, no background, Always strings removed),
   `android.blockedPermissions: ACCESS_FINE_LOCATION` (coarse only), splash colour.
 
-## Phase 5 — what to do next
-Side-by-side with the prototype in a browser; list differences that can't be matched. Device checks below first.
+## Phase 5 — what was done
+- Scene: `npm run scene:compare` (fixed Chrome detection on macOS; diff step now Node/pngjs instead of Python Pillow).
+  All 11 scenarios match the prototype's `paint()` to anti-aliasing: < 0.15 % of pixels differ by > 8/255
+  (only visible difference: the sign's text rasterisation).
+- UI: element-by-element audit of HUD, panel, scrubber, bubble, splash, menu and all sheets against the markup.
+  Fixed: HUD texts let taps through to the scene and the chip row (gaps included) catches them, like
+  `pointer-events`; long island names truncate instead of clipping the chevron; wordmark shell sits on the
+  baseline (no −.035em shift — the markup row is `align-items: baseline`); UV value/word gap 6; tide line caps
+  and sun dot no longer clipped (react-native-svg ignores `overflow: visible`); `text-wrap: balance` on iOS
+  (`src/ui/BalancedText.tsx`; Android uses its native balanced strategy).
+
+## Differences from the prototype that can't be (or weren't) matched
+- Bricolage is variable on the web (opsz = font size); native uses static instances per size bucket
+  (`src/ui/fonts.ts`). The tide hero "m" is 700 instead of 600 (no 600 instance).
+- Material Symbols: the web font adjusts optical size per icon size (20–48); the bundled SVG paths are one
+  optical size, so strokes at 14–18 px and 38 px differ very slightly.
+- `text-wrap: balance` on iOS is an approximation (average line width, one retry); `text-wrap: pretty` has no
+  equivalent (the HUD sub uses iOS `standard` line breaking).
+- Backdrop blur is drawn by Skia from the scene only: where the bubble overlaps HUD text, that text shows sharp
+  through the bubble's 5 % transparency instead of blurred.
+- Search placeholder colour: browser default → `#757575`. Hover styles don't apply on touch.
+- MSRO badge: bundled copy of the SVG; its text uses the system font, as in the original.
+- Copy/spec conflicts resolved toward the markup: wordmark is "naib" + shell + "li" (README says "oli"); status
+  bar text is dark during the splash (README says "light content", invisible on #FBF6EC).
+- Added platform conventions not in the prototype: pressed states dim, drag a sheet down to close, keyboard lifts
+  the picker, Android back closes sheet then bubble.
 
 ## Open items carried forward
 - **Performance is unverified on a real device.** CPU-only emulator: ~7 fps (not representative; blur isn't the
@@ -79,14 +121,13 @@ Side-by-side with the prototype in a browser; list differences that can't be mat
   verdict and temperature text clipping, wordmark baseline, sheet drag vs. scroll, keyboard lift on Android.
 - Known small differences: tide hero "m" uses Bricolage 700 (no 600 instance); pressed states dim to .6
   (prototype is pointer-only); search placeholder colour #757575 (Chrome default).
-- `scripts/scene-compare/proto.mjs` currently crashes under Node 26 (native step still works).
 
 ## Commands
 ```bash
 npx expo start                 # then open in Expo Go (everything used is in Expo Go)
 npm test                       # unit + parity tests
 npx tsc --noEmit && npx expo lint
-npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Chrome + Python Pillow)
+npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Google Chrome)
 ```
 
 ## Gotchas learned

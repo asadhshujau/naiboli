@@ -3,7 +3,8 @@
  * shell .6em square, margin 0 .03em −.035em.
  *
  * The shell is an inline view inside the text: RN sits inline views on the baseline on both
- * platforms, like the CSS inline-block; the −.035em bottom margin becomes a small downward shift.
+ * platforms. In the markup the row is `align-items: baseline` and the shell has no text, so its bottom
+ * edge sits on the baseline (the −.035em bottom margin doesn't move a baseline-aligned flex item).
  */
 import { memo } from 'react';
 import { Text, View } from 'react-native';
@@ -18,7 +19,7 @@ export const Wordmark = memo(function Wordmark({ size }: { size: number }) {
   return (
     <Text style={T.bric(800, size, { lh: 1, ls: -0.045, color: C.ink })} accessibilityRole="header" accessibilityLabel="Naiboli">
       naib
-      <View style={{ width: shell + 2 * mx, height: shell, paddingHorizontal: mx, transform: [{ translateY: size * 0.035 }] }}>
+      <View style={{ width: shell + 2 * mx, height: shell, paddingHorizontal: mx }}>
         <ShellLogo size={shell} />
       </View>
       li

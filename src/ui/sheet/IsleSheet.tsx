@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { IsleTag, IsleView } from '@/state/sheets';
+import { BalancedText } from '@/ui/BalancedText';
 import { T } from '@/ui/fonts';
 import { Icon } from '@/ui/Icon';
 import { C } from '@/ui/theme';
@@ -44,9 +45,7 @@ export function IsleSheet({ isle, onChange, onClose }: { isle: IsleView; onChang
       <SheetHeader eyebrow={isle.eyebrow} title="About the island" onClose={onClose} />
 
       <View style={s.hero}>
-        <Text style={T.bric(800, 40, { lh: 1, ls: -0.045, color: C.ink })} textBreakStrategy="balanced" lineBreakStrategyIOS="push-out">
-          {isle.en}
-        </Text>
+        <BalancedText style={T.bric(800, 40, { lh: 1, ls: -0.045, color: C.ink })}>{isle.en}</BalancedText>
         <Press onPress={() => openLink(isle.mapUrl)} style={s.coords} accessibilityRole="link" accessibilityLabel={`Open ${isle.en} in Maps`}>
           <Icon name="map" size={16} color={C.coords} fill />
           <Text style={T.mono(11, { ls: 0.09, upper: true, color: C.coords })}>{isle.coords}</Text>

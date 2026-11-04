@@ -42,7 +42,8 @@ Docs: https://docs.expo.dev/eas/index.md
 
 ## Project workflow (Naiboli)
 
-- Read `PROGRESS.md` first: it says which phase to resume and what is still open.
+- Read `PROGRESS.md` first: it says which phase to resume and what is still open. When the user asks what's
+  pending, answer from its "Pending" section (and keep that section up to date when things are fixed or reported).
 - Device testing is deferred: the app is **not** tested on a device or build between phases. After all phases are
   complete, the user tests an EAS build, and only then does the fix round start. Don't block a phase on device
   checks — record anything that needs checking on a device in `PROGRESS.md` ("Open items") instead.

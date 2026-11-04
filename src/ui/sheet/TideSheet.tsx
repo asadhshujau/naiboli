@@ -43,7 +43,13 @@ export function TideSheet({ td, onClose }: { td: TdView; onClose: () => void }) 
         <View style={s.chart} onLayout={(e) => setW(e.nativeEvent.layout.width)}>
           {w ? (
             <>
-              <Svg width={w} height={CHART_H} viewBox="0 0 354 150" preserveAspectRatio="none" style={s.abs}>
+              {/* CSS overflow:visible: 1.5 dp (the cap radius) wider each side so the round caps aren't clipped */}
+              <Svg
+                width={w + 3}
+                height={CHART_H}
+                viewBox={`${(-1.5 * 354) / w} 0 ${354 + (3 * 354) / w} 150`}
+                preserveAspectRatio="none"
+                style={[s.abs, { left: -1.5 }]}>
                 <Path d={td.area} fill={C.tealArea} />
                 <Path d={td.line} fill="none" stroke={C.tealLine} strokeWidth={3} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
               </Svg>
