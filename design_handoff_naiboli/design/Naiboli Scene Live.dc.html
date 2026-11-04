@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cpath%20d%3D%22M76.7%2087.5L82.1%2082.7L86.9%2077.1L90.9%2070.8L94.1%2063.9L96.3%2056.5L97.5%2048.6L97.7%2040.6L96.7%2032.4L94.6%2024.3L91.3%2016.4L86.9%208.9L81.4%202.0L60.7%2026.7L63.5%2030.2L65.7%2034.0L67.3%2038.0L68.4%2042.1L68.8%2046.3L68.7%2050.3L68.0%2054.3L66.9%2058.0L65.2%2061.5L63.1%2064.6L60.6%2067.4L57.9%2069.8L54.9%2071.7L51.7%2073.1Q54.2%2086.7%2076.7%2087.5Z%22%20fill%3D%22%23FFB020%22%20stroke%3D%22%23FFB020%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M37.9%2097.3L43.9%2098.0L49.9%2097.9L56.1%2097.1L62.1%2095.4L68.0%2093.0Q46.7%2087.9%2046.9%2074.4L43.9%2074.7L40.9%2074.6L38.0%2074.1L35.2%2073.3L32.5%2072.1Q25.1%2081.9%2037.9%2097.3Z%22%20fill%3D%22%2312b5b0%22%20stroke%3D%22%2312b5b0%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M8.3%2077.5L11.4%2081.8L15.1%2085.8L19.3%2089.3L24.0%2092.4L29.2%2094.8Q19.8%2077.6%2028.9%2069.7L26.9%2067.9L25.1%2065.8L23.7%2063.6L22.6%2061.3L21.8%2058.8Q10.8%2059.7%208.3%2077.5Z%22%20fill%3D%22%2311a5a3%22%20stroke%3D%22%2311a5a3%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M3.8%2046.0L2.7%2050.6L2.3%2055.4L2.5%2060.3L3.3%2065.3L4.7%2070.1Q10.5%2053.7%2021.2%2055.0L21.2%2052.5L21.5%2050.2L22.2%2047.9L23.0%2045.7L24.2%2043.8Q17.0%2037.0%203.8%2046.0Z%22%20fill%3D%22%23109596%22%20stroke%3D%22%23109596%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M22.0%2024.1L18.3%2026.2L14.8%2028.8L11.7%2031.8L8.9%2035.3L6.5%2039.2Q20.9%2033.3%2026.4%2041.1L28.0%2039.6L29.8%2038.4L31.7%2037.5L33.6%2036.8L35.6%2036.4Q35.8%2027.6%2022.0%2024.1Z%22%20fill%3D%22%230f8488%22%20stroke%3D%22%230f8488%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M47.3%2023.2L43.7%2022.0L39.9%2021.2L36.0%2020.9L32.1%2021.2L28.1%2021.9Q40.6%2027.9%2038.7%2036.2L40.6%2036.4L42.5%2036.9L44.2%2037.6L45.9%2038.4L47.3%2039.5Q53.3%2034.4%2047.3%2023.2Z%22%20fill%3D%22%230e747b%22%20stroke%3D%22%230e747b%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M63.1%2039.4L61.7%2036.3L60.0%2033.3L57.8%2030.6L55.3%2028.1L52.4%2025.9Q55.9%2037.8%2049.3%2041.5L50.3%2042.9L51.1%2044.4L51.7%2046.0L52.1%2047.6L52.3%2049.2Q59.2%2050.1%2063.1%2039.4Z%22%20fill%3D%22%230d646e%22%20stroke%3D%22%230d646e%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M61.7%2059.5L63.0%2056.8L63.9%2053.9L64.4%2050.8L64.6%2047.6L64.3%2044.4Q58.5%2053.8%2052.1%2051.6L51.8%2053.2L51.3%2054.6L50.6%2055.9L49.7%2057.1L48.8%2058.2Q52.3%2063.3%2061.7%2059.5Z%22%20fill%3D%22%230c5461%22%20stroke%3D%22%230c5461%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M47.6%2070.7L50.1%2069.9L52.6%2068.7L55.0%2067.2L57.2%2065.4L59.1%2063.4Q49.4%2065.2%2047.1%2059.6L45.9%2060.3L44.6%2060.8L43.3%2061.1L42.0%2061.3L40.7%2061.3Q39.4%2066.7%2047.6%2070.7Z%22%20fill%3D%22%230b4353%22%20stroke%3D%22%230b4353%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M31.7%2067.9L33.8%2069.1L36.0%2070.1L38.4%2070.8L40.9%2071.2L43.5%2071.2Q36.5%2065.9%2038.8%2061.0L37.6%2060.6L36.5%2060.1L35.5%2059.4L34.6%2058.6L33.9%2057.8Q29.5%2060.2%2031.7%2067.9Z%22%20fill%3D%22%230a3346%22%20stroke%3D%22%230a3346%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&amp;family=DM+Mono:wght@400;500&amp;family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=block" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thaana:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#EDE4D3;-webkit-font-smoothing:antialiased}
+a{color:#087F7A;text-decoration:none}
+a:hover{color:#0A3346;text-decoration:underline}
+input,button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#EDE4D3;padding:16px 0;box-sizing:border-box">
+<div style="width:{{ frameW }}px;height:{{ frameH }}px;position:relative;flex-shrink:0">
+<div style="position:absolute;left:0;top:0;width:402px;height:874px;transform:scale({{ scale }});transform-origin:0 0">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ statusDark }}" hint-size="402px,874px">
+<div data-screen-label="Scene" style="position:relative;isolation:isolate;z-index:0;width:100%;height:100%;overflow:hidden;font-family:Figtree, 'Noto Sans Thaana', system-ui, sans-serif;color:#0A3346;background:#74CEF4">
+
+  <canvas ref="{{ sceneRef }}" onClick="{{ onSceneClick }}" style="position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer"></canvas>
+
+  <!-- top HUD -->
+  <div style="position:absolute;left:0;right:0;top:0;padding:58px 20px 0;pointer-events:none;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:10px;pointer-events:auto">
+      <button onClick="{{ openMenu }}" style="width:44px;height:44px;border-radius:50%;border:none;background:{{ hud.chip }};backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;place-items:center;cursor:pointer;padding:0"><span style="display:block;width:22px;height:22px;flex-shrink:0;"><svg viewBox="0 0 100 100" style="display:block;width:100%;height:100%;overflow:visible"><path d="M76.7 87.5L82.1 82.7L86.9 77.1L90.9 70.8L94.1 63.9L96.3 56.5L97.5 48.6L97.7 40.6L96.7 32.4L94.6 24.3L91.3 16.4L86.9 8.9L81.4 2.0L60.7 26.7L63.5 30.2L65.7 34.0L67.3 38.0L68.4 42.1L68.8 46.3L68.7 50.3L68.0 54.3L66.9 58.0L65.2 61.5L63.1 64.6L60.6 67.4L57.9 69.8L54.9 71.7L51.7 73.1Q54.2 86.7 76.7 87.5Z" style="fill:#FFB020;stroke:#FFB020;stroke-width:0.6;stroke-linejoin:round"></path><path d="M37.9 97.3L43.9 98.0L49.9 97.9L56.1 97.1L62.1 95.4L68.0 93.0Q46.7 87.9 46.9 74.4L43.9 74.7L40.9 74.6L38.0 74.1L35.2 73.3L32.5 72.1Q25.1 81.9 37.9 97.3Z" style="fill:#12b5b0;stroke:#12b5b0;stroke-width:0.6;stroke-linejoin:round"></path><path d="M8.3 77.5L11.4 81.8L15.1 85.8L19.3 89.3L24.0 92.4L29.2 94.8Q19.8 77.6 28.9 69.7L26.9 67.9L25.1 65.8L23.7 63.6L22.6 61.3L21.8 58.8Q10.8 59.7 8.3 77.5Z" style="fill:#11a5a3;stroke:#11a5a3;stroke-width:0.6;stroke-linejoin:round"></path><path d="M3.8 46.0L2.7 50.6L2.3 55.4L2.5 60.3L3.3 65.3L4.7 70.1Q10.5 53.7 21.2 55.0L21.2 52.5L21.5 50.2L22.2 47.9L23.0 45.7L24.2 43.8Q17.0 37.0 3.8 46.0Z" style="fill:#109596;stroke:#109596;stroke-width:0.6;stroke-linejoin:round"></path><path d="M22.0 24.1L18.3 26.2L14.8 28.8L11.7 31.8L8.9 35.3L6.5 39.2Q20.9 33.3 26.4 41.1L28.0 39.6L29.8 38.4L31.7 37.5L33.6 36.8L35.6 36.4Q35.8 27.6 22.0 24.1Z" style="fill:#0f8488;stroke:#0f8488;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.3 23.2L43.7 22.0L39.9 21.2L36.0 20.9L32.1 21.2L28.1 21.9Q40.6 27.9 38.7 36.2L40.6 36.4L42.5 36.9L44.2 37.6L45.9 38.4L47.3 39.5Q53.3 34.4 47.3 23.2Z" style="fill:#0e747b;stroke:#0e747b;stroke-width:0.6;stroke-linejoin:round"></path><path d="M63.1 39.4L61.7 36.3L60.0 33.3L57.8 30.6L55.3 28.1L52.4 25.9Q55.9 37.8 49.3 41.5L50.3 42.9L51.1 44.4L51.7 46.0L52.1 47.6L52.3 49.2Q59.2 50.1 63.1 39.4Z" style="fill:#0d646e;stroke:#0d646e;stroke-width:0.6;stroke-linejoin:round"></path><path d="M61.7 59.5L63.0 56.8L63.9 53.9L64.4 50.8L64.6 47.6L64.3 44.4Q58.5 53.8 52.1 51.6L51.8 53.2L51.3 54.6L50.6 55.9L49.7 57.1L48.8 58.2Q52.3 63.3 61.7 59.5Z" style="fill:#0c5461;stroke:#0c5461;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.6 70.7L50.1 69.9L52.6 68.7L55.0 67.2L57.2 65.4L59.1 63.4Q49.4 65.2 47.1 59.6L45.9 60.3L44.6 60.8L43.3 61.1L42.0 61.3L40.7 61.3Q39.4 66.7 47.6 70.7Z" style="fill:#0b4353;stroke:#0b4353;stroke-width:0.6;stroke-linejoin:round"></path><path d="M31.7 67.9L33.8 69.1L36.0 70.1L38.4 70.8L40.9 71.2L43.5 71.2Q36.5 65.9 38.8 61.0L37.6 60.6L36.5 60.1L35.5 59.4L34.6 58.6L33.9 57.8Q29.5 60.2 31.7 67.9Z" style="fill:#0a3346;stroke:#0a3346;stroke-width:0.6;stroke-linejoin:round"></path></svg></span></button>
+      <button onClick="{{ openIsland }}" style="height:44px;border-radius:22px;border:none;background:{{ hud.chip }};backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:6px;padding:0 12px 0 10px;color:{{ hud.ink }};font:600 15px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">location_on</span>{{ loc }}<span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:20px">expand_more</span></button>
+      <div style="flex:1"></div>
+      <button onClick="{{ openTemp }}" style="height:44px;border-radius:22px;border:none;background:{{ hud.chip }};backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:4px;padding:0 14px 0 10px;color:{{ hud.ink }};cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px">{{ now.icon }}</span><span style="font:700 22px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em">{{ now.temp }}°</span></button>
+    </div>
+    <div style="margin-top:22px;font:500 11.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:{{ hud.sub }};text-shadow:{{ hud.shadow }}">{{ eyebrow }}</div>
+    <div style="margin-top:8px;font-family:'Bricolage Grotesque', sans-serif;font-weight:800;font-size:40px;line-height:.98;letter-spacing:-0.04em;color:{{ hud.ink }};text-wrap:balance;text-shadow:{{ hud.shadow }}">{{ head }}</div>
+    <div style="margin-top:8px;font:500 16px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:{{ hud.sub }};max-width:300px;text-wrap:pretty;text-shadow:{{ hud.shadow }}">{{ sub }}</div>
+    <sc-if value="{{ hasWarning }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openWarning }}" style="pointer-events:auto;margin-top:12px;align-self:flex-start;display:flex;align-items:center;gap:8px;height:36px;padding:0 10px 0 12px;border-radius:18px;border:none;background:#FF7350;color:#2A0C03;font:700 13.5px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:19px">warning</span>{{ warning.short }}</button>
+    </sc-if>
+  </div>
+
+  <!-- tap hint -->
+  <div style="position:absolute;left:0;right:0;top:606px;display:flex;justify-content:center;pointer-events:none;opacity:{{ hintOpacity }};transition:opacity .5s">
+    <span style="font:500 11px 'DM Mono', monospace;letter-spacing:.04em;color:#FFFFFF;background:rgba(3,32,48,.38);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 12px;border-radius:999px">Tap anything: sun, palms, island, sea</span>
+  </div>
+
+  <!-- bottom panel -->
+  <div style="position:absolute;left:12px;right:12px;bottom:14px;border-radius:30px;padding:14px 14px 12px;background:{{ hud.panel }};backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);color:{{ hud.pInk }};box-shadow:0 14px 40px rgba(0,20,40,.25), inset 0 0 0 1px {{ hud.pEdge }}">
+    <div style="display:flex;align-items:center;gap:8px;padding:0 4px">
+      <div style="flex:1;min-width:0">
+        <div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:{{ hud.pSub }}">{{ whenLabel }}</div>
+        <div style="font:800 21px/1.1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.025em;margin-top:2px">Shall we go?</div>
+      </div>
+      <sc-if value="{{ isLater }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ backToNow }}" style="height:34px;padding:0 12px;border-radius:17px;border:none;background:{{ hud.pBtn }};color:{{ hud.pInk }};font:700 12.5px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer;display:flex;align-items:center;gap:4px"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:17px">replay</span>Now</button>
+      </sc-if>
+      <button onClick="{{ openActs }}" style="height:34px;padding:0 10px 0 12px;border-radius:17px;border:none;background:{{ hud.pBtn }};color:{{ hud.pInk }};font:700 12.5px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer;display:flex;align-items:center;gap:2px">All {{ actCount }}<span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:18px">chevron_right</span></button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px">
+      <sc-for list="{{ top3 }}" as="c" hint-placeholder-count="3">
+        <button onClick="{{ c.open }}" style="border:none;border-radius:18px;padding:10px;background:{{ hud.pCard }};color:{{ hud.pInk }};text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px">
+            <span style="width:30px;height:30px;border-radius:10px;background:{{ c.vBg }};color:{{ c.vInk }};display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:18px">{{ c.icon }}</span></span>
+            <span style="font:800 17px/1 'Bricolage Grotesque', sans-serif;color:{{ c.vWord }};letter-spacing:-0.02em">{{ c.v }}</span>
+          </div>
+          <span style="font:700 13px/1.15 Figtree, 'Noto Sans Thaana', sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div style="margin-top:14px;padding:0 4px">
+      <div ref="{{ scrubRef }}" style="position:relative;height:38px;touch-action:none;cursor:grab;user-select:none">
+        <div style="position:absolute;left:0;right:0;bottom:0;height:30px;display:flex;align-items:flex-end;gap:2px">
+          <sc-for list="{{ ribbon }}" as="rb" hint-placeholder-count="24"><span style="flex:1;height:{{ rb.h }}%;border-radius:3px;background:{{ rb.c }};opacity:{{ rb.o }}"></span></sc-for>
+        </div>
+        <div style="position:absolute;top:0;bottom:-2px;left:{{ thumbPct }}%;width:0;pointer-events:none">
+          <span style="position:absolute;left:-2px;top:2px;bottom:0;width:4px;border-radius:2px;background:{{ hud.pInk }}"></span>
+          <span style="position:absolute;left:-7px;top:-3px;width:14px;height:14px;border-radius:50%;background:{{ hud.pInk }};box-shadow:0 0 0 3px {{ hud.panelSolid }}"></span>
+        </div>
+      </div>
+      <div style="position:relative;height:14px;margin-top:6px">
+        <sc-for list="{{ axis }}" as="ax" hint-placeholder-count="5"><span style="position:absolute;left:{{ ax.x }}%;transform:translateX({{ ax.tx }}%);font:500 10px 'DM Mono', monospace;color:{{ hud.pSub }};white-space:nowrap">{{ ax.label }}</span></sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- info bubble -->
+  <div style="position:absolute;z-index:30;left:{{ bub.x }}px;top:{{ bub.y }}px;width:268px;opacity:{{ bub.o }};transform:scale({{ bub.s }});transform-origin:{{ bub.origin }};transition:opacity .18s, transform .28s cubic-bezier(.2,.9,.3,1.25);pointer-events:{{ bub.pe }}">
+    <div style="border-radius:24px;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 44px rgba(0,20,40,.3);padding:16px;color:#0A3346">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:36px;height:36px;border-radius:12px;background:{{ bub.tileBg }};color:#0A3346;display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">{{ bub.icon }}</span></span>
+        <span style="flex:1;font:500 11px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">{{ bub.title }}</span>
+        <button onClick="{{ closeBubble }}" style="width:30px;height:30px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:18px">close</span></button>
+      </div>
+      <div style="font:800 28px/1.05 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:12px;color:{{ bub.bigColor }}">{{ bub.big }}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-top:8px">
+        <sc-for list="{{ bub.lines }}" as="ln" hint-placeholder-count="2"><span style="font:500 14px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#3F5F69">{{ ln }}</span></sc-for>
+      </div>
+      <sc-if value="{{ bub.hasAction }}">
+        <button onClick="{{ bub.action }}" style="margin-top:12px;width:100%;height:42px;border-radius:999px;border:none;background:#0A3346;color:#FFFFFF;font:700 14px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">{{ bub.actionLabel }}<span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:18px">arrow_forward</span></button>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- sheets -->
+  <div style="position:absolute;inset:0;z-index:50;pointer-events:{{ sheetPE }}">
+    <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(3,24,36,.45);opacity:{{ sheetScrim }};transition:opacity .35s"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;max-height:86%;display:flex;flex-direction:column;background:#FBF6EC;border-radius:32px 32px 0 0;transform:translateY({{ sheetY }});transition:transform .45s cubic-bezier(.2,.85,.25,1);box-shadow:0 -10px 40px rgba(0,20,30,.2)">
+      <div style="display:flex;justify-content:center;padding:10px 0 4px"><span style="width:40px;height:5px;border-radius:3px;background:rgba(10,51,70,.18)"></span></div>
+      <div ref="{{ sheetScrollRef }}" style="position:relative;overflow-y:auto;scrollbar-width:none;padding:8px 20px 40px">
+
+        <sc-if value="{{ sh.acts }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">{{ whenLabel }}</div><div style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:2px">All activities</div></div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:8px;margin:20px 4px 8px"><span style="width:9px;height:9px;border-radius:50%;background:{{ g.dot }}"></span><span style="font:700 16px 'Bricolage Grotesque', sans-serif;flex:1">{{ g.title }}</span><span style="font:500 12px 'DM Mono', monospace;color:#4F6F79">{{ g.count }}</span></div>
+            <div style="border-radius:22px;background:#FFFFFF;overflow:hidden;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+              <sc-for list="{{ g.items }}" as="a">
+                <button onClick="{{ a.open }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 14px;border:none;border-top:{{ a.sep }};background:transparent;color:#0A3346;text-align:left;cursor:pointer">
+                  <span style="width:38px;height:38px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:{{ a.vBg }};color:{{ a.vInk }}"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:21px">{{ a.icon }}</span></span>
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">{{ a.name }}</span><span style="font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.reason }}</span></span>
+                  <span style="font:500 12px 'DM Mono', monospace;color:#4F6F79">{{ a.score }}</span>
+                  <span style="font:700 12.5px Figtree, 'Noto Sans Thaana', sans-serif;padding:5px 10px;border-radius:999px;background:{{ a.vBg }};color:{{ a.vInk }};min-width:40px;text-align:center">{{ a.v }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+          <div style="margin:16px 4px 0;font:500 12.5px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;text-wrap:pretty">{{ actsSrc }}</div>
+        </sc-if>
+
+        <sc-if value="{{ sh.act }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <button onClick="{{ openActs }}" style="height:38px;padding:0 14px 0 8px;border-radius:19px;border:none;background:#F1E9DA;display:flex;align-items:center;gap:2px;cursor:pointer;color:#0A3346;font:700 13.5px Figtree, 'Noto Sans Thaana', sans-serif"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:20px">chevron_left</span>All</button>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <div style="margin-top:16px;border-radius:28px;padding:20px;background:{{ d.headBg }}">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="width:48px;height:48px;border-radius:16px;background:#FFFFFF;color:{{ d.vInk }};display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:26px">{{ d.icon }}</span></span>
+              <div><div style="font:700 22px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em">{{ d.name }}</div><div style="font:500 11px 'DM Mono', monospace;letter-spacing:.06em;text-transform:uppercase;color:#4F6F79;margin-top:2px">{{ whenLabel }}</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:12px;margin-top:14px">
+              <div style="font:800 92px/.84 'Bricolage Grotesque', sans-serif;letter-spacing:-0.06em;color:{{ d.vWord }}">{{ d.vBig }}</div>
+              <div style="padding-bottom:8px;font:500 13px 'DM Mono', monospace;color:#4F6F79"><span style="font:700 22px 'Bricolage Grotesque', sans-serif;color:#0A3346">{{ d.score }}</span> / 10</div>
+            </div>
+            <div style="font:600 16px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;margin-top:12px;text-wrap:pretty">{{ d.line }}</div>
+          </div>
+          <div style="margin-top:12px;padding:16px;border-radius:24px;background:#FFFFFF">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:700 16px 'Bricolage Grotesque', sans-serif">Best window</span><span style="font:700 14px Figtree, 'Noto Sans Thaana', sans-serif;color:{{ d.vInk }}">{{ d.window }}</span></div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:80px;margin-top:14px">
+              <sc-for list="{{ d.hours }}" as="hb" hint-placeholder-count="24"><div style="flex:1;height:{{ hb.h }}%;border-radius:4px;background:{{ hb.c }};box-shadow:{{ hb.ring }}"></div></sc-for>
+            </div>
+            <div style="display:flex;gap:3px;margin-top:6px">
+              <sc-for list="{{ d.hours }}" as="hb" hint-placeholder-count="24"><span style="flex:1;font:500 9px 'DM Mono', monospace;color:#4F6F79;white-space:nowrap">{{ hb.label }}</span></sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ d.hasBr }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:16px;border-radius:24px;background:#FFFFFF">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:700 16px 'Bricolage Grotesque', sans-serif">What’s shaping it</span><span style="font:500 12px 'DM Mono', monospace;color:#4F6F79">{{ d.condTxt }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+                <sc-for list="{{ d.br }}" as="f" hint-placeholder-count="6">
+                  <div style="display:grid;grid-template-columns:20px 84px minmax(0,1fr) 28px;align-items:center;gap:10px">
+                    <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:19px;color:#4F6F79">{{ f.icon }}</span>
+                    <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font:600 14px Figtree, 'Noto Sans Thaana', sans-serif;color:#0A3346">{{ f.label }}</span><span style="font:500 9.5px 'DM Mono', monospace;letter-spacing:.08em;text-transform:uppercase;color:{{ f.tagC }}">{{ f.tag }}</span></span>
+                    <span style="position:relative;height:8px;border-radius:4px;background:#F1E9DA;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ f.w }}%;border-radius:4px;background:{{ f.c }}"></span></span>
+                    <span style="font:500 12px 'DM Mono', monospace;text-align:right;color:{{ f.ink }}">{{ f.val }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ d.hasDays }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;border-radius:24px;background:#FFFFFF;overflow:hidden">
+              <div style="padding:16px 16px 10px">
+                <div style="font:700 16px 'Bricolage Grotesque', sans-serif">Next 7 days</div>
+                <div style="font:500 13px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:3px;text-wrap:pretty">{{ d.weekLine }}</div>
+              </div>
+              <sc-for list="{{ d.days }}" as="dy" hint-placeholder-count="7">
+                <div style="display:grid;grid-template-columns:72px minmax(0,1fr) 28px 54px;align-items:center;gap:10px;padding:10px 16px;border-top:{{ dy.sep }};background:{{ dy.bg }}">
+                  <span style="font:700 14px Figtree, 'Noto Sans Thaana', sans-serif;white-space:nowrap">{{ dy.label }}</span>
+                  <span style="display:flex;flex-direction:column;gap:5px;min-width:0">
+                    <span style="position:relative;height:6px;border-radius:3px;background:#F1E9DA;overflow:hidden"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ dy.w }}%;border-radius:3px;background:{{ dy.c }}"></span></span>
+                    <span style="font:500 12px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dy.note }}</span>
+                  </span>
+                  <span style="font:500 12px 'DM Mono', monospace;color:#4F6F79;text-align:right">{{ dy.score }}</span>
+                  <span style="font:700 12.5px Figtree, 'Noto Sans Thaana', sans-serif;padding:5px 0;border-radius:999px;background:{{ dy.vBg }};color:{{ dy.vInk }};text-align:center">{{ dy.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="margin-top:12px;padding:16px;border-radius:24px;background:#FFF0C6;display:flex;gap:12px;align-items:flex-start">
+            <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px;color:#7A5600">lightbulb</span>
+            <div style="font:500 14px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#4A3A12">{{ d.tip }}</div>
+          </div>
+          <div style="margin:14px 4px 0;font:500 12.5px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;text-wrap:pretty">{{ actsSrc }}</div>
+        </sc-if>
+
+        <sc-if value="{{ sh.wx }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">{{ wx.eyebrow }}</div><div style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:2px">Weather</div></div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <sc-if value="{{ wx.hasWarning }}" hint-placeholder-val="{{ false }}">
+            <div data-focus="{{ wx.f.warning }}" style="margin-top:16px;padding:16px;border-radius:24px;background:#FFE0D6;display:flex;gap:12px;align-items:flex-start;box-shadow:{{ wx.r.warning }}">
+              <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px;color:#E2522F">warning</span>
+              <div><div style="font:700 16px 'Bricolage Grotesque', sans-serif;color:#5A1C0B">{{ wx.warnTitle }} · until {{ wx.warnUntil }}</div><div style="font:500 14px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#6B2A17;margin-top:4px">{{ wx.warnBody }}</div></div>
+            </div>
+          </sc-if>
+          <div data-focus="{{ wx.f.temp }}" style="margin-top:16px;border-radius:28px;padding:20px;background:{{ wx.heroBg }};box-shadow:{{ wx.r.temp }}">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+              <div style="font:800 92px/.84 'Bricolage Grotesque', sans-serif;letter-spacing:-0.06em">{{ wx.temp }}°</div>
+              <span style="width:64px;height:64px;border-radius:22px;background:#FFFFFF;color:{{ wx.tint }};display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:38px">{{ wx.icon }}</span></span>
+            </div>
+            <div style="font:700 22px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em;margin-top:14px">{{ wx.cond }}</div>
+            <div style="font:500 14px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;color:#3F5F69;margin-top:4px">Feels like {{ wx.feels }}° · High {{ wx.hi }}° · Low {{ wx.lo }}°</div>
+          </div>
+          <div style="margin-top:12px;padding:16px 0;border-radius:24px;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+            <div style="padding:0 16px;font:700 16px 'Bricolage Grotesque', sans-serif">Next 24 hours</div>
+            <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:12px 12px 0">
+              <sc-for list="{{ wx.hourly }}" as="hr" hint-placeholder-count="8">
+                <div style="flex:0 0 52px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:10px 0;border-radius:16px;background:{{ hr.bg }};color:{{ hr.ink }}">
+                  <span style="font:500 10.5px 'DM Mono', monospace;color:{{ hr.sub }}">{{ hr.label }}</span>
+                  <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px;color:{{ hr.ic }}">{{ hr.icon }}</span>
+                  <span style="font:700 16px 'Bricolage Grotesque', sans-serif">{{ hr.temp }}°</span>
+                  <span style="font:500 10.5px 'DM Mono', monospace;color:{{ hr.rc }}">{{ hr.rain }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ wx.hasWeek }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;border-radius:24px;background:#FFFFFF;overflow:hidden;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+              <div style="padding:16px 16px 10px">
+                <div style="font:700 16px 'Bricolage Grotesque', sans-serif">Next 8 days</div>
+                <div style="font:500 13px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:3px;text-wrap:pretty">{{ wx.weekLine }}</div>
+              </div>
+              <sc-for list="{{ wx.days }}" as="dy" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:56px 24px 34px 28px minmax(0,1fr) 28px;align-items:center;gap:8px;padding:10px 16px;border-top:{{ dy.sep }};background:{{ dy.bg }}">
+                  <span style="font:700 14px Figtree, 'Noto Sans Thaana', sans-serif;white-space:nowrap">{{ dy.label }}</span>
+                  <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px;color:{{ dy.ic }}">{{ dy.icon }}</span>
+                  <span style="font:500 10.5px 'DM Mono', monospace;color:#2F86C2">{{ dy.rain }}</span>
+                  <span style="font:600 14px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;text-align:right">{{ dy.lo }}°</span>
+                  <div style="position:relative;height:6px;border-radius:3px;background:#F1E9DA"><div style="position:absolute;top:0;bottom:0;left:{{ dy.l }}%;width:{{ dy.w }}%;border-radius:3px;background:linear-gradient(90deg,#7FD3CF,#FFC83D)"></div></div>
+                  <span style="font:700 15px 'Bricolage Grotesque', sans-serif">{{ dy.hi }}°</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
+            <div data-focus="{{ wx.f.wind }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.wind }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">air</span>Wind</div>
+              <div style="display:flex;align-items:center;gap:4px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.wind }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;align-self:flex-end;padding-bottom:3px">km/h</span><span style="margin-left:auto;width:30px;height:30px;border-radius:50%;background:#D3F1EE;color:#087F7A;display:grid;place-items:center"><span style="display:block;font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:18px;transform:rotate({{ wx.arrow }}deg)">navigation</span></span></div>
+              <div style="font:600 13.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;margin-top:6px">{{ wx.windWord }}</div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">From {{ wx.dir }} · gusts {{ wx.gust }}</div>
+            </div>
+            <div data-focus="{{ wx.f.uv }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.uv }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">light_mode</span>UV index</div>
+              <div style="display:flex;align-items:baseline;gap:6px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.uv }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">{{ wx.uvWord }}</span></div>
+              <div style="position:relative;height:6px;border-radius:3px;margin-top:10px;background:linear-gradient(90deg,#17B890,#FFC83D 40%,#FF7350 75%,#B04BD6)"><span style="position:absolute;top:50%;left:{{ wx.uvPct }}%;width:12px;height:12px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 2px #0A3346;transform:translate(-50%,-50%)"></span></div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:8px">{{ wx.uvLine }}</div>
+            </div>
+            <div data-focus="{{ wx.f.rain }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.rain }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">rainy</span>Rain</div>
+              <div style="display:flex;align-items:baseline;gap:4px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.rain }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">% chance</span></div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:6px">{{ wx.rainLine }}</div>
+            </div>
+            <div data-focus="{{ wx.f.hum }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.hum }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">humidity_percentage</span>Humidity</div>
+              <div style="display:flex;align-items:baseline;gap:4px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.hum }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">%</span></div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:6px">{{ wx.humWord }}</div>
+            </div>
+            <div data-focus="{{ wx.f.sky }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.sky }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">cloud</span>Clouds</div>
+              <div style="display:flex;align-items:baseline;gap:4px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.clouds }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">% cover</span></div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:6px">{{ wx.cloudLine }}</div>
+            </div>
+            <div data-focus="{{ wx.f.vis }}" style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.vis }};display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">visibility</span>Visibility</div>
+              <div style="display:flex;align-items:baseline;gap:4px;margin-top:8px"><span style="font:800 32px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">{{ wx.vis }}</span><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">km</span></div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:6px">{{ wx.visLine }}</div>
+            </div>
+            <div data-focus="{{ wx.f.sun }}" style="grid-column:1 / -1;padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.sun }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">wb_twilight</span>Sun</div><span style="font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">{{ wx.sunLine }}</span></div>
+              <svg viewBox="0 0 300 92" style="display:block;width:100%;height:auto;margin-top:10px;overflow:visible">
+                <path d="M 12 84 Q 150 -36 288 84" style="fill:none;stroke:#E6D9BD;stroke-width:2;stroke-dasharray:4 5"></path>
+                <line x1="0" y1="84" x2="300" y2="84" style="stroke:#E6D9BD;stroke-width:1.5"></line>
+                <circle cx="{{ wx.sunX }}" cy="{{ wx.sunY }}" r="9" opacity="{{ wx.sunO }}" style="fill:#FFC83D;stroke:#FFFFFF;stroke-width:3"></circle>
+              </svg>
+              <div style="display:flex;justify-content:space-between;margin-top:6px">
+                <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Sunrise</div><div style="font:700 18px 'Bricolage Grotesque', sans-serif;margin-top:2px">{{ wx.rise }}</div></div>
+                <div style="text-align:right"><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Sunset</div><div style="font:700 18px 'Bricolage Grotesque', sans-serif;margin-top:2px">{{ wx.set }}</div></div>
+              </div>
+            </div>
+            <div data-focus="{{ wx.f.moon }}" style="grid-column:1 / -1;padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:{{ wx.r.moon }}">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">bedtime</span>Moon</div>
+              <div style="display:flex;align-items:center;gap:16px;margin-top:12px">
+                <svg viewBox="0 0 100 100" style="display:block;width:68px;height:68px;flex-shrink:0"><circle cx="50" cy="50" r="40" style="fill:#1E3058"></circle><path d="{{ wx.moon.svg }}" style="fill:#F6EFD8"></path></svg>
+                <div style="min-width:0"><div style="font:800 24px/1.05 'Bricolage Grotesque', sans-serif;letter-spacing:-0.025em">{{ wx.moon.name }}</div><div style="font:500 13.5px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:4px">{{ wx.moon.illum }}% lit · {{ wx.moon.nextTxt }}</div></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:14px">
+                <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Moonrise</div><div style="font:700 18px 'Bricolage Grotesque', sans-serif;margin-top:2px">{{ wx.moon.rise }}</div></div>
+                <div style="text-align:right"><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Moonset</div><div style="font:700 18px 'Bricolage Grotesque', sans-serif;margin-top:2px">{{ wx.moon.set }}</div></div>
+              </div>
+            </div>
+          </div>
+        <div style="display:flex;justify-content:center;margin-top:16px"><a href="https://openweathermap.org/" target="_blank" rel="noopener" style="display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#4F6F79"><img src="./assets/openweather-logo.png" alt="OpenWeather" height="40" style="display:block;height:40px;width:auto"><span style="font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">Weather data provided by OpenWeather</span></a></div>
+        </sc-if>
+
+        <sc-if value="{{ sh.tide }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">{{ td.eyebrow }}</div><div style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:2px">Tide</div></div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <div style="margin-top:16px;border-radius:28px;padding:20px;background:#D3F1EE">
+            <div style="font:500 11px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#0A5C63">Tide level</div>
+            <div style="font:800 66px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.05em;margin-top:8px">{{ td.levelText }}<span style="font-size:26px;font-weight:600;margin-left:4px;letter-spacing:0">m</span></div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font:700 15px Figtree, 'Noto Sans Thaana', sans-serif"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">{{ td.dirIcon }}</span>{{ td.dirText }} until {{ td.until }}</div>
+            <div style="font:500 13px/1.4 Figtree, 'Noto Sans Thaana', sans-serif;color:#0A5C63;margin-top:6px">{{ td.src }}</div>
+          </div>
+          <div style="margin-top:12px;padding:18px 18px 14px;border-radius:24px;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 16px 'Bricolage Grotesque', sans-serif">Next 24 hours</span><span style="font:500 11px 'DM Mono', monospace;color:#4F6F79">metres</span></div>
+            <div style="position:relative;height:150px;margin-top:16px">
+              <svg viewBox="0 0 354 150" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">
+                <path d="{{ td.area }}" style="fill:#C9F0EC"></path>
+                <path d="{{ td.line }}" style="fill:none;stroke:#12B5B0;stroke-width:3;stroke-linecap:round;vector-effect:non-scaling-stroke"></path>
+              </svg>
+              <div style="position:absolute;top:0;bottom:0;left:{{ td.nowPct }}%;width:0;border-left:1.5px dashed #0A3346;opacity:.4"></div>
+              <sc-for list="{{ td.marks }}" as="tm" hint-placeholder-count="0">
+                <div style="position:absolute;left:{{ tm.x }}%;top:{{ tm.y }}px;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:{{ tm.c }}"></div>
+                <div style="position:absolute;left:{{ tm.x }}%;top:{{ tm.ly }}px;transform:translateX({{ tm.tx }}%);font:500 10.5px 'DM Mono', monospace;color:#0A3346;white-space:nowrap">{{ tm.label }}</div>
+              </sc-for>
+              <div style="position:absolute;left:{{ td.nowPct }}%;top:{{ td.nowY }}px;width:14px;height:14px;border-radius:50%;background:#FFFFFF;border:3px solid #0A3346;transform:translate(-50%,-50%);box-sizing:border-box"></div>
+            </div>
+            <div style="position:relative;height:18px;margin-top:8px">
+              <sc-for list="{{ td.axis }}" as="ax" hint-placeholder-count="5"><span style="position:absolute;left:{{ ax.x }}%;transform:translateX({{ ax.tx }}%);font:500 10.5px 'DM Mono', monospace;color:#4F6F79;white-space:nowrap">{{ ax.label }}</span></sc-for>
+            </div>
+          </div>
+          <div style="margin-top:12px;border-radius:24px;background:#FFFFFF;overflow:hidden;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+            <sc-for list="{{ td.next }}" as="tx" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:{{ tx.sep }}">
+                <span style="width:36px;height:36px;border-radius:12px;background:{{ tx.icBg }};color:{{ tx.ic }};display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">{{ tx.icon }}</span></span>
+                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">{{ tx.kind }}</span><span style="font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">{{ tx.time }}</span></span>
+                <span style="font:700 16px 'Bricolage Grotesque', sans-serif">{{ tx.lvl }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px">
+            <div style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,51,70,.05);display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">beach_access</span>Beach</div>
+              <div style="font:800 26px/1.05 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:8px">{{ td.beach }}</div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:4px">{{ td.beachLine }}</div>
+            </div>
+            <div style="padding:16px;border-radius:24px;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,51,70,.05);display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">waves</span>Lagoon</div>
+              <div style="font:800 26px/1.05 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:8px">{{ td.lagoon }}</div>
+              <div style="font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:4px">{{ td.lagoonLine }}</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:16px;border-radius:24px;background:#FFF0C6;display:flex;gap:12px;align-items:flex-start">
+            <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px;color:#7A5600">lightbulb</span>
+            <div style="font:500 14px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#4A3A12">Sandbanks shrink fast at high water. Plan reef walks and sandbank trips around low tide.</div>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:16px"><a href="https://geohub.msro.mv" target="_blank" rel="noopener" style="display:block;line-height:0"><img src="https://geohub.msro.mv/badges/powered-by-msro.svg" alt="Powered by MSRO" height="24" style="display:block;height:24px;width:auto"></a></div>
+        </sc-if>
+
+        <sc-if value="{{ sh.isle }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">{{ isle.eyebrow }}</div><div style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:2px">About the island</div></div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <div style="margin-top:16px;border-radius:28px;padding:20px;background:#FBEBC4">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+              <div style="min-width:0">
+                <div style="font:800 40px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.045em;text-wrap:balance">{{ isle.en }}</div>
+                <a href="{{ isle.mapUrl }}" target="_blank" rel="noopener" style="margin-top:10px;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px 0 8px;border-radius:15px;background:rgba(255,255,255,.55);font:500 11px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#7A5B2E;text-decoration:none" style-hover="background:rgba(255,255,255,.85)"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:16px">map</span>{{ isle.coords }}<span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:14px">open_in_new</span></a>
+              </div>
+              
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:18px">
+              <sc-for list="{{ isle.now }}" as="nw" hint-placeholder-count="3">
+                <span style="display:flex;align-items:center;gap:5px;height:30px;padding:0 11px 0 9px;border-radius:15px;background:rgba(255,255,255,.72);font:600 13px Figtree, 'Noto Sans Thaana', sans-serif;color:#0A3346"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:17px;color:#9A6A28">{{ nw.icon }}</span>{{ nw.t }}</span>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ isle.hasDesc }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:16px 18px;border-radius:24px;background:#FFFFFF;font:500 15px/1.55 Figtree, 'Noto Sans Thaana', sans-serif;color:#3F5F69;text-wrap:pretty">{{ isle.desc }}</div>
+          </sc-if>
+          <sc-if value="{{ isle.loading }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:18px;border-radius:24px;background:#FFFFFF;display:flex;align-items:center;gap:10px;font:500 14px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:20px">hourglass_top</span>Loading island details…</div>
+          </sc-if>
+          <sc-if value="{{ isle.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:20px;border-radius:24px;background:#FFFFFF;display:flex;gap:14px;align-items:flex-start">
+              <span style="width:44px;height:44px;border-radius:16px;background:#D3F1EE;color:#087F7A;display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:24px">explore</span></span>
+              <div><div style="font:700 16px 'Bricolage Grotesque', sans-serif">Still being mapped</div><div style="font:500 14px/1.5 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:4px">{{ isle.emptyLine }}</div></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isle.hasAccess }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:16px;border-radius:24px;background:#FFFFFF">
+              <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">route</span>Getting there</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-top:12px">
+                <sc-for list="{{ isle.access }}" as="ac" hint-placeholder-count="3">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 12px;border-radius:18px;background:#F6F1E6;text-align:center">
+                    <span style="width:40px;height:40px;border-radius:50%;background:#D3F1EE;color:#087F7A;display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:22px">{{ ac.icon }}</span></span>
+                    <span style="font:600 12.5px/1.25 Figtree, 'Noto Sans Thaana', sans-serif;color:#0A3346">{{ ac.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isle.hasBeaches }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;border-radius:24px;background:#FFFFFF;overflow:hidden">
+              <div style="padding:16px 16px 12px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                  <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">beach_access</span>Beaches</div>
+                  <span style="font:800 22px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em">{{ isle.beachCount }}</span>
+                </div>
+                <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin-top:12px;background:#C9D4D8"><div style="width:{{ isle.sandPct }}%;background:#E9C88E"></div></div>
+                <div style="display:flex;gap:14px;margin-top:8px;font:500 12px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#E9C88E"></span>{{ isle.sandyN }} sandy</span>
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#C9D4D8"></span>{{ isle.rockyN }} rocky</span>
+                </div>
+              </div>
+              <sc-for list="{{ isle.beaches }}" as="bc" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid rgba(10,51,70,.07)">
+                  <span style="width:36px;height:36px;border-radius:12px;background:{{ bc.tile }};color:{{ bc.ic }};display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">{{ bc.icon }}</span></span>
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">{{ bc.name }}</span><span style="font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">{{ bc.type }}</span></span>
+                  <sc-if value="{{ bc.hasTag }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;height:26px;padding:0 10px;border-radius:13px;display:flex;align-items:center;background:{{ bc.tag.bg }};color:{{ bc.tag.ink }};font:700 11.5px Figtree, 'Noto Sans Thaana', sans-serif;white-space:nowrap">{{ bc.tag.t }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isle.hasReefs }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;border-radius:24px;background:#FFFFFF;overflow:hidden">
+              <div style="padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <div style="display:flex;align-items:center;gap:6px;font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:16px">scuba_diving</span>Reefs</div>
+                <span style="font:800 22px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em">{{ isle.reefCount }}</span>
+              </div>
+              <sc-for list="{{ isle.reefs }}" as="rf" hint-placeholder-count="1">
+                <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid rgba(10,51,70,.07)">
+                  <span style="width:36px;height:36px;border-radius:12px;background:#D3F1EE;color:#087F7A;display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">water</span></span>
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">{{ rf.name }}</span><span style="font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79">{{ rf.meta }}</span></span>
+                  <sc-if value="{{ rf.hasTag }}" hint-placeholder-val="{{ false }}"><span style="flex-shrink:0;height:26px;padding:0 10px;border-radius:13px;display:flex;align-items:center;background:{{ rf.tag.bg }};color:{{ rf.tag.ink }};font:700 11.5px Figtree, 'Noto Sans Thaana', sans-serif;white-space:nowrap">{{ rf.tag.t }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <button onClick="{{ isle.change }}" style="margin-top:16px;width:100%;height:52px;border-radius:26px;border:none;background:transparent;box-shadow:inset 0 0 0 1.5px rgba(10,51,70,.18);color:#0A3346;font:700 15px Figtree, 'Noto Sans Thaana', sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:20px">swap_horiz</span>Change island</button>
+        </sc-if>
+
+        <sc-if value="{{ sh.welcome }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Welcome to Naiboli</div><div style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em;margin-top:2px">Where are you?</div></div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <div style="margin-top:16px;border-radius:28px;padding:20px;background:#D3F1EE;display:flex;gap:14px;align-items:flex-start">
+            <span style="width:44px;height:44px;border-radius:16px;background:#FFFFFF;color:#087F7A;display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:24px">near_me</span></span>
+            <div style="font:500 15px/1.5 Figtree, 'Noto Sans Thaana', sans-serif;color:#0A3346;text-wrap:pretty">Use your location to find the island you’re on, or pick one yourself. You can change it any time.</div>
+          </div>
+          <sc-if value="{{ wel.hasMsg }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:14px 16px;border-radius:20px;background:#FFE0D6;display:flex;gap:10px;align-items:flex-start;font:500 14px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#5A1F0E"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px;color:#E2522F">{{ wel.msgIcon }}</span><span style="text-wrap:pretty">{{ wel.msg }}</span></div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+            <button onClick="{{ wel.locate }}" style="height:56px;border-radius:28px;border:none;background:#0A3346;color:#FBF6EC;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font:700 16px Figtree, 'Noto Sans Thaana', sans-serif"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:21px">near_me</span>{{ wel.btn }}</button>
+            <button onClick="{{ wel.manual }}" style="height:56px;border-radius:28px;border:none;background:#F1E9DA;color:#0A3346;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font:700 16px Figtree, 'Noto Sans Thaana', sans-serif"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:21px">search</span>Pick an island myself</button>
+          </div>
+          <div style="margin-top:14px;font:500 12.5px/1.45 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;text-align:center;text-wrap:pretty">Your location is only used to find the nearest island.</div>
+        </sc-if>
+
+        <sc-if value="{{ sh.island }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between"><span style="font:800 26px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.03em">Pick an island</span>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button></div>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:18px;background:#FFFFFF;box-shadow:inset 0 0 0 1.5px rgba(10,51,70,.1)">
+            <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px;color:#4F6F79">search</span>
+            <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search islands…" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font:500 16px Figtree, 'Noto Sans Thaana', sans-serif;color:#0A3346">
+          </div>
+          <button onClick="{{ geoRow.tap }}" style="margin-top:10px;width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border:none;border-radius:18px;background:#FFFFFF;text-align:left;cursor:pointer;color:#0A3346;box-shadow:0 1px 2px rgba(10,51,70,.05)">
+            <span style="width:36px;height:36px;border-radius:12px;background:{{ geoRow.tile }};color:{{ geoRow.ic }};display:grid;place-items:center;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px">{{ geoRow.icon }}</span></span>
+            <span style="flex:1;min-width:0"><span style="display:block;font:700 16px Figtree, 'Noto Sans Thaana', sans-serif">{{ geoRow.title }}</span><span style="display:block;font:500 12.5px/1.35 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:1px;text-wrap:pretty">{{ geoRow.sub }}</span></span>
+            <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px;color:#9AAFB5">chevron_right</span>
+          </button>
+          <div style="border-radius:22px;background:#FFFFFF;overflow:hidden;margin-top:14px">
+            <sc-for list="{{ islandList }}" as="il" hint-placeholder-count="6">
+              <button onClick="{{ il.pick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border:none;border-top:{{ il.sep }};background:{{ il.bg }};text-align:left;cursor:pointer;color:#0A3346">
+                <span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:20px;color:{{ il.ic }}">{{ il.icon }}</span>
+                <span style="flex:1;min-width:0"><span style="display:block;font:700 16px Figtree, 'Noto Sans Thaana', sans-serif">{{ il.name }}</span><span style="display:block;font:500 12.5px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ il.atoll }} · {{ il.wxCond }}</span></span>
+                <span style="display:flex;align-items:center;gap:6px;flex-shrink:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-variation-settings:'FILL' 1;font-size:24px;color:{{ il.wxTint }}">{{ il.wxIcon }}</span><span style="font:700 18px 'Bricolage Grotesque', sans-serif;letter-spacing:-0.02em;min-width:30px;text-align:right">{{ il.wxTemp }}°</span></span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ noResults }}"><div style="padding:22px 16px;font:500 15px Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;text-align:center">No islands match "{{ query }}"</div></sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ sh.menu }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+            <div>
+              <div style="display:flex;align-items:baseline;font:800 40px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.045em;color:#0A3346"><span>naib</span><span style="display:inline-block;width:.6em;height:.6em;margin:0 .03em -.035em"><svg viewBox="0 0 100 100" style="display:block;width:100%;height:100%;overflow:visible"><path d="M76.7 87.5L82.1 82.7L86.9 77.1L90.9 70.8L94.1 63.9L96.3 56.5L97.5 48.6L97.7 40.6L96.7 32.4L94.6 24.3L91.3 16.4L86.9 8.9L81.4 2.0L60.7 26.7L63.5 30.2L65.7 34.0L67.3 38.0L68.4 42.1L68.8 46.3L68.7 50.3L68.0 54.3L66.9 58.0L65.2 61.5L63.1 64.6L60.6 67.4L57.9 69.8L54.9 71.7L51.7 73.1Q54.2 86.7 76.7 87.5Z" style="fill:#FFB020;stroke:#FFB020;stroke-width:0.6;stroke-linejoin:round"></path><path d="M37.9 97.3L43.9 98.0L49.9 97.9L56.1 97.1L62.1 95.4L68.0 93.0Q46.7 87.9 46.9 74.4L43.9 74.7L40.9 74.6L38.0 74.1L35.2 73.3L32.5 72.1Q25.1 81.9 37.9 97.3Z" style="fill:#12b5b0;stroke:#12b5b0;stroke-width:0.6;stroke-linejoin:round"></path><path d="M8.3 77.5L11.4 81.8L15.1 85.8L19.3 89.3L24.0 92.4L29.2 94.8Q19.8 77.6 28.9 69.7L26.9 67.9L25.1 65.8L23.7 63.6L22.6 61.3L21.8 58.8Q10.8 59.7 8.3 77.5Z" style="fill:#11a5a3;stroke:#11a5a3;stroke-width:0.6;stroke-linejoin:round"></path><path d="M3.8 46.0L2.7 50.6L2.3 55.4L2.5 60.3L3.3 65.3L4.7 70.1Q10.5 53.7 21.2 55.0L21.2 52.5L21.5 50.2L22.2 47.9L23.0 45.7L24.2 43.8Q17.0 37.0 3.8 46.0Z" style="fill:#109596;stroke:#109596;stroke-width:0.6;stroke-linejoin:round"></path><path d="M22.0 24.1L18.3 26.2L14.8 28.8L11.7 31.8L8.9 35.3L6.5 39.2Q20.9 33.3 26.4 41.1L28.0 39.6L29.8 38.4L31.7 37.5L33.6 36.8L35.6 36.4Q35.8 27.6 22.0 24.1Z" style="fill:#0f8488;stroke:#0f8488;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.3 23.2L43.7 22.0L39.9 21.2L36.0 20.9L32.1 21.2L28.1 21.9Q40.6 27.9 38.7 36.2L40.6 36.4L42.5 36.9L44.2 37.6L45.9 38.4L47.3 39.5Q53.3 34.4 47.3 23.2Z" style="fill:#0e747b;stroke:#0e747b;stroke-width:0.6;stroke-linejoin:round"></path><path d="M63.1 39.4L61.7 36.3L60.0 33.3L57.8 30.6L55.3 28.1L52.4 25.9Q55.9 37.8 49.3 41.5L50.3 42.9L51.1 44.4L51.7 46.0L52.1 47.6L52.3 49.2Q59.2 50.1 63.1 39.4Z" style="fill:#0d646e;stroke:#0d646e;stroke-width:0.6;stroke-linejoin:round"></path><path d="M61.7 59.5L63.0 56.8L63.9 53.9L64.4 50.8L64.6 47.6L64.3 44.4Q58.5 53.8 52.1 51.6L51.8 53.2L51.3 54.6L50.6 55.9L49.7 57.1L48.8 58.2Q52.3 63.3 61.7 59.5Z" style="fill:#0c5461;stroke:#0c5461;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.6 70.7L50.1 69.9L52.6 68.7L55.0 67.2L57.2 65.4L59.1 63.4Q49.4 65.2 47.1 59.6L45.9 60.3L44.6 60.8L43.3 61.1L42.0 61.3L40.7 61.3Q39.4 66.7 47.6 70.7Z" style="fill:#0b4353;stroke:#0b4353;stroke-width:0.6;stroke-linejoin:round"></path><path d="M31.7 67.9L33.8 69.1L36.0 70.1L38.4 70.8L40.9 71.2L43.5 71.2Q36.5 65.9 38.8 61.0L37.6 60.6L36.5 60.1L35.5 59.4L34.6 58.6L33.9 57.8Q29.5 60.2 31.7 67.9Z" style="fill:#0a3346;stroke:#0a3346;stroke-width:0.6;stroke-linejoin:round"></path></svg></span><span>li</span></div>
+              <div style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.3em;text-transform:uppercase;color:#4F6F79;margin-top:8px">Forecast for fun</div>
+            </div>
+            <button onClick="{{ closeSheet }}" style="width:40px;height:40px;border-radius:50%;border:none;background:#F1E9DA;display:grid;place-items:center;cursor:pointer;color:#0A3346;padding:0"><span style="font-family:'Material Symbols Rounded';font-weight:400;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;font-size:22px">close</span></button>
+          </div>
+          <div style="margin-top:20px;padding:16px;border-radius:22px;background:#FFF0C6">
+            <div style="font:700 16px 'Bricolage Grotesque', sans-serif">Just a heads up!</div>
+            <div style="font:500 14px/1.5 Figtree, 'Noto Sans Thaana', sans-serif;color:#4A3A12;margin-top:6px">Naiboli is for good vibes and recreational planning. Please use official sources for safety-critical decisions or professional maritime activities. Have fun and stay safe! 🌊</div>
+          </div>
+          <div style="margin-top:10px;padding:16px;border-radius:22px;background:#FFFFFF">
+            <div style="font:700 16px 'Bricolage Grotesque', sans-serif">The Naiboli story</div>
+            <div style="font:500 14px/1.5 Figtree, 'Noto Sans Thaana', sans-serif;color:#4F6F79;margin-top:6px">Naiboli started as a personal need: a simple way to understand sea conditions in a more human way.</div>
+          </div>
+          <div style="margin-top:10px;border-radius:22px;background:#FFFFFF;overflow:hidden">
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center"><span style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Weather data</span><a href="https://openweathermap.org/" target="_blank" rel="noopener" style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">OpenWeather</a></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(10,51,70,.07)"><span style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Tide data</span><a href="https://geohub.msro.mv" target="_blank" rel="noopener" style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">MSRO</a></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(10,51,70,.07)"><span style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Activity scores</span><a href="https://moodhu.dev" target="_blank" rel="noopener" style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">moodhu.dev</a></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(10,51,70,.07)"><span style="font:500 10.5px 'DM Mono', monospace;letter-spacing:.09em;text-transform:uppercase;color:#4F6F79">Privacy</span><a href="https://moodhu.dev/privacy-policy" target="_blank" rel="noopener" style="font:700 15px Figtree, 'Noto Sans Thaana', sans-serif">Privacy Policy</a></div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ sp.on }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Splash" onClick="{{ sp.skip }}" style="position:absolute;inset:0;z-index:60;background:#FBF6EC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;cursor:pointer;opacity:{{ sp.op }};transform:scale({{ sp.sc }});transition:opacity .55s ease, transform .6s ease">
+      <div style="display:flex;align-items:baseline;font:800 72px/1 'Bricolage Grotesque', sans-serif;letter-spacing:-0.045em;color:#0A3346"><span style="display:inline-block;opacity:{{ sp.txtOp }};transform:translateY({{ sp.txtY }}px);transition:opacity .6s ease .35s, transform .7s cubic-bezier(.2,.8,.2,1) .35s">naib</span><span style="display:inline-block;width:.6em;height:.6em;margin:0 .03em -.035em;transform:rotate({{ sp.shellRot }}deg) scale({{ sp.shellSc }});transition:transform 1.1s cubic-bezier(.2,.9,.25,1.12)"><svg viewBox="0 0 100 100" style="display:block;width:100%;height:100%;overflow:visible"><path d="M76.7 87.5L82.1 82.7L86.9 77.1L90.9 70.8L94.1 63.9L96.3 56.5L97.5 48.6L97.7 40.6L96.7 32.4L94.6 24.3L91.3 16.4L86.9 8.9L81.4 2.0L60.7 26.7L63.5 30.2L65.7 34.0L67.3 38.0L68.4 42.1L68.8 46.3L68.7 50.3L68.0 54.3L66.9 58.0L65.2 61.5L63.1 64.6L60.6 67.4L57.9 69.8L54.9 71.7L51.7 73.1Q54.2 86.7 76.7 87.5Z" style="fill:#FFB020;stroke:#FFB020;stroke-width:0.6;stroke-linejoin:round"></path><path d="M37.9 97.3L43.9 98.0L49.9 97.9L56.1 97.1L62.1 95.4L68.0 93.0Q46.7 87.9 46.9 74.4L43.9 74.7L40.9 74.6L38.0 74.1L35.2 73.3L32.5 72.1Q25.1 81.9 37.9 97.3Z" style="fill:#12b5b0;stroke:#12b5b0;stroke-width:0.6;stroke-linejoin:round"></path><path d="M8.3 77.5L11.4 81.8L15.1 85.8L19.3 89.3L24.0 92.4L29.2 94.8Q19.8 77.6 28.9 69.7L26.9 67.9L25.1 65.8L23.7 63.6L22.6 61.3L21.8 58.8Q10.8 59.7 8.3 77.5Z" style="fill:#11a5a3;stroke:#11a5a3;stroke-width:0.6;stroke-linejoin:round"></path><path d="M3.8 46.0L2.7 50.6L2.3 55.4L2.5 60.3L3.3 65.3L4.7 70.1Q10.5 53.7 21.2 55.0L21.2 52.5L21.5 50.2L22.2 47.9L23.0 45.7L24.2 43.8Q17.0 37.0 3.8 46.0Z" style="fill:#109596;stroke:#109596;stroke-width:0.6;stroke-linejoin:round"></path><path d="M22.0 24.1L18.3 26.2L14.8 28.8L11.7 31.8L8.9 35.3L6.5 39.2Q20.9 33.3 26.4 41.1L28.0 39.6L29.8 38.4L31.7 37.5L33.6 36.8L35.6 36.4Q35.8 27.6 22.0 24.1Z" style="fill:#0f8488;stroke:#0f8488;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.3 23.2L43.7 22.0L39.9 21.2L36.0 20.9L32.1 21.2L28.1 21.9Q40.6 27.9 38.7 36.2L40.6 36.4L42.5 36.9L44.2 37.6L45.9 38.4L47.3 39.5Q53.3 34.4 47.3 23.2Z" style="fill:#0e747b;stroke:#0e747b;stroke-width:0.6;stroke-linejoin:round"></path><path d="M63.1 39.4L61.7 36.3L60.0 33.3L57.8 30.6L55.3 28.1L52.4 25.9Q55.9 37.8 49.3 41.5L50.3 42.9L51.1 44.4L51.7 46.0L52.1 47.6L52.3 49.2Q59.2 50.1 63.1 39.4Z" style="fill:#0d646e;stroke:#0d646e;stroke-width:0.6;stroke-linejoin:round"></path><path d="M61.7 59.5L63.0 56.8L63.9 53.9L64.4 50.8L64.6 47.6L64.3 44.4Q58.5 53.8 52.1 51.6L51.8 53.2L51.3 54.6L50.6 55.9L49.7 57.1L48.8 58.2Q52.3 63.3 61.7 59.5Z" style="fill:#0c5461;stroke:#0c5461;stroke-width:0.6;stroke-linejoin:round"></path><path d="M47.6 70.7L50.1 69.9L52.6 68.7L55.0 67.2L57.2 65.4L59.1 63.4Q49.4 65.2 47.1 59.6L45.9 60.3L44.6 60.8L43.3 61.1L42.0 61.3L40.7 61.3Q39.4 66.7 47.6 70.7Z" style="fill:#0b4353;stroke:#0b4353;stroke-width:0.6;stroke-linejoin:round"></path><path d="M31.7 67.9L33.8 69.1L36.0 70.1L38.4 70.8L40.9 71.2L43.5 71.2Q36.5 65.9 38.8 61.0L37.6 60.6L36.5 60.1L35.5 59.4L34.6 58.6L33.9 57.8Q29.5 60.2 31.7 67.9Z" style="fill:#0a3346;stroke:#0a3346;stroke-width:0.6;stroke-linejoin:round"></path></svg></span><span style="display:inline-block;opacity:{{ sp.txtOp }};transform:translateY({{ sp.txtY }}px);transition:opacity .6s ease .45s, transform .7s cubic-bezier(.2,.8,.2,1) .45s">li</span></div>
+      <div style="font:500 11px 'DM Mono', monospace;letter-spacing:.3em;text-transform:uppercase;color:#4F6F79;opacity:{{ sp.txtOp }};transition:opacity .6s ease .7s">Forecast for fun</div>
+    </div>
+  </sc-if>
+
+</div>
+</x-import>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;animate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;splash&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+let RISE = 5 + 50 / 60, SET = 17 + 49 / 60; const HZ = 444, ICX = 196, WL = 572, DY = -40;
+const TAU = Math.PI * 2;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const md24 = (h) => ((h % 24) + 24) % 24;
+const fmt = (h) => { h = md24(h); let hh = Math.floor(h), mm = Math.round((h - hh) * 60); if (mm === 60) { hh = (hh + 1) % 24; mm = 0; } return (hh % 12 || 12) + ':' + String(mm).padStart(2, '0') + ' ' + (hh < 12 ? 'AM' : 'PM'); };
+const fmtHr = (h) => { h = Math.round(md24(h)) % 24; return (h % 12 || 12) + (h < 12 ? 'a' : 'p'); };
+const fmtLvl = (v) => (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(2);
+const tideSyn = (h) => 0.09 + 0.36 * Math.cos(2 * Math.PI * (h - 1) / 12.42);
+let TIDE = null;
+const tideAt = (h) => { if (!TIDE) return tideSyn(h); const v = TIDE.v, i = h * 6, n = v.length; if (i <= 0) return v[0]; if (i >= n - 1) return v[n - 1]; const k = Math.floor(i), f = i - k; return v[k] + (v[k + 1] - v[k]) * f; };
+const hex = (h) => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+const rgb = (c, a) => a == null ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+const lum = (c) => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255;
+const uvWordOf = (u) => u <= 2 ? 'Low' : u <= 5 ? 'Moderate' : u <= 7 ? 'High' : u <= 10 ? 'Very high' : 'Extreme';
+const windWordOf = (w) => w < 12 ? 'Light breeze' : w < 20 ? 'Gentle breeze' : w < 30 ? 'Moderate winds' : w < 40 ? 'Fresh winds' : 'Strong winds';
+const palmWordOf = (w) => w < 12 ? 'Fronds barely stirring' : w < 20 ? 'Palms swaying gently' : w < 35 ? 'Palms bending and rustling' : 'Hold on to your hat';
+
+const P = (o) => ({ sky: o.sky.map(hex), sea: o.sea.map(hex), lagoon: hex(o.lagoon), cloud: hex(o.cloud) });
+const PAL = {
+  night: P({ sky: ['#081333', '#14265A', '#2D4985'], sea: ['#1E4675', '#153662', '#0B2147'], lagoon: '#2F6C93', cloud: '#2A3E73' }),
+  golden: P({ sky: ['#3E4B9C', '#BA70A0', '#FFC68A'], sea: ['#E7A58E', '#4A86AE', '#1B4E79'], lagoon: '#F3C7B0', cloud: '#F6B2A4' }),
+  day: P({ sky: ['#2EA8EC', '#74CEF4', '#CDF2F3'], sea: ['#3ED8CB', '#15B0B7', '#08809A'], lagoon: '#8FEFE1', cloud: '#FFFFFF' }),
+  over: P({ sky: ['#899FAD', '#AEBFC8', '#D7E0E2'], sea: ['#7DB5B5', '#52969E', '#2F6B78'], lagoon: '#B9DBD7', cloud: '#C7D1D6' }),
+  storm: P({ sky: ['#1D2636', '#333D50', '#525D6E'], sea: ['#38606A', '#25484F', '#14303A'], lagoon: '#5D8483', cloud: '#3A4556' }),
+};
+const lerpPal = (a, b, k) => ({ sky: a.sky.map((c, i) => mix(c, b.sky[i], k)), sea: a.sea.map((c, i) => mix(c, b.sea[i], k)), lagoon: mix(a.lagoon, b.lagoon, k), cloud: mix(a.cloud, b.cloud, k) });
+const OBJ = { sand: '#FBEBC4', sandLo: '#E9C88E', bush: '#2E9A63', bushHi: '#45B97A', trunk: '#A9774A', trunkSh: '#7F5532', ring: '#6A4529', frond: '#2FA36B', frondDk: '#1D7A51', frondHi: '#55C786', spine: '#17603F', nut: '#6E4A2A', hull: '#6B4428', hullHi: '#8E5E38', sail: '#FFF6E6', far: '#2D7B66', farSand: '#E9D6A8', bird: '#1E3A4A', sign: '#D2A167', signDk: '#8A5A30', signInk: '#4A2C12' };
+const OBJC = Object.fromEntries(Object.entries(OBJ).map(([k, v]) => [k, hex(v)]));
+const NIGHT_T = hex('#0E1C3D'), GOLD_T = hex('#FF8F5A'), GREY_T = hex('#5E6B73');
+
+function sunState(h) {
+  h = md24(h);
+  if (h >= RISE && h <= SET) { const f = (h - RISE) / (SET - RISE); return { day: true, f, el: Math.sin(Math.PI * f) }; }
+  const len = 24 - (SET - RISE), fn = md24(h - SET) / len; return { day: false, f: fn, el: -Math.sin(Math.PI * fn) };
+}
+function lightOf(h, gloom) {
+  const s = sunState(h); let N = 0, G = 0, D = 0, base;
+  if (s.el >= .3) { D = 1; base = PAL.day; }
+  else if (s.el >= .05) { D = (s.el - .05) / .25; G = 1 - D; base = lerpPal(PAL.golden, PAL.day, D); }
+  else if (s.el >= -.12) { G = (s.el + .12) / .17; N = 1 - G; base = lerpPal(PAL.night, PAL.golden, G); }
+  else { N = 1; base = PAL.night; }
+  let tgt = gloom >= .6 ? lerpPal(PAL.over, PAL.storm, (gloom - .6) / .4) : PAL.over;
+  if (N > 0) tgt = lerpPal(tgt, PAL.night, N * .6);
+  const pal = lerpPal(base, tgt, gloom * (.9 - .45 * N));
+  return { ...s, N, G, D, pal };
+}
+
+const ACTS = [
+  { id: 'surf', name: 'Surfing', icon: 'surfing', key: 'wind', peak: 7, tip: 'Reef breaks are shallow. Wear booties and know your channel out.' },
+  { id: 'sail', name: 'Sailing', icon: 'sailing', key: 'wind', peak: 14, tip: 'Watch the horizon for squalls and tell someone your route.' },
+  { id: 'jet', name: 'Jet Skiing', icon: 'speed', key: 'wind', peak: 10, tip: 'Keep well clear of swimmers and snorkel spots. Life vest on.' },
+  { id: 'swim', name: 'Swimming', icon: 'pool', key: 'tide', peak: 10, tip: 'Currents run hard near channels. Swim where others can see you.' },
+  { id: 'snorkel', name: 'Snorkeling', icon: 'scuba_diving', key: 'vis', peak: 10, tip: 'Never snorkel alone, and never stand on coral.' },
+  { id: 'dive', name: 'Diving', icon: 'scuba_diving', key: 'vis', peak: 9, tip: 'Dive with a certified buddy and plan around channel currents.' },
+  { id: 'fish', name: 'Fishing', icon: 'phishing', key: 'tide', peak: 6, night: true, tip: 'Mind the reef edge at low tide. Bring a torch after dark.' },
+  { id: 'dolphin', name: 'Dolphin Watching', icon: 'visibility', key: 'wind', peak: 17, tip: 'Keep your distance and let the dolphins come to you.' },
+  { id: 'rainwalk', name: 'Rain Walk', icon: 'umbrella', key: 'rain', peak: 16, night: true, tip: 'Head indoors at the first rumble of thunder.' },
+  { id: 'ocswim', name: 'Overcast Swimming', icon: 'cloud', key: 'cloud', peak: 15, tip: 'Clouds don\u2019t block all UV. Sunscreen still.' },
+  { id: 'kayak', name: 'Kayaking', icon: 'kayaking', key: 'wind', peak: 8, tip: 'Paddle out into the wind so it carries you home.' },
+  { id: 'beach', name: 'Beach Leisure', icon: 'beach_access', key: 'uv', peak: 16, night: true, tip: 'Find shade from 11 to 3 and drink more water than you think.' },
+  { id: 'sup', name: 'Paddleboarding', icon: 'rowing', key: 'wind', peak: 8, tip: 'Leash on. Offshore wind can carry you out fast.' },
+  { id: 'sandbank', name: 'Sandbank Visit', icon: 'footprint', key: 'tide', peak: 11, tip: 'Check the tide first. Sandbanks shrink fast at high water.' },
+];
+const FAIR = [7.2, 8.4, 7.9, 8.4, 7.8, 8.2, 8.1, 7.6, 3.2, 5.6, 7.1, 8.5, 6.8, 8.2];
+const MOODS = {
+  sunny: { hour: 10.5, temp: 30, feels: 35, lo: 28, hi: 31, cond: 'Sunny', icon: 'sunny', wind: 8, dir: 'NE', deg: 45, gust: 12, uv: 11, uvMax: 11, rain: 5, hum: 66, clouds: 10, vis: 10, gloom: 0, cloudN: 2, rainAmt: 0, tempWord: 'Hot and bright',
+    headEn: 'Glorious out there.', sub: 'Big sun, glassy lagoon. Go get wet.', phrases: { wind: 'Light 8 km/h breeze', rain: 'Dry all day', vis: 'Water clarity looks excellent', uv: 'UV 11. Reef-safe sunscreen!', cloud: 'Barely a cloud' },
+    scores: [5.8, 7.4, 8.6, 9.1, 9.4, 8.9, 8.0, 8.7, 1.8, 2.6, 9.0, 9.3, 9.2, 9.6] },
+  partly: { hour: 13.25, temp: 31, feels: 36, lo: 28, hi: 31, cond: 'Partly cloudy', icon: 'partly_cloudy_day', wind: 16, dir: 'W', deg: 270, gust: 22, uv: 9, uvMax: 10, rain: 20, hum: 70, clouds: 45, vis: 10, gloom: .12, cloudN: 5, rainAmt: 0, tempWord: 'Warm and pleasant',
+    headEn: 'Pretty great.', sub: 'Sun with puffy clouds. Breeze builds after 2 PM.', phrases: { wind: 'Steady 16 km/h westerly', rain: '20% chance, late', vis: 'Clear, slight surface chop', uv: 'UV 9. Very high', cloud: 'Sun between puffy clouds' }, scores: FAIR },
+  windy: { hour: 13, temp: 30, feels: 33, lo: 28, hi: 31, cond: 'Breezy', icon: 'air', wind: 34, dir: 'W', deg: 270, gust: 46, uv: 10, uvMax: 11, rain: 10, hum: 68, clouds: 30, vis: 10, gloom: .08, cloudN: 4, rainAmt: 0, tempWord: 'Hot, but the breeze helps',
+    headEn: 'Windy one today.', sub: 'Bright and blowy. Surfers, this one\u2019s yours. Leave the kayak.', phrases: { wind: 'Fresh 34 km/h westerly', rain: 'Dry, a passing cloud or two', vis: 'Choppy on top, clear below', uv: 'UV 10. Very high', cloud: 'Fast-moving clouds' },
+    scores: [9.2, 9.0, 4.6, 5.2, 4.4, 5.6, 5.0, 5.8, 1.6, 2.8, 3.0, 7.2, 2.6, 5.4] },
+  overcast: { hour: 15, temp: 28, feels: 32, lo: 27, hi: 29, cond: 'Overcast', icon: 'cloud', wind: 14, dir: 'WSW', deg: 250, gust: 20, uv: 3, uvMax: 5, rain: 35, hum: 78, clouds: 92, vis: 8, gloom: .6, cloudN: 8, rainAmt: 0, tempWord: 'Mild under cloud',
+    headEn: 'Not bad, actually.', sub: 'Soft grey light. Easy on the skin, fine on the water.', phrases: { wind: '14 km/h, gusting 20', rain: '35% chance of a sprinkle', vis: 'Flat light, 8 km visibility', uv: 'UV 3. Gentle', cloud: 'Full cover, zero glare' },
+    scores: [6.6, 7.3, 7.0, 6.2, 5.8, 6.9, 7.8, 6.0, 5.4, 8.4, 6.7, 5.0, 6.4, 5.2] },
+  rainy: { hour: 16, temp: 29, feels: 36, lo: 28, hi: 29, cond: 'Light rain', icon: 'rainy', wind: 27, dir: 'W', deg: 270, gust: 30, uv: 1, uvMax: 4, rain: 85, hum: 85, clouds: 85, vis: 10, gloom: .74, cloudN: 7, rainAmt: .55, tempWord: 'Warm and sticky',
+    headEn: 'Bring a towel.', sub: 'On-and-off showers all day. Pick your gaps.', phrases: { wind: 'Moderate 27 km/h westerly', rain: 'Showers on and off', vis: 'Still 10 km between showers', uv: 'UV 1. Low', cloud: '85% cloud' },
+    scores: [7.4, 7.6, 7.8, 5.4, 5.5, 6.5, 5.4, 5.8, 6.7, 4.6, 3.9, 3.8, 3.6, 3.5] },
+  stormy: { hour: 14.5, temp: 27, feels: 31, lo: 26, hi: 28, cond: 'Thunderstorms', icon: 'thunderstorm', wind: 52, dir: 'W', deg: 270, gust: 64, uv: 0, uvMax: 2, rain: 100, hum: 92, clouds: 100, vis: 3, gloom: 1, cloudN: 9, rainAmt: 1, flash: true, tempWord: 'Cooler in the rain',
+    headEn: 'Stay ashore.', sub: 'Thunderstorms and 64 km/h gusts. A good day for a nap.', phrases: { wind: 'Gusts to 64 km/h', rain: 'Heavy rain and thunder', vis: 'Poor, 3 km', uv: 'UV 0', cloud: 'Storm clouds' },
+    scores: [3.1, 1.6, 1.4, 2.2, 1.9, 2.0, 1.8, 1.5, 2.4, 1.3, 1.1, 1.7, 1.0, 0.9], warning: { short: 'Thunderstorms, gusts, heavy rain', title: 'Active warning', until: '11 PM', body: 'Heavy rain and thunderstorms with gusts of 64 km/h expected. Stay ashore.' } },
+  night: { hour: 21.5, temp: 28, feels: 32, lo: 27, hi: 30, cond: 'Clear night', icon: 'bedtime', wind: 9, dir: 'NE', deg: 45, gust: 13, uv: 0, uvMax: 11, rain: 5, hum: 74, clouds: 8, vis: 10, gloom: 0, cloudN: 1, rainAmt: 0, tempWord: 'Balmy night',
+    headEn: 'Night owls only.', sub: 'Calm and starry. Good night for fishing off the jetty.', phrases: { wind: 'Calm 9 km/h', rain: 'Dry and starry', vis: 'Dark water. Bring a torch', uv: 'No sun till 5:50', cloud: 'Clear skies' },
+    scores: [2.8, 2.4, 1.6, 4.4, 2.6, 3.3, 8.2, 1.2, 5.8, 1.8, 2.2, 7.4, 1.9, 2.8] },
+  golden: { hour: 17.4, temp: 29, feels: 33, lo: 28, hi: 31, cond: 'Golden hour', icon: 'wb_twilight', wind: 11, dir: 'NW', deg: 315, gust: 15, uv: 1, uvMax: 11, rain: 10, hum: 70, clouds: 25, vis: 10, gloom: .05, cloudN: 3, rainAmt: 0, tempWord: 'Warm evening',
+    headEn: 'Golden hour.', sub: 'Sunset at 5:49. Dolphins, a cold drink, done.', phrases: { wind: 'Easing to 11 km/h', rain: 'Dry evening', vis: 'Low sun glare on the water', uv: 'UV 1. Sun is low', cloud: 'A few pink clouds' },
+    scores: [6.4, 8.1, 6.2, 7.6, 5.2, 4.6, 8.5, 9.1, 3.1, 4.2, 8.3, 9.4, 8.4, 7.2] },
+};
+const MOOD_KEYS = { 'By island': 'island', 'Auto (clock)': 'auto', 'Sunny': 'sunny', 'Partly cloudy': 'partly', 'Windy': 'windy', 'Overcast': 'overcast', 'Rainy': 'rainy', 'Stormy': 'stormy', 'Clear night': 'night', 'Golden hour': 'golden' };
+const ISLAND_HOUR = 13;
+const ISLAND_WX = { 'K. Malé': 'partly', 'K. Hulhumalé': 'sunny', 'K. Maafushi': 'rainy', 'K. Thulusdhoo': 'windy', 'AA. Ukulhas': 'overcast', 'Gn. Fuvahmulah': 'stormy' };
+const WX_CYCLE = ['sunny', 'partly', 'windy', 'overcast', 'rainy', 'stormy'];
+const wxOf = (n) => ISLAND_WX[n] || WX_CYCLE[[...n].reduce((a, ch) => a + ch.charCodeAt(0), 0) % WX_CYCLE.length];
+const WX_HERO = { sunny: '#FFF0C6', partly: '#FFF3D6', windy: '#D3F1EE', overcast: '#E4EAEC', rainy: '#DAEFFB', stormy: '#E3E6EE', night: '#DDE3F6', golden: '#FFE3CF' };
+const WX_TINT = { sunny: '#E9A100', partly: '#D99A1A', windy: '#0F9C98', overcast: '#7C8F98', rainy: '#2F86C2', stormy: '#E2522F', night: '#5866A8', golden: '#E8813A' };
+const VC = {
+  go: { light: { bg: '#D3F4E9', ink: '#0B6B57', word: '#0E9F7E' }, dark: { bg: 'rgba(23,184,144,.24)', ink: '#8BEDCE', word: '#8BEDCE' }, fill: '#17B890', head: '#D9F5EC', big: 'Go.', line: 'Yes! Conditions line up nicely.' },
+  maybe: { light: { bg: '#FFF0C2', ink: '#7A5600', word: '#A87000' }, dark: { bg: 'rgba(255,200,61,.22)', ink: '#FFD772', word: '#FFD772' }, fill: '#FFC83D', head: '#FFF1C6', big: 'Maybe.', line: 'Doable. Go with a plan and a buddy.' },
+  skip: { light: { bg: '#FFE0D6', ink: '#B23A1C', word: '#E2522F' }, dark: { bg: 'rgba(255,115,80,.22)', ink: '#FFA58E', word: '#FFA58E' }, fill: '#FF7350', head: '#FFE1D7', big: 'Skip.', line: 'Not this time. Another hour will treat you better.' },
+};
+const vKey = (s) => s >= 7 ? 'go' : s >= 5 ? 'maybe' : 'skip';
+const vWord = { go: 'Go', maybe: 'Maybe', skip: 'Skip', wait: 'Wait' };
+VC.wait = { light: { bg: '#DDE3F6', ink: '#3A4890', word: '#5866A8' }, dark: { bg: 'rgba(140,151,216,.26)', ink: '#C3CBF7', word: '#C3CBF7' }, fill: '#8C97D8', head: '#E2E7F8', big: 'Wait.', line: 'Too dark for now.' };
+const REC = { ideal: 'go', go: 'go', caution: 'maybe', avoid: 'skip', wait_for_daylight: 'wait' };
+const ACT_ALIAS = { surfing: 'surf', surf: 'surf', sailing: 'sail', jetskiing: 'jet', jetski: 'jet', swimming: 'swim', snorkeling: 'snorkel', snorkelling: 'snorkel', diving: 'dive', scubadiving: 'dive', fishing: 'fish', dolphinwatching: 'dolphin', dolphins: 'dolphin', rainwalk: 'rainwalk', rainwalking: 'rainwalk', overcastswimming: 'ocswim', kayaking: 'kayak', beachleisure: 'beach', beach: 'beach', sunbathing: 'beach', paddleboarding: 'sup', standuppaddleboarding: 'sup', sup: 'sup', sandbankvisit: 'sandbank', sandbank: 'sandbank', sandbanking: 'sandbank', sandbankvisiting: 'sandbank' };
+const actIcon = (n) => /snork|div/.test(n) ? 'scuba_diving' : /fish/.test(n) ? 'phishing' : /sail|boat|cruise/.test(n) ? 'sailing' : /kite/.test(n) ? 'kitesurfing' : /surf/.test(n) ? 'surfing' : /kayak|canoe/.test(n) ? 'kayaking' : /walk|hike/.test(n) ? 'directions_walk' : /beach|sun/.test(n) ? 'beach_access' : 'waves';
+const FACTORS = [['wind', 'Wind', 'air'], ['rain', 'Rain', 'rainy'], ['temp', 'Heat', 'thermostat'], ['uv', 'UV', 'wb_sunny'], ['visibility', 'Visibility', 'visibility'], ['tide', 'Tide', 'waves'], ['daylight', 'Daylight', 'light_mode']];
+const FWORD = { wind: 'wind', rain: 'rain', uv: 'strong sun', visibility: 'haze', tide: 'tide', temp: 'heat', daylight: 'daylight' };
+const FTIP = { uv: 'Strong sun. Rash guard, hat and reef-safe sunscreen.', rain: 'Showers about. Keep an eye on the sky and have a plan B.', wind: 'Wind is the deciding factor. Stay inside the lagoon if it picks up.', visibility: 'Hazy out there. Stay close to shore and to your buddy.', tide: 'Tide timing matters here. Check the tide before you head out.', temp: 'It\u2019s a hot one. Go early or late and drink lots of water.' };
+const ATOLLS = { K: 'Kaafu Atoll', B: 'Baa Atoll', GA: 'Gaafu Alif Atoll', Sh: 'Shaviyani Atoll', AA: 'Alif Alif Atoll', ADh: 'Alif Dhaalu Atoll', Lh: 'Lhaviyani Atoll', HDh: 'Haa Dhaalu Atoll', HA: 'Haa Alif Atoll', Gn: 'Gnaviyani Atoll', S: 'Addu Atoll', Th: 'Thaa Atoll', L: 'Laamu Atoll', F: 'Faafu Atoll', V: 'Vaavu Atoll', M: 'Meemu Atoll', R: 'Raa Atoll', N: 'Noonu Atoll', Dh: 'Dhaalu Atoll' };
+const ISLANDS = ['K. Malé', 'K. Hulhumalé', 'K. Villimalé', 'K. Maafushi', 'K. Thulusdhoo', 'K. Himmafushi', 'K. Guraidhoo', 'K. Dhiffushi', 'K. Huraa', 'K. Gulhi', 'K. Funadhoo', 'B. Funadhoo', 'B. Eydhafushi', 'B. Dharavandhoo', 'GA. Funadhoo', 'Sh. Funadhoo', 'AA. Rasdhoo', 'AA. Ukulhas', 'ADh. Dhigurah', 'ADh. Maamigili', 'Lh. Naifaru', 'Lh. Hinnavaru', 'HDh. Kulhudhuffushi', 'HA. Dhidhdhoo', 'Gn. Fuvahmulah', 'S. Hithadhoo', 'S. Feydhoo', 'Th. Veymandoo', 'L. Gan', 'F. Nilandhoo', 'V. Felidhoo', 'M. Muli', 'R. Ungoofaaru', 'N. Velidhoo', 'Dh. Kudahuvadhoo'];
+const POPULAR = ['K. Malé', 'K. Hulhumalé', 'K. Maafushi', 'K. Thulusdhoo', 'AA. Ukulhas', 'Gn. Fuvahmulah'];
+
+const accIcon = (s) => { s = String(s || '').toLowerCase(); return /ferry/.test(s) ? 'directions_boat_filled' : /sea ?plane/.test(s) ? 'flight_takeoff' : /aero|plane|flight|air/.test(s) ? 'flight' : /speed/.test(s) ? 'directions_boat' : /boat|dhoni/.test(s) ? 'sailing' : /bus/.test(s) ? 'directions_bus' : /taxi|car|road|bridge/.test(s) ? 'local_taxi' : /walk/.test(s) ? 'directions_walk' : 'route'; };
+const capF = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const FRONDS = [-1.55, -1.15, -.78, -.42, -.1, .22, .55, .9, 1.28, 1.6];
+Object.assign(ATOLLS, { D: 'Dhaalu Atoll', T: 'Thaa Atoll', GDh: 'Gaafu Dhaalu Atoll' });
+const API = 'https://moodhu.dev/api', TZ = 5 * 3600;
+const LS_ISLE = 'naiboli.island.v1', LS_ASKED = 'naiboli.locAsked.v1';
+const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const savedIsle = () => { const I = lsGet(LS_ISLE); return I && I.id != null && I.english_name ? I : null; };
+let DAY0 = Math.floor((Date.now() / 1000 + TZ) / 86400) * 86400 - TZ;
+const hOfUnix = (u) => (u - DAY0) / 3600;
+const nowH = () => hOfUnix(Date.now() / 1000);
+const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const dateOf = (h) => { const d = new Date((DAY0 + TZ + Math.floor(h / 24) * 86400) * 1000); return { dow: DOW[d.getUTCDay()], d: d.getUTCDate(), mon: MON[d.getUTCMonth()] }; };
+const dayLabel = (h) => { const x = dateOf(h); return `${x.dow} ${x.d} ${x.mon}`; };
+const DIRS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+const dirOf = (d) => DIRS[Math.round(((((d || 0) % 360) + 360) % 360) / 22.5) % 16];
+const isThunder = (id) => id >= 200 && id < 300, isWet = (id) => id >= 200 && id < 600;
+const owmIcon = (id, day) => isThunder(id) ? 'thunderstorm' : isWet(id) ? 'rainy' : id >= 600 && id < 700 ? 'weather_snowy' : id >= 700 && id < 800 ? 'foggy' : id === 800 ? (day ? 'sunny' : 'bedtime') : id <= 802 ? (day ? 'partly_cloudy_day' : 'partly_cloudy_night') : 'cloud';
+const owmCond = (id, day) => isThunder(id) ? 'Thunderstorms' : id >= 300 && id < 400 ? 'Drizzle' : id === 500 ? 'Light rain' : id === 501 ? 'Rain' : id >= 502 && id < 520 ? 'Heavy rain' : id >= 520 && id < 600 ? 'Showers' : id >= 700 && id < 800 ? 'Hazy' : id === 800 ? (day ? 'Sunny' : 'Clear') : id === 801 ? (day ? 'Mostly sunny' : 'Mostly clear') : id === 802 ? 'Partly cloudy' : id === 803 ? 'Mostly cloudy' : 'Overcast';
+const rainAmtOf = (s) => isThunder(s.id) ? 1 : !isWet(s.id) ? 0 : s.mm ? clamp(.25 + s.mm / 4, .25, 1) : s.id < 400 ? .25 : s.id === 500 ? .35 : s.id === 501 ? .6 : s.id < 520 ? .9 : .55;
+const gloomOf = (s) => clamp(Math.pow(s.clouds / 100, 1.6) * .64 + (isWet(s.id) ? .12 + rainAmtOf(s) * .14 : 0) + (isThunder(s.id) ? .3 : 0), 0, 1);
+const moonPath = (ctx, x, y, r, p) => { const c = Math.cos(TAU * p), right = p < .5, bulgeR = right === (c > 0), rx = r * Math.abs(c); ctx.beginPath(); ctx.arc(x, y, r, -Math.PI / 2, Math.PI / 2, !right); if (bulgeR) ctx.ellipse(x, y, rx, r, 0, Math.PI / 2, -Math.PI / 2, true); else ctx.ellipse(x, y, rx, r, 0, Math.PI / 2, Math.PI * 1.5, false); ctx.closePath(); };
+const moonSvg = (p) => { const c = Math.cos(TAU * p), right = p < .5, bulgeR = right === (c > 0); return `M50 10 A40 40 0 0 ${right ? 1 : 0} 50 90 A${(40 * Math.abs(c)).toFixed(2)} 40 0 0 ${bulgeR ? 0 : 1} 50 10 Z`; };
+const cloudNOf = (c) => c <= 3 ? c / 3 : clamp(1 + c / 100 * 8, 0, 9);
+const CAT = { 'Tourism Island': 'Resort', 'Uninhabited Island': 'Uninhabited', 'Industrial Island': 'Industrial', 'Institutional Island': 'Institutional' };
+const POP = [
+  { id: 1069, english_name: 'Malé', dhivehi_name: '', atoll_code_english: 'K', category: 'Residential Island', weather_anchor_id: 27 },
+  { id: 1068, english_name: 'Hulhumalé', dhivehi_name: '', atoll_code_english: 'K', category: 'Residential Island', weather_anchor_id: 27 },
+  { id: 1060, english_name: 'Maafushi', dhivehi_name: '', atoll_code_english: 'K', category: 'Residential Island', weather_anchor_id: 27 },
+  { id: 1017, english_name: 'Thulusdhoo', dhivehi_name: '', atoll_code_english: 'K', category: 'Residential Island', weather_anchor_id: 28 },
+  { id: 25, english_name: 'Ukulhas', dhivehi_name: '', atoll_code_english: 'AA', category: 'Residential Island', weather_anchor_id: 1 },
+  { id: 1002, english_name: 'Fuvahmulah', dhivehi_name: '', atoll_code_english: 'Gn', category: 'Residential Island', weather_anchor_id: 26 },
+];
+
+class Component extends DCLogic {
+  state = { sp: (this.props.splash ?? true) ? 0 : 3, offset: 0, bubble: null, bubbleOpen: false, sheet: null, sheetOpen: false, actId: null, focus: null, loc: savedIsle() ? savedIsle().id : 1069, locObj: savedIsle() || POP[0], firstRun: !savedIsle(), geo: { st: 'idle' }, perm: 'unknown', islands: null, wx: {}, tides: {}, isle: {}, acts: {}, query: '', scale: 1, hintSeen: false };
+  sceneRef = React.createRef(); scrubRef = React.createRef(); sheetScrollRef = React.createRef();
+  _t = 0; _hDisp = null; _flash = 0; _flashT = 2.5; _re = 0; _ripples = [];
+
+  componentDidMount() {
+    if (this.state.sp === 0) this.startSplash();
+    this.loadLive();
+    this.permState().then(p => { if (this._dead) return; this._perm = p; this.setState({ perm: p }); if (this.state.firstRun && p === 'granted') this.locate(true); else this.maybeWelcome(); });
+    const R = (a, b) => a + Math.random() * (b - a);
+    this._clouds = [{ x: .05, y: .1, s: 1, v: 7 }, { x: .58, y: .42, s: .8, v: 5 }, { x: .32, y: .7, s: 1.15, v: 9 }, { x: .8, y: .2, s: .9, v: 6 }, { x: .18, y: .48, s: 1.3, v: 8 }, { x: .68, y: .78, s: 1.05, v: 10 }, { x: .42, y: .04, s: 1.25, v: 6 }, { x: .9, y: .58, s: .85, v: 7 }, { x: 0, y: .86, s: 1.1, v: 9 }];
+    this._rain = Array.from({ length: 190 }, () => ({ x: Math.random() * 1.2 - .1, y: R(0, 900), l: R(10, 20), v: R(640, 1000) }));
+    this._stars = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random() * .9, r: R(.5, 1.7), p: R(0, 6.28) }));
+    this.fit = () => { const s = Math.min(1, (window.innerHeight - 32) / 874, (window.innerWidth - 24) / 402); this.setState({ scale: Math.max(.4, s) }); };
+    this.fit(); window.addEventListener('resize', this.fit);
+    this._last = performance.now();
+    const loop = (now) => { this._raf = requestAnimationFrame(loop); try { this.tick(now); } catch (e) { if (!this._err) { this._err = 1; console.error(e); } } };
+    this._raf = requestAnimationFrame(loop);
+  }
+  startSplash() { this._spT && this._spT.forEach(clearTimeout); this._spStart = Date.now(); this.setState({ sp: 0 }); this._spT = [setTimeout(() => this.setState({ sp: 1 }), 80), setTimeout(() => this.splashGate(), 2600)]; }
+  splashGate = () => { if (this.state.sp >= 2) return; const W = this.wxFor(this.curIsland()); if ((W && W !== 'loading' && this.state.geo.st !== 'locating') || Date.now() - this._spStart > 9000) this.endSplash(); else this._spT.push(setTimeout(this.splashGate, 250)); };
+  endSplash = () => { if (this.state.sp >= 2) return; this._spT && this._spT.forEach(clearTimeout); this.setState({ sp: 2 }); this._spT = [setTimeout(() => this.setState({ sp: 3 }, this.maybeWelcome), 650)]; };
+  componentDidUpdate(pp) { this.prefetchPicker(); if (pp && (pp.splash ?? true) === false && (this.props.splash ?? true) !== false) this.startSplash(); if (!this._painting) { this._painting = true; try { this.tick(this._last || performance.now()); } catch (e) {} this._painting = false; } }
+  componentWillUnmount() { cancelAnimationFrame(this._raf); window.removeEventListener('resize', this.fit); clearTimeout(this._sheetT); this._spT && this._spT.forEach(clearTimeout); clearInterval(this._clock); clearTimeout(this._pfT); this._dead = true; }
+
+  bindScrub(el) {
+    if (this._scrubEl === el) return; this._scrubEl = el;
+    const set = (e) => { const r = el.getBoundingClientRect(); this.setState({ offset: clamp((e.clientX - r.left) / r.width, 0, 1) * 23, bubbleOpen: false, hintSeen: true }); };
+    el.addEventListener('pointerdown', (e) => { this._drag = true; try { el.setPointerCapture(e.pointerId); } catch (x) {} set(e); });
+    el.addEventListener('pointermove', (e) => { if (this._drag) set(e); });
+    const up = () => { if (!this._drag) return; this._drag = false; this.setState(s => ({ offset: Math.round(s.offset) })); };
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  }
+
+  tick(now) {
+    const dt = Math.min(.05, (now - this._last) / 1000); this._last = now;
+    const anim = this.props.animate !== false; if (anim) this._t += dt;
+    if (this.scrubRef.current) this.bindScrub(this.scrubRef.current);
+    const mb = this._m; if (!mb) return; const m0 = mb.live ? { ...mb, ...this.wxAt(mb, this._hDisp ?? mb.hour + this.state.offset) } : mb;
+    const sm = this._sm || (this._sm = { gloom: m0.gloom, rain: m0.rainAmt, wind: m0.wind, cn: m0.cloudN }), kk = Math.min(1, (dt || 0) * 1.6);
+    sm.gloom += (m0.gloom - sm.gloom) * kk; sm.rain += (m0.rainAmt - sm.rain) * kk; sm.wind += (m0.wind - sm.wind) * kk; sm.cn += (m0.cloudN - sm.cn) * kk;
+    const m = { ...m0, gloom: sm.gloom, rainAmt: sm.rain, wind: sm.wind, cloudN: sm.cn };
+    const target = m.hour + this.state.offset;
+    if (this._hDisp == null || Math.abs(this._hDisp - target) > 30) this._hDisp = target;
+    this._hDisp += (target - this._hDisp) * Math.min(1, (dt || 0) * 7);
+    const c = this.sceneRef.current; if (!c) return;
+    const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight; if (!w || !h) return;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.paint(ctx, w, h, anim ? dt : 0, m, this._hDisp, dt);
+  }
+
+  windAt(m, h) { if (m.live) return Math.max(1, Math.round(this.sample(m.W, h).wind)); return Math.max(2, Math.round(m.wind * (1 + .22 * (Math.sin((h - 9) / 24 * TAU) - Math.sin((m.hour - 9) / 24 * TAU))))); }
+  tempAt(m, h) { if (m.live) return Math.round(this.sample(m.W, h).temp); return Math.round(m.temp + (m.hi - m.lo) * .5 * (Math.cos((h - 14) / 24 * TAU) - Math.cos((m.hour - 14) / 24 * TAU))); }
+  scoreAt(m, i, h) {
+    if (m.live) return this.liveScore(m, i, h);
+    const a = ACTS[i], base = m.scores[i];
+    const shape = 1.3 * (Math.cos((md24(h) - a.peak) / 12 * Math.PI) - Math.cos((md24(m.hour) - a.peak) / 12 * Math.PI));
+    const dl = (x) => sunState(x).el > -.05 ? 1 : 0;
+    const night = a.night ? 0 : (dl(h) - dl(m.hour)) * 3.6;
+    return clamp(base + shape + night, .3, 9.9);
+  }
+
+  palm(ctx, bx, by, Hh, lean, wind, t, seed, C, store) {
+    const aw = Math.abs(wind), n = 16, seg = Hh / n;
+    const sway = Math.sin(t * (1 + aw * 1.8) + seed) * (.012 + aw * .05) + Math.sin(t * 2.9 + seed * 2) * aw * .018;
+    const bend = wind * .3 + sway;
+    const pts = [[bx, by]]; let x = bx, y = by;
+    for (let i = 1; i <= n; i++) { const s = i / n, ang = -Math.PI / 2 + lean * (.4 + .6 * s) + bend * Math.pow(s, 1.7); x += Math.cos(ang) * seg; y += Math.sin(ang) * seg; pts.push([x, y]); }
+    const wB = Hh * .062, wT = Hh * .03, L = [], Rr = [];
+    pts.forEach((p, i) => { const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n, i + 1)]; let dx = b[0] - a[0], dy = b[1] - a[1]; const d = Math.hypot(dx, dy) || 1; dx /= d; dy /= d; const ww = (wB + (wT - wB) * (i / n)) / 2; L.push([p[0] - dy * ww, p[1] + dx * ww]); Rr.push([p[0] + dy * ww, p[1] - dx * ww]); });
+    ctx.fillStyle = rgb(C.trunk); ctx.beginPath(); L.forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)); for (let i = Rr.length - 1; i >= 0; i--) ctx.lineTo(Rr[i][0], Rr[i][1]); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = rgb(C.trunkSh); ctx.beginPath(); pts.forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)); for (let i = Rr.length - 1; i >= 0; i--) ctx.lineTo(Rr[i][0], Rr[i][1]); ctx.closePath(); ctx.globalAlpha = .55; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = rgb(C.ring); ctx.lineWidth = 1.2; ctx.beginPath(); for (let i = 1; i < n; i++) { ctx.moveTo(L[i][0], L[i][1]); ctx.quadraticCurveTo(pts[i][0], pts[i][1] + 2.2, Rr[i][0], Rr[i][1]); } ctx.stroke();
+    const [cx, cy] = pts[n]; const top = Math.atan2(pts[n][1] - pts[n - 2][1], pts[n][0] - pts[n - 2][0]);
+    const frond = (off, f, dark) => {
+      const len = Hh * (.4 + .1 * (((f * 37) % 5) / 4)), steps = 14, ds = 1 / steps;
+      const flutter = Math.sin(t * (2 + aw * 5) + f * 1.3 + seed) * (.06 + aw * .3) + Math.sin(t * (5 + aw * 8) + f * 2.1) * aw * .1;
+      const push = wind * 1.5 + flutter; let dx = Math.cos(top + off), dy = Math.sin(top + off); let px = cx, py = cy; const sp = [[px, py]];
+      for (let k = 1; k <= steps; k++) { dx += push * ds * .9; dy += (1.2 + Math.abs(Math.cos(top + off)) * .5) * ds * (.3 + k / steps); const d = Math.hypot(dx, dy); dx /= d; dy /= d; px += dx * len * ds; py += dy * len * ds; sp.push([px, py]); }
+      const up = [], dn = [], wmax = Hh * .062;
+      sp.forEach((p, k) => { const a = sp[Math.max(0, k - 1)], b = sp[Math.min(steps, k + 1)]; let tx = b[0] - a[0], ty = b[1] - a[1]; const d = Math.hypot(tx, ty) || 1; tx /= d; ty /= d; const s = k / steps; const ww = wmax * Math.pow(Math.sin(Math.PI * Math.min(1, s * 1.08)), .7); const z = k % 2 ? 1.3 : .7; up.push([p[0] - ty * ww * z, p[1] + tx * ww * z + ww * .3]); dn.push([p[0] + ty * ww * (2 - z), p[1] - tx * ww * (2 - z) + ww * .75]); });
+      ctx.fillStyle = rgb(dark ? C.frondDk : C.frond); ctx.beginPath(); up.forEach(([qx, qy], i) => i ? ctx.lineTo(qx, qy) : ctx.moveTo(qx, qy)); for (let i = dn.length - 1; i >= 0; i--) ctx.lineTo(dn[i][0], dn[i][1]); ctx.closePath(); ctx.fill();
+      if (!dark) { ctx.fillStyle = rgb(C.frondHi); ctx.beginPath(); sp.forEach(([qx, qy], i) => i ? ctx.lineTo(qx, qy) : ctx.moveTo(qx, qy)); for (let i = up.length - 1; i >= 0; i--) ctx.lineTo((up[i][0] + sp[i][0]) / 2, (up[i][1] + sp[i][1]) / 2); ctx.closePath(); ctx.globalAlpha = .55; ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.strokeStyle = rgb(C.spine); ctx.lineWidth = 1.4; ctx.beginPath(); sp.forEach(([qx, qy], i) => i ? ctx.lineTo(qx, qy) : ctx.moveTo(qx, qy)); ctx.stroke();
+      return sp;
+    };
+    let ext = [[cx, cy]];
+    FRONDS.forEach((o, f) => { if (f % 2 === 0) ext = ext.concat(frond(o * 1.05, f, true)); });
+    ctx.fillStyle = rgb(C.nut); ctx.beginPath(); [[-4, 4], [4, 5], [0, 9]].forEach(([ox, oy]) => { ctx.moveTo(cx + ox + 5, cy + oy); ctx.arc(cx + ox, cy + oy, 5, 0, TAU); }); ctx.fill();
+    FRONDS.forEach((o, f) => { if (f % 2 === 1) ext = ext.concat(frond(o, f, false)); });
+    if (store) { const xs = ext.map(p => p[0]).concat(pts.map(p => p[0])), ys = ext.map(p => p[1]).concat(pts.map(p => p[1])); store.push({ x: Math.min(...xs) - 6, y: Math.min(...ys) - 6, w: Math.max(...xs) - Math.min(...xs) + 12, h: Math.max(...ys) - Math.min(...ys) + 12 }); }
+  }
+
+  cloud(ctx, x, y, s, col) {
+    ctx.fillStyle = col; ctx.beginPath();
+    for (const [cx, cy, r] of [[0, 0, 18], [24, -12, 24], [50, -5, 20], [68, 3, 14]]) { ctx.moveTo(x + (cx + r) * s, y + cy * s); ctx.arc(x + cx * s, y + cy * s, r * s, 0, TAU); }
+    const bx = x - 18 * s, by = y - 2 * s, bw = 100 * s, bh = 22 * s, br = 11 * s;
+    ctx.moveTo(bx + br, by); ctx.lineTo(bx + bw - br, by); ctx.arc(bx + bw - br, by + br, br, -Math.PI / 2, Math.PI / 2); ctx.lineTo(bx + br, by + bh); ctx.arc(bx + br, by + br, br, Math.PI / 2, Math.PI * 1.5); ctx.fill();
+  }
+
+  paint(ctx, W, H, dt, m, hour, rdt) {
+    const t = this._t, Lt = lightOf(hour, m.gloom), pal = Lt.pal, gl = m.gloom;
+    const wT = this.windAt(m, hour); this._wS = this._wS == null ? wT : this._wS + (wT - this._wS) * Math.min(1, (rdt || 0) * 1.6); const wind = this._wS, wn = clamp(wind / 50, 0, 1);
+    const toward = (m.deg + 180) * Math.PI / 180, wsign = Math.sin(toward) >= 0 ? 1 : -1, wsx0 = wsign * (.15 + .85 * wn);
+    this._wsx = this._wsx == null ? wsx0 : this._wsx + (wsx0 - this._wsx) * Math.min(1, (rdt || 0) * 1.5); const wsx = this._wsx;
+    const tint = (c) => mix(mix(mix(c, NIGHT_T, Lt.N * .64), GOLD_T, Lt.G * .2), GREY_T, gl * .3);
+    const C = {}; for (const k in OBJC) C[k] = tint(OBJC[k]);
+    const lvT = TIDE ? -.27 + .72 * (tideAt(hour) - TIDE.lo) / (TIDE.hi - TIDE.lo) : tideAt(hour); this._lv = this._lv == null ? lvT : this._lv + (lvT - this._lv) * Math.min(1, (rdt || 0) * 2);
+    const lvl = this._lv, tideOff = -lvl * 30, breath = Math.sin(t * .35) * 2, seaL = WL + tideOff + breath;
+    const hits = { palms: [], clouds: [] };
+    // sky
+    const g = ctx.createLinearGradient(0, 0, 0, HZ); g.addColorStop(0, rgb(pal.sky[0])); g.addColorStop(Lt.G > .4 ? .66 : .6, rgb(pal.sky[1])); g.addColorStop(1, rgb(pal.sky[2]));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, HZ + 2);
+    const MS = this.moonAt(m, hour), starA = Lt.N * (1 - gl) * (MS.up ? 1 - .45 * MS.illum : 1);
+    if (starA > .02) { ctx.fillStyle = '#FFFFFF'; for (const s of this._stars) { ctx.globalAlpha = starA * (.3 + .7 * Math.abs(Math.sin(t * .9 + s.p))); ctx.beginPath(); ctx.arc(s.x * W, 50 + s.y * (HZ - 90), s.r, 0, TAU); ctx.fill(); } ctx.globalAlpha = 1; }
+    // sun / moon
+    const arc = 200, bodyX = W * (.08 + .84 * Lt.f), bodyY = HZ - Math.sin(Math.PI * Lt.f) * arc;
+    hits.sun = null;
+    if (Lt.day) {
+      const a = clamp(1 - gl * .85, 0, 1), r = 30 + Lt.G * 8, col = mix(hex('#FFD54A'), hex('#FFB04A'), Lt.G);
+      if (a > .05) {
+        const gr = r * 4.6 * (1 + .05 * Math.sin(t * 1.4)); const rg = ctx.createRadialGradient(bodyX, bodyY, r * .5, bodyX, bodyY, gr);
+        rg.addColorStop(0, rgb(mix(col, [255, 255, 255], .3), .55 * a)); rg.addColorStop(1, rgb(col, 0)); ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bodyX, bodyY, gr, 0, TAU); ctx.fill();
+        ctx.globalAlpha = a; ctx.fillStyle = rgb(col); ctx.beginPath(); ctx.arc(bodyX, bodyY, r, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+        hits.sun = { x: bodyX, y: bodyY, r: Math.max(40, r * 1.8), kind: 'sun' };
+      }
+    }
+    hits.moon = null; let moonX = bodyX, moonGlit = 0;
+    if (MS.up) {
+      const r = 20, k = MS.illum, mx = W * (.08 + .84 * MS.f), my = HZ - Math.sin(Math.PI * MS.f) * arc, a = clamp(MS.el * 6, 0, 1) * (1 - gl * .85) * (1 - Lt.D * .5);
+      if (a > .05 && k > .02) {
+        moonX = mx; moonGlit = Lt.day ? 0 : a * (.2 + .8 * k);
+        const gA = .35 * a * k * (1 - Lt.D);
+        if (gA > .01) { const rg = ctx.createRadialGradient(mx, my, r * .6, mx, my, r * 4); rg.addColorStop(0, `rgba(210,222,255,${gA})`); rg.addColorStop(1, 'rgba(210,222,255,0)'); ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(mx, my, r * 4, 0, TAU); ctx.fill(); }
+        ctx.fillStyle = '#F6EFD8'; ctx.globalAlpha = a * .13 * (1 - Lt.D); ctx.beginPath(); ctx.arc(mx, my, r, 0, TAU); ctx.fill();
+        ctx.globalAlpha = a; moonPath(ctx, mx, my, r, MS.p); ctx.fill();
+        ctx.save(); moonPath(ctx, mx, my, r, MS.p); ctx.clip(); ctx.fillStyle = 'rgba(60,70,110,.13)'; ctx.beginPath(); ctx.arc(mx - 6, my - 4, 4.5, 0, TAU); ctx.arc(mx + 7, my + 5, 3, 0, TAU); ctx.fill(); ctx.restore();
+        ctx.globalAlpha = 1;
+        hits.moon = { x: mx, y: my, r: 40 };
+      }
+    }
+    // clouds
+    const ccol = mix(mix(pal.cloud, [255, 255, 255], (1 - gl) * Lt.D * .4), pal.cloud, 0), cshade = mix(ccol, [20, 30, 50], .14);
+    const csc = .85 + gl * .85, span = W + 300, csp = .5 + wind / 15;
+    for (let i = 0; i < Math.min(this._clouds.length, Math.ceil(m.cloudN - .02)); i++) {
+      const c = this._clouds[i], s = csc * c.s, x = ((c.x * span + t * c.v * csp * (wsign > 0 ? 1 : -1) % span) + span) % span - 150, y = 110 + c.y * (HZ - 220), ca = .96 * clamp(m.cloudN - i, 0, 1);
+      ctx.globalAlpha = ca; this.cloud(ctx, x, y + 5 * s, s, rgb(cshade)); this.cloud(ctx, x, y, s, rgb(ccol)); ctx.globalAlpha = 1;
+      if (ca > .3) hits.clouds.push({ x: x - 20 * s, y: y - 38 * s, w: 104 * s, h: 66 * s });
+    }
+    // birds
+    if (Lt.D > .4 && gl < .5) {
+      ctx.strokeStyle = rgb(C.bird, .75); ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath();
+      for (let i = 0; i < 3; i++) { const bx = ((t * (12 + i * 3) + i * 120) % (W + 80)) - 40, by = 300 + i * 22 + Math.sin(t * .7 + i * 2) * 10, fl = -3 + 5 * Math.sin(t * 8 + i * 1.7), s = 1 - i * .18; ctx.moveTo(bx - 9 * s, by + fl * s); ctx.quadraticCurveTo(bx - 4 * s, by - 4 * s, bx, by); ctx.quadraticCurveTo(bx + 4 * s, by - 4 * s, bx + 9 * s, by + fl * s); }
+      ctx.stroke();
+    }
+    // sea base
+    const sg = ctx.createLinearGradient(0, HZ, 0, H); sg.addColorStop(0, rgb(pal.sea[0])); sg.addColorStop(.3, rgb(pal.sea[1])); sg.addColorStop(1, rgb(pal.sea[2]));
+    ctx.fillStyle = sg; ctx.fillRect(0, HZ, W, H - HZ);
+    ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(0, HZ, W, 1);
+    // far island
+    ctx.fillStyle = rgb(C.farSand); ctx.beginPath(); ctx.ellipse(W * .84, HZ + 2, 46, 3.2, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = rgb(C.far); ctx.beginPath(); ctx.ellipse(W * .84, HZ, 36, 6, 0, Math.PI, TAU); ctx.fill();
+    for (const [ox, hh] of [[-14, 14], [-2, 18], [12, 12]]) { const px = W * .84 + ox; ctx.strokeStyle = rgb(C.far); ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(px, HZ - 2); ctx.lineTo(px + wsx * 2, HZ - hh); ctx.stroke(); ctx.beginPath(); ctx.ellipse(px + wsx * 2, HZ - hh, 5, 2.2, 0, 0, TAU); ctx.fill(); }
+    const amp = clamp(.55 + wind / 22, .5, 2.6);
+    const wave = (base, A, k, w, ph, col) => {
+      const wg = ctx.createLinearGradient(0, base - 10, 0, H); wg.addColorStop(0, rgb(col)); wg.addColorStop(1, rgb(pal.sea[2]));
+      ctx.fillStyle = wg; ctx.beginPath(); ctx.moveTo(0, H);
+      const yAt = (x) => base + A * amp * Math.sin(x * k + t * w + ph) + A * amp * .35 * Math.sin(x * k * 2.7 - t * w * 1.6 + ph);
+      for (let x = 0; x <= W + 4; x += 4) ctx.lineTo(x, yAt(x)); ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.16)'; ctx.lineWidth = 1.4; ctx.beginPath(); for (let x = 0; x <= W + 4; x += 4) x ? ctx.lineTo(x, yAt(x)) : ctx.moveTo(x, yAt(x)); ctx.stroke();
+    };
+    const sea0 = pal.sea[0], sea1 = pal.sea[1], sea2 = pal.sea[2];
+    wave(HZ + 8 + tideOff * .2, 1.2, .045, .8, 0, mix(sea0, [255, 255, 255], .08));
+    wave(HZ + 30 + tideOff * .35, 2, .034, 1, 1.3, mix(sea0, sea1, .3));
+    // dhoni
+    hits.dhoni = null;
+    const sA = this.actData(), sE = sA && sA.byId.sail ? this.apiAt(sA, sA.byId.sail, hour) : null;
+    const sailOk = (sE ? sE.s : this.scoreAt(m, 1, hour)) >= 5 && gl < .9;
+    if (sailOk) {
+      const dsp = 7 + wind * .35, dxp = ((t * dsp * wsign + 80) % (W + 160) + (W + 160)) % (W + 160) - 80, dyp = HZ + 44 + tideOff * .4 + Math.sin(t * 1.6) * 1.4;
+      ctx.save(); ctx.translate(dxp, dyp); ctx.rotate(Math.sin(t * 1.3) * .04); ctx.scale(wsign * .9, .9);
+      ctx.fillStyle = rgb(C.sail); ctx.beginPath(); ctx.moveTo(-2, -46); ctx.quadraticCurveTo(14, -30, 18, -9); ctx.lineTo(-16, -8); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = rgb(C.hull); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-2, -48); ctx.lineTo(-2, -4); ctx.stroke();
+      ctx.fillStyle = rgb(C.hull); ctx.beginPath(); ctx.moveTo(-26, -6); ctx.quadraticCurveTo(-22, 5, -6, 5); ctx.lineTo(16, 5); ctx.quadraticCurveTo(27, 2, 33, -15); ctx.lineTo(25, -5); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgb(C.hullHi); ctx.fillRect(-20, -5, 40, 2);
+      if (Lt.N > .5) { ctx.fillStyle = 'rgba(255,214,120,.95)'; ctx.beginPath(); ctx.arc(-2, -14, 2.2, 0, TAU); ctx.fill(); ctx.fillStyle = 'rgba(255,214,120,.25)'; ctx.beginPath(); ctx.arc(-2, -14, 8, 0, TAU); ctx.fill(); }
+      ctx.restore();
+      hits.dhoni = { x: dxp - 36, y: dyp - 54, w: 72, h: 64 };
+    }
+    wave(HZ + 64 + tideOff * .55, 3, .026, 1.15, 2.4, mix(sea0, sea1, .55));
+    // glitter
+    const glitA = Lt.day ? clamp(1 - gl * 1.3, 0, 1) : moonGlit * (1 - gl);
+    if (glitA > .05) {
+      const gc = Lt.day ? mix([255, 255, 255], [255, 220, 170], Lt.G) : [215, 228, 255];
+      for (let i = 0; i < 14; i++) { const yy = HZ + 6 + i * 8, ww = (16 + (i * 7) % 18) * (1 - i / 18), xx = (Lt.day ? bodyX : moonX) + Math.sin(t * 1.5 + i * 1.7) * (5 + i * 2.2) - ww / 2; if (yy > WL - 20 && Math.abs(xx - ICX) < 140) continue; ctx.fillStyle = rgb(gc, glitA * (.2 + .4 * Math.abs(Math.sin(t * 2.2 + i)))); ctx.fillRect(xx, yy, ww, 2); }
+    }
+    // island
+    ctx.save(); ctx.translate(0, DY);
+    const bush = (bx, by, r) => { ctx.moveTo(bx + r, by); ctx.arc(bx, by, r, 0, TAU); };
+    ctx.fillStyle = rgb(C.bush); ctx.beginPath(); [[-78, 590, 12], [-58, 582, 16], [-34, 578, 14], [6, 576, 13], [30, 579, 16], [56, 585, 12], [78, 593, 9]].forEach(([ox, y, r]) => bush(ICX + ox, y, r)); ctx.fill();
+    ctx.fillStyle = rgb(C.bushHi); ctx.beginPath(); [[-60, 574, 8], [-36, 571, 7], [28, 572, 8], [6, 570, 6]].forEach(([ox, y, r]) => bush(ICX + ox, y, r)); ctx.fill();
+    const ig = ctx.createLinearGradient(0, 576, 0, 640); ig.addColorStop(0, rgb(C.sand)); ig.addColorStop(1, rgb(C.sandLo));
+    ctx.fillStyle = ig; ctx.beginPath(); ctx.moveTo(ICX - 250, 690); ctx.quadraticCurveTo(ICX - 205, 652, ICX - 162, 636);
+    ctx.bezierCurveTo(ICX - 132, 616, ICX - 94, 586, ICX - 26, 583); ctx.bezierCurveTo(ICX + 44, 580, ICX + 114, 598, ICX + 164, 636); ctx.quadraticCurveTo(ICX + 207, 652, ICX + 252, 690); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = rgb(C.sandLo, .35); ctx.beginPath(); ctx.ellipse(ICX - 28, 592, 18, 3, 0, 0, TAU); ctx.ellipse(ICX + 50, 594, 12, 2.4, 0, 0, TAU); ctx.fill();
+    this.palm(ctx, ICX + 46, 592, 132, .32, wsx, t, 2.1, C, hits.palms);
+    this.palm(ctx, ICX - 28, 590, 214, -.2, wsx, t, 0, C, hits.palms);
+    {
+      const sx = ICX - 108, sy = 604, rot = .07 + Math.sin(t * 1.1) * .012 * (.3 + wn);
+      ctx.save(); ctx.font = "700 12px Figtree, sans-serif";
+      let nm = this._signName || ''; while (nm.length > 3 && ctx.measureText(nm).width > 118) nm = nm.slice(0, -2) + '\u2026';
+      const bw = Math.max(46, ctx.measureText(nm).width + 22), bh = 24, top = -42 - bh;
+      ctx.translate(sx, sy); ctx.rotate(rot);
+      ctx.fillStyle = rgb(C.signDk); ctx.fillRect(-2.5, top + 6, 5, -top - 4);
+      const rr = (x, y, w, hh) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, hh, 4); else ctx.rect(x, y, w, hh); ctx.fill(); };
+      ctx.fillStyle = rgb(C.signDk); rr(-bw / 2, top + 2.5, bw, bh);
+      ctx.fillStyle = rgb(C.sign); rr(-bw / 2, top, bw, bh);
+      ctx.fillStyle = rgb(C.signDk, .35); ctx.fillRect(-bw / 2 + 3, top + bh / 2, bw - 6, 1);
+      ctx.beginPath(); ctx.arc(-bw / 2 + 5, top + 5, 1.3, 0, TAU); ctx.arc(bw / 2 - 5, top + 5, 1.3, 0, TAU); ctx.arc(-bw / 2 + 5, top + bh - 5, 1.3, 0, TAU); ctx.arc(bw / 2 - 5, top + bh - 5, 1.3, 0, TAU); ctx.fill();
+      ctx.fillStyle = rgb(C.signInk); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(nm, 0, top + bh / 2 + .5);
+      ctx.restore();
+      hits.sign = { x: sx - bw / 2 - 10, y: sy + DY + top - 10, w: bw + 20, h: -top + 18 };
+    }
+    ctx.restore(); hits.palms.forEach(pb => { pb.y += DY; });
+    // lagoon water over island base
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0, H);
+    const lw = (x) => seaL + 1.4 * Math.sin(x * .05 + t * 1.2);
+    for (let x = 0; x <= W + 4; x += 4) ctx.lineTo(x, lw(x)); ctx.lineTo(W, H); ctx.closePath(); ctx.clip();
+    ctx.translate(ICX, seaL + 8); ctx.scale(1, .22);
+    const lg = ctx.createRadialGradient(0, 0, 0, 0, 0, 230); lg.addColorStop(0, rgb(pal.lagoon, .66)); lg.addColorStop(.5, rgb(pal.lagoon, .72)); lg.addColorStop(.8, rgb(mix(pal.lagoon, sea1, .4), .5)); lg.addColorStop(1, rgb(sea1, 0));
+    ctx.fillStyle = lg; ctx.fillRect(-240, -240, 480, 480); ctx.restore();
+    const hw = 128 + tideOff * 2.4;
+    ctx.save(); ctx.setLineDash([10, 7]); ctx.lineDashOffset = -t * 14; ctx.lineCap = 'round';
+    ctx.strokeStyle = `rgba(255,255,255,${.55 + .25 * Math.sin(t * 1.6)})`; ctx.lineWidth = 2.2; ctx.beginPath();
+    for (let x = ICX - hw; x <= ICX + hw + 8; x += 3) { const y = lw(x) + 1; x === ICX - hw ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = 1.5; ctx.lineDashOffset = t * 10; ctx.beginPath();
+    for (let x = ICX - hw - 18; x <= ICX + hw + 26; x += 3) { const y = lw(x) + 7 + Math.sin(t * 1.3) * 1.5; x === ICX - hw - 18 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); ctx.restore();
+    hits.island = { x: ICX - hw, y: 564 + DY, w: hw * 2 + 10, h: seaL - 560 - DY };
+    // front waves
+    wave(612 + tideOff, 5, .019, 1.3, 3.1, mix(sea1, sea2, .25));
+    wave(672 + tideOff, 7, .016, 1.45, 4.2, mix(sea1, sea2, .45));
+    wave(750 + tideOff, 9, .013, 1.6, 5.3, mix(sea1, sea2, .7));
+    // rain
+    if (m.rainAmt > .01) {
+      const n = Math.round(this._rain.length * m.rainAmt), sl = clamp(wind / 90, 0, .5) * wsign;
+      ctx.strokeStyle = gl > .9 ? 'rgba(210,225,240,.5)' : 'rgba(225,238,245,.55)'; ctx.lineWidth = 1.2; ctx.beginPath();
+      for (let i = 0; i < n; i++) { const d = this._rain[i]; d.y += d.v * dt; d.x += sl * d.v * dt / W * .6; if (d.y > H) { d.y = -20; d.x = Math.random() * 1.2 - .1; } const px = (((d.x + .1) % 1.2 + 1.2) % 1.2 - .1) * W; ctx.moveTo(px, d.y); ctx.lineTo(px - sl * d.l, d.y - d.l); }
+      ctx.stroke();
+    }
+    if (m.flash) {
+      this._flashT -= dt;
+      if (this._flashT <= 0) { this._flash = 1; this._flashT = 3.5 + Math.random() * 4; this._re = .16; let bx = W * (.2 + Math.random() * .6), by = 110; const pts = [[bx, by]]; while (by < HZ) { by += 30 + Math.random() * 30; bx += (Math.random() - .5) * 40; pts.push([bx, Math.min(by, HZ)]); } this._bolt = pts; }
+      if (this._re > 0) { this._re -= dt; if (this._re <= 0) this._flash = .8; }
+      if (this._flash > 0) {
+        if (this._bolt && this._flash > .35) { ctx.strokeStyle = `rgba(255,255,240,${this._flash})`; ctx.lineWidth = 2.2; ctx.beginPath(); this._bolt.forEach(([x, y], j) => j ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke(); }
+        ctx.fillStyle = `rgba(230,236,255,${this._flash * .4})`; ctx.fillRect(0, 0, W, H); this._flash = Math.max(0, this._flash - dt * 3.2);
+      }
+    }
+    if (this._ripples.length) {
+      this._ripples = this._ripples.filter(rp => (rp.a += (dt || .016)) < .7);
+      for (const rp of this._ripples) { const rr = 8 + rp.a * 100; ctx.strokeStyle = `rgba(255,255,255,${(1 - rp.a / .7) * .8})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(rp.x, rp.y, rr, rp.sea ? rr * .3 : rr, 0, 0, TAU); ctx.stroke(); }
+    }
+    this._hits = hits;
+  }
+
+  mood() {
+    const I = this.curIsland(), W = this.wxFor(I);
+    const good = W && W.hrs ? W : (W !== 'err' && this._lastW) || null;
+    if (good) { const m = this.liveMood(good); m.loading = good !== W; if (good === W) this._lastW = W; return m; }
+    const key = wxOf(this.labelOf(I));
+    return { ...MOODS[key], key, hour: nowH(), live: false, loading: W !== 'err', offline: W === 'err' };
+  }
+  tide(h) {
+    const level = tideAt(h), rising = tideAt(h + .05) > tideAt(h - .05);
+    const next = this.extrema().filter(e => e.h > h + .01), nh = next.find(e => e.high), nl = next.find(e => !e.high);
+    const lo = TIDE ? TIDE.lo : -.27, hi = TIDE ? TIDE.hi : .45, n = clamp((level - lo) / (hi - lo), 0, 1);
+    const f = (e) => e ? `${fmt(e.h)} · ${fmtLvl(e.lvl)} m` : 'Beyond the forecast';
+    return { level, n, rising, levelText: fmtLvl(level), dirText: rising ? 'Rising' : 'Falling', until: next[0] ? fmt(next[0].h) : 'later', nh: f(nh), nl: f(nl) };
+  }
+  extrema() {
+    if (TIDE) return TIDE.ex;
+    const ex = []; for (let k = -4; k < 12; k++) { const h = 1 + k * 6.21; ex.push({ h, high: ((k % 2) + 2) % 2 === 0, lvl: tideSyn(h) }); } return ex;
+  }
+  tideSrc() {
+    const T = this.curTide();
+    if (!T || T === 'loading') return 'Loading tide feed\u2026';
+    if (T === 'err' || !T.v) return 'Tide feed unavailable. Showing a typical cycle.';
+    return T.same || !T.km ? `Predicted for ${T.src}` : `Estimated from ${T.src}, ${T.km < 10 ? T.km.toFixed(1) : Math.round(T.km)} km away`;
+  }
+
+  loadLive() {
+    const I = this.curIsland(); this.ensureWx(I); this.ensureTide(I); this.ensureIsle(I); this.ensureActs(I);
+    this._listP = this.getJSON('/islands').then(list => {
+      if (this._dead || !Array.isArray(list)) return null; list = list.filter(i => i && i.english_name);
+      const f = list.find(i => i.id === this.state.loc); if (f && !this.state.firstRun) lsSet(LS_ISLE, f);
+      this.setState(s => ({ islands: list, locObj: list.find(i => i.id === s.loc) || s.locObj }));
+      return list;
+    }).catch(() => null);
+    this._clock = setInterval(() => {
+      if (nowH() >= 24) { DAY0 += 86400; TIDE = null; this._lastW = null; this._inflight = {}; this._tInflight = {}; this._aInflight = {}; this.setState({ wx: {}, tides: {}, acts: {} }, () => { const c = this.curIsland(); this.ensureWx(c); this.ensureTide(c); this.ensureActs(c); }); return; }
+      const c = this.curIsland(), W = this.wxFor(c); if (W && W.hrs && Date.now() - W.fetched > 600000) this.ensureWx(c, true);
+      const AC = this.state.acts[c.id]; if (AC && AC.list && Date.now() - AC.fetched > 600000) this.ensureActs(c, true); else if (AC === 'err') this.ensureActs(c);
+      this.forceUpdate();
+    }, 60000);
+  }
+  async getJSON(path) {
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 20000);
+    try { const r = await fetch(API + path, { signal: ctl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); } finally { clearTimeout(to); }
+  }
+  wxKey(I) { return I.weather_anchor_id ?? 'i' + I.id; }
+  wxFor(I) { return I ? this.state.wx[this.wxKey(I)] : undefined; }
+  curIsland() { return this.state.locObj || POP[0]; }
+  curTide() { return this.state.tides[this.state.loc]; }
+  labelOf(I) { return `${I.atoll_code_english}. ${I.english_name}`; }
+  atollLine(I, long) {
+    const a = ATOLLS[I.atoll_code_english] || (I.atoll_name_english ? I.atoll_name_english + ' Atoll' : 'Maldives'), c = CAT[I.category];
+    if (long) return I.id === 1069 ? `${a} · Capital` : `${a} · ${c || 'Residential'}`;
+    return c ? `${a} · ${c}` : a;
+  }
+  ensureWx(I, force) {
+    const k = this.wxKey(I), cur = this.state.wx[k]; this._inflight = this._inflight || {};
+    if (this._inflight[k] || (!force && cur && cur !== 'err')) return;
+    this._inflight[k] = true;
+    if (!cur || cur === 'err') this.setState(s => ({ wx: { ...s.wx, [k]: 'loading' } }));
+    this.getJSON(`/weather-for-island/${I.id}`).then(j => { const W = this.procWx(j); if (!W) throw new Error('bad payload'); if (!this._dead) this.setState(s => ({ wx: { ...s.wx, [k]: W } })); })
+      .catch(() => { if (!this._dead) this.setState(s => ({ wx: { ...s.wx, [k]: s.wx[k] && s.wx[k].hrs ? s.wx[k] : 'err' } })); })
+      .finally(() => { this._inflight[k] = false; });
+  }
+  ensureTide(I) {
+    const k = I.id, cur = this.state.tides[k]; this._tInflight = this._tInflight || {};
+    if (this._tInflight[k] || (cur && cur !== 'err')) return;
+    this._tInflight[k] = true;
+    this.setState(s => ({ tides: { ...s.tides, [k]: 'loading' } }));
+    this.getJSON(`/tide-for-island/${I.id}`).then(j => { const T = this.procTide(j); if (!this._dead) this.setState(s => ({ tides: { ...s.tides, [k]: T || 'err' } })); })
+      .catch(() => { if (!this._dead) this.setState(s => ({ tides: { ...s.tides, [k]: 'err' } })); })
+      .finally(() => { this._tInflight[k] = false; });
+  }
+  procWx(j) {
+    const d = j && j.data; if (!d || !d.current || !Array.isArray(d.hourly)) return null;
+    const S = (x, h) => { const w = (x.weather && x.weather[0]) || {}; return { h, temp: x.temp, feels: x.feels_like ?? x.temp, hum: x.humidity ?? 70, clouds: x.clouds ?? 0, vis: (x.visibility ?? 10000) / 1000, wind: (x.wind_speed ?? 0) * 3.6, gust: (x.wind_gust ?? x.wind_speed ?? 0) * 3.6, deg: x.wind_deg ?? 0, uvi: x.uvi ?? 0, pop: (x.pop ?? 0) * 100, id: w.id ?? 800, mm: (x.rain && x.rain['1h']) || 0 }; };
+    const cur = S(d.current, hOfUnix(d.current.dt)); cur.pop = ((d.hourly[0] && d.hourly[0].pop) || 0) * 100;
+    const hrs = [cur].concat(d.hourly.map(x => S(x, hOfUnix(x.dt))).filter(s => s.h > cur.h + .05));
+    const days = (d.daily || []).map(x => ({ h: hOfUnix(x.dt), rise: hOfUnix(x.sunrise), set: hOfUnix(x.sunset), lo: x.temp && x.temp.min, hi: x.temp && x.temp.max, uvi: x.uvi, id: (x.weather && x.weather[0] && x.weather[0].id) ?? 800, pop: (x.pop ?? 0) * 100, wind: (x.wind_speed ?? 0) * 3.6, clouds: x.clouds ?? 0, mr: x.moonrise ? hOfUnix(x.moonrise) : null, ms: x.moonset ? hOfUnix(x.moonset) : null, mp: x.moon_phase ?? null }));
+    const at = Date.parse(j.observed_at || j.updated_at || '') / 1000;
+    return { hrs, days, moon: this.moonOf(days), at: isNaN(at) ? null : hOfUnix(at), fetched: Date.now() };
+  }
+  procTide(j) {
+    const a = j && j.data; if (!Array.isArray(a) || a.length < 120) return null;
+    const t0 = Date.parse(a[0].time_utc_plus5) / 1000 - TZ; if (isNaN(t0)) return null;
+    const startH = hOfUnix(t0), N = 48 * 6 + 1, v = new Float32Array(N);
+    for (let i = 0; i < N; i++) { const idx = clamp(Math.round((i / 6 - startH) * 60), 0, a.length - 1); v[i] = a[idx].tide_m; }
+    let lo = Infinity, hi = -Infinity; for (const x of v) { if (x < lo) lo = x; if (x > hi) hi = x; }
+    const ex = []; for (let i = 1; i < N - 1; i++) { if (v[i] > v[i - 1] && v[i] >= v[i + 1]) ex.push({ h: i / 6, high: true, lvl: v[i] }); else if (v[i] < v[i - 1] && v[i] <= v[i + 1]) ex.push({ h: i / 6, high: false, lvl: v[i] }); }
+    return { v, lo, hi: hi - lo < .05 ? lo + .05 : hi, ex, src: j.source_island_name || '', km: parseFloat(j.distance_km) || 0, same: j.source_island_id === j.island_id };
+  }
+  matches(q) {
+    const L = this.state.islands, pop = POP.map(p => (L && L.find(i => i.id === p.id)) || p);
+    if (!q) return pop;
+    const cw = { 'Residential Island': 0, 'Tourism Island': .3 };
+    return (L || pop).map(I => {
+      const n = I.english_name.toLowerCase(), a = (I.atoll_code_english + ' ' + (ATOLLS[I.atoll_code_english] || I.atoll_name_english || '')).toLowerCase();
+      const r = n.startsWith(q) || (I.dhivehi_name || '').startsWith(q) ? 0 : n.split(/[\s'-]+/).some(w => w.startsWith(q)) ? 1 : n.includes(q) ? 2 : a.includes(q) ? 3 : -1;
+      return { I, r: r < 0 ? -1 : r + (cw[I.category] ?? .6) };
+    }).filter(x => x.r >= 0).sort((x, y) => x.r - y.r || x.I.english_name.localeCompare(y.I.english_name)).slice(0, 12).map(x => x.I);
+  }
+  async permState() {
+    try { const p = await navigator.permissions.query({ name: 'geolocation' }); p.onchange = () => { this._perm = p.state; if (!this._dead) this.setState({ perm: p.state }); }; return p.state; } catch (e) { return 'unknown'; }
+  }
+  maybeWelcome = () => {
+    if (this._welDone || this._perm == null || this.state.sp < 3 || !this.state.firstRun) return;
+    if (this._perm === 'granted' && !this._autoFail) return;
+    this._welDone = true;
+    if ((!this._autoFail && lsGet(LS_ASKED)) || (this.state.sheet && this.state.sheetOpen)) return;
+    lsSet(LS_ASKED, 1); this.openSheet('welcome');
+  };
+  locate(auto) {
+    if (this.state.geo.st === 'locating') return;
+    const fail = (st) => { if (this._dead) return; this.setState({ geo: { st } }); if (auto) { this._autoFail = true; this.maybeWelcome(); } };
+    if (!navigator.geolocation) return fail('fail');
+    this.setState({ geo: { st: 'locating' } });
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      this._perm = 'granted'; this.setState({ perm: 'granted' });
+      try {
+        const r = await fetch(API + '/where-am-i', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }) });
+        const j = await r.json().catch(() => null);
+        if (r.status === 422 || (j && j.resolved === false)) return fail('far');
+        if (!r.ok || !j || !j.island || j.island.id == null) return fail('fail');
+        const list = this.state.islands || await this._listP;
+        const I = (list || []).find(x => x.id === j.island.id) || j.island;
+        if (!this._dead) this.pickIsland(I);
+      } catch (e) { fail('fail'); }
+    }, (err) => { const denied = !!err && err.code === 1; if (denied) { this._perm = 'denied'; this.setState({ perm: 'denied' }); } fail(denied ? 'denied' : 'fail'); }, { timeout: 15000, maximumAge: 300000 });
+  }
+  pickIsland(I) { lsSet(LS_ISLE, I); this.setState({ loc: I.id, locObj: I, bubbleOpen: false, firstRun: false, geo: { st: 'idle' } }); this.closeSheet(); this.ensureWx(I); this.ensureTide(I); this.ensureIsle(I); this.ensureActs(I); }
+  prefetchPicker() {
+    if (this.state.sheet !== 'island') { this._pfKey = null; return; }
+    const key = this.state.query + '|' + !!this.state.islands; if (key === this._pfKey) return; this._pfKey = key;
+    clearTimeout(this._pfT); this._pfT = setTimeout(() => this.matches(this.state.query.trim().toLowerCase()).forEach(I => this.ensureWx(I)), 250);
+  }
+  sample(W, h) {
+    const a = W.hrs; if (a.length < 2 || h <= a[0].h) return a[0];
+    let i = 1; while (i < a.length && a[i].h <= h) i++; if (i >= a.length) return a[a.length - 1];
+    const p = a[i - 1], q = a[i], f = (h - p.h) / (q.h - p.h), L = (k) => p[k] + (q[k] - p[k]) * f, nr = f < .5 ? p : q;
+    return { h, temp: L('temp'), feels: L('feels'), hum: L('hum'), clouds: L('clouds'), vis: L('vis'), wind: L('wind'), gust: L('gust'), uvi: L('uvi'), pop: L('pop'), mm: L('mm'), deg: nr.deg, id: nr.id };
+  }
+  keyOf(s, h) {
+    const el = sunState(h).el;
+    return isThunder(s.id) ? 'stormy' : isWet(s.id) ? 'rainy' : s.wind >= 30 ? 'windy' : el <= 0 ? 'night' : el < .3 && md24(h) > 12 && s.clouds < 70 ? 'golden' : s.clouds >= 75 ? 'overcast' : s.clouds >= 30 ? 'partly' : 'sunny';
+  }
+  phrasesOf(s) {
+    const w = Math.round(s.wind), c = s.clouds, v = Math.round(s.vis), p = Math.round(s.pop / 5) * 5;
+    return {
+      wind: `${windWordOf(w)}, ${w} km/h ${dirOf(s.deg)}`,
+      rain: isThunder(s.id) ? 'Thunder and heavy rain' : isWet(s.id) ? 'Raining now' : p >= 60 ? `${p}% chance. Showers likely` : p >= 30 ? `${p}% chance of a shower` : p >= 10 ? `${p}% chance, mostly dry` : 'Dry for now',
+      vis: v >= 10 ? 'Clear, 10 km visibility' : v >= 6 ? `Decent, ${v} km visibility` : `Poor, ${v} km visibility`,
+      uv: '',
+      cloud: c < 10 ? 'Barely a cloud' : c < 35 ? 'A few puffy clouds' : c < 70 ? 'Sun between clouds' : c < 90 ? 'Mostly cloudy' : 'Full cloud cover',
+    };
+  }
+  liveMood(W) {
+    const h = nowH(), s = this.sample(W, h), D = W.days.find(x => x.h >= 0 && x.h < 24) || W.days[0] || {};
+    if (D.rise != null) { RISE = md24(D.rise); SET = md24(D.set); }
+    const day = sunState(h).el > 0, key = this.keyOf(s, h), base = MOODS[key];
+    const temp = Math.round(s.temp), feels = Math.round(s.feels), wind = Math.max(1, Math.round(s.wind)), gust = Math.round(s.gust), cond = owmCond(s.id, day);
+    const tail = { sunny: wind < 12 ? 'Glassy lagoon. Go get wet.' : 'Big sun. Go get wet.', partly: 'Sun between the clouds.', windy: `Blowy at ${wind} km/h. Surfers, this one\u2019s yours.`, overcast: 'Soft light, easy on the skin.', rainy: 'Showers about. Pick your gaps.', stormy: `Thunder and gusts to ${gust} km/h.`, night: s.clouds < 40 ? 'Calm and starry.' : 'Warm and quiet.', golden: `Sunset at ${fmt(SET)}.` }[key];
+    const ahead = W.hrs.filter(x => x.h >= h - .5 && x.h <= h + 24 && (isThunder(x.id) || x.gust >= 50));
+    let warning = null;
+    if (ahead.length) {
+      const th = ahead.some(x => isThunder(x.id)), g = Math.round(Math.max(...ahead.map(x => x.gust)));
+      let last = ahead[0]; for (const x of ahead) { if (x.h - last.h <= 1.5) last = x; else break; }
+      const later = ahead[0].h > h + .5 ? ` from ${fmt(Math.floor(ahead[0].h))}` : '';
+      warning = { short: th ? (g >= 40 ? 'Thunderstorms and strong gusts' : 'Thunderstorms in the forecast') : `Gusts to ${g} km/h`, title: 'Forecast alert', until: fmt(Math.ceil(last.h + 1)),
+        body: `${th ? 'Thunderstorms' : 'Strong winds'} in the forecast${later}${g >= 40 ? `, gusts to ${g} km/h` : ''}. Stay ashore while it passes.` };
+    }
+    return { live: true, W, key, hour: h, temp, feels, lo: Math.round(D.lo ?? s.temp - 2), hi: Math.round(D.hi ?? s.temp + 1), cond, icon: owmIcon(s.id, day), wind, dir: dirOf(s.deg), deg: s.deg, gust,
+      uv: Math.round(s.uvi), uvMax: Math.round(D.uvi ?? s.uvi), rain: Math.round(s.pop / 5) * 5, hum: Math.round(s.hum), clouds: Math.round(s.clouds), vis: Math.round(s.vis),
+      gloom: gloomOf(s), cloudN: cloudNOf(s.clouds), rainAmt: rainAmtOf(s), flash: isThunder(s.id), tempWord: feels >= 38 ? 'Hot and sticky' : feels >= 34 ? 'Warm and humid' : feels >= 30 ? 'Warm' : 'Pleasantly mild',
+      headEn: base.headEn, sub: `${cond}, feels like ${feels}°. ${tail}`, phrases: this.phrasesOf(s), warning, updated: W.at != null ? fmt(W.at) : '' };
+  }
+  hourView(m, h) {
+    const s = this.sample(m.W, h), day = sunState(h).el > 0;
+    return { key: this.keyOf(s, h), temp: Math.round(s.temp), feels: Math.round(s.feels), wind: Math.max(1, Math.round(s.wind)), gust: Math.round(s.gust), dir: dirOf(s.deg), deg: s.deg, hum: Math.round(s.hum), clouds: Math.round(s.clouds), vis: Math.round(s.vis),
+      cond: owmCond(s.id, day), icon: owmIcon(s.id, day), rain: Math.round(s.pop / 5) * 5, gloom: gloomOf(s), cloudN: cloudNOf(s.clouds), rainAmt: rainAmtOf(s), flash: isThunder(s.id), phrases: this.phrasesOf(s) };
+  }
+  wxAt(m, h) { const s = this.sample(m.W, h); return { gloom: gloomOf(s), cloudN: cloudNOf(s.clouds), rainAmt: rainAmtOf(s), flash: isThunder(s.id), wind: Math.max(1, s.wind), deg: s.deg }; }
+  moonOf(days) {
+    const ev = []; days.forEach(d => { if (d.mr != null) ev.push({ h: d.mr, rise: true }); if (d.ms != null) ev.push({ h: d.ms, rise: false }); }); ev.sort((a, b) => a.h - b.h);
+    const iv = []; let open = null;
+    for (const e of ev) { if (e.rise) open = e.h; else { iv.push([open ?? e.h - 12.4, e.h]); open = null; } }
+    if (open != null) iv.push([open, open + 12.4]);
+    return { iv, ev, days: days.filter(d => d.mp != null).map(d => ({ h: d.h, mp: d.mp })) };
+  }
+  moonFallback() {
+    if (this._mf) return this._mf;
+    const ref = Date.UTC(2000, 0, 6, 18, 14) / 1000, p0 = ((((DAY0 + 43200 - ref) / (29.530588853 * 86400)) % 1) + 1) % 1;
+    const iv = []; for (let k = -1; k < 3; k++) { const r = RISE + p0 * 24.84 + k * 24.84; iv.push([r, r + 12.4]); }
+    return (this._mf = { iv, ev: iv.flatMap(([a, b]) => [{ h: a, rise: true }, { h: b, rise: false }]), days: [{ h: 12, mp: p0 }] });
+  }
+  moonAt(m, h) {
+    const M = m.live && m.W.moon && m.W.moon.days.length ? m.W.moon : this.moonFallback();
+    let best = M.days[0]; for (const d of M.days) if (Math.abs(d.h - h) < Math.abs(best.h - h)) best = d;
+    const p = (((best.mp + (h - best.h) / 708.73) % 1) + 1) % 1, illum = (1 - Math.cos(TAU * p)) / 2;
+    const it = M.iv.find(([a, b]) => h >= a && h <= b);
+    if (!it) return { up: false, p, illum, M };
+    const f = (h - it[0]) / (it[1] - it[0]); return { up: true, f, el: Math.sin(Math.PI * f), p, illum, M };
+  }
+  moonInfo(m, h) {
+    const s = this.moonAt(m, h), p = s.p, near = (x) => Math.abs(((p - x + 1.5) % 1) - .5) < .025;
+    const name = near(0) ? 'New moon' : near(.25) ? 'First quarter' : near(.5) ? 'Full moon' : near(.75) ? 'Last quarter' : p < .25 ? 'Waxing crescent' : p < .5 ? 'Waxing gibbous' : p < .75 ? 'Waning gibbous' : 'Waning crescent';
+    const nextOf = (rise) => { const e = s.M.ev.find(x => x.rise === rise && x.h > h); return e ? fmt(e.h) + (Math.floor(e.h / 24) > Math.floor(h / 24) ? ' ' + dateOf(e.h).dow : '') : '\u2014'; };
+    const toFull = (((.5 - p) % 1) + 1) % 1, toNew = (((1 - p) % 1) + 1) % 1, isFull = toFull <= toNew, d = Math.round((isFull ? toFull : toNew) * 29.53), label = isFull ? 'Full moon' : 'New moon';
+    const nextTxt = name === label ? `${label} now` : d <= 0 ? `${label} tonight` : d === 1 ? `${label} tomorrow` : `${label} on ${dayLabel(h + d * 24)}`;
+    return { up: s.up, illum: Math.round(s.illum * 100), name, rise: nextOf(true), set: nextOf(false), nextTxt, svg: moonSvg(p) };
+  }
+  ensureIsle(I) {
+    const k = I.id, cur = this.state.isle[k]; this._iInflight = this._iInflight || {};
+    if (this._iInflight[k] || (cur && cur !== 'err')) return;
+    this._iInflight[k] = true;
+    this.setState(s => ({ isle: { ...s.isle, [k]: 'loading' } }));
+    this.getJSON(`/islands/${k}`).then(j => {
+      const D = { description: j.description || '', beaches: (j.beaches || []).map(b => ({ name: b.name, type: b.type })), reefs: (j.reefs || []).map(r => ({ name: r.name, type: r.type, distance: r.distance })), access: (j.accessibilities || []).map(a => a.method).filter(Boolean), dv: j.dhivehi_name || '', lat: parseFloat(j.latitude_decimal), lon: parseFloat(j.longitude_decimal) };
+      if (!this._dead) this.setState(s => ({ isle: { ...s.isle, [k]: D } }));
+    }).catch(() => { if (!this._dead) this.setState(s => ({ isle: { ...s.isle, [k]: 'err' } })); }).finally(() => { this._iInflight[k] = false; });
+  }
+  liveScore(m, i, h) {
+    if (this._scW !== m.W || this._scT !== TIDE) { this._scW = m.W; this._scT = TIDE; this._sc = new Map(); }
+    const ck = i * 100000 + Math.round(h * 4), hit = this._sc.get(ck); if (hit != null) return hit;
+    const s = this.sample(m.W, h), a = ACTS[i], el = sunState(h).el, w = s.wind, pop = s.pop / 100, cl = s.clouds / 100, th = isThunder(s.id), wet = isWet(s.id);
+    const lo = TIDE ? TIDE.lo : -.27, hi = TIDE ? TIDE.hi : .45, tn = clamp((tideAt(h) - lo) / (hi - lo), 0, 1), rate = Math.abs(tideAt(h + .25) - tideAt(h - .25)) * 2 / Math.max(.1, hi - lo);
+    const bell = (x, c, d) => Math.exp(-((x - c) / d) * ((x - c) / d));
+    const calm = clamp(1 - w / 28, 0, 1), dry = clamp(1 - pop * .7 - (wet ? .3 : 0), 0, 1), vis = clamp(s.vis / 10, 0, 1);
+    const F = {
+      surf: () => 2 + 7.5 * bell(w, 30, 13),
+      sail: () => 1.5 + 8 * bell(w, 20, 10) * (1 - pop * .4),
+      jet: () => 1.5 + 8 * calm * dry,
+      swim: () => 2 + 5.5 * calm * dry + 2 * tn,
+      snorkel: () => 1 + 6.5 * calm * dry * vis + 2 * (1 - cl),
+      dive: () => 1.5 + 7.5 * clamp(1 - w / 35, 0, 1) * vis * (1 - pop * .4),
+      fish: () => 2.5 + 5 * clamp(rate / .2, 0, 1) + 2 * calm * dry,
+      dolphin: () => 1.5 + 6 * calm * dry + 2 * bell(md24(h), 17, 2.5),
+      rainwalk: () => 1 + 8.5 * Math.max(pop, wet ? .8 : 0),
+      ocswim: () => 1.5 + 6 * clamp((cl - .4) / .5, 0, 1) * dry + 2 * calm,
+      kayak: () => 1.5 + 8 * clamp(1 - w / 22, 0, 1) * dry,
+      beach: () => 2 + 6 * dry + 1.8 * (1 - clamp(s.uvi / 11, 0, 1)),
+      sup: () => 1.5 + 8 * clamp(1 - w / 18, 0, 1) * dry,
+      sandbank: () => 1.5 + 5.5 * (1 - tn) + 2.5 * calm * dry,
+    };
+    let v = (F[a.id] || (() => 5))();
+    if (!a.night && el < -.05) v -= 4;
+    if (th) v = a.id === 'rainwalk' ? 1 : Math.min(v, 2);
+    v = clamp(v, .3, 9.9); this._sc.set(ck, v); return v;
+  }
+  windowOf(at, h0) {
+    const hrs = []; for (let o = 0; o < 24; o++) { const r = at(h0 + o); hrs.push({ h: h0 + o, s: r.s, k: r.k }); }
+    const mx = Math.max(...hrs.map(x => x.s)); if (mx < 5) return { hrs, text: 'No great window today' };
+    const k = hrs.findIndex(x => x.s === mx); let a = k, b = k;
+    while (a > 0 && hrs[a - 1].s >= mx - .6) a--; while (b < hrs.length - 1 && hrs[b + 1].s >= mx - .6) b++;
+    const t = `${fmt(Math.floor(hrs[a].h)).replace(':00', '')}\u2013${fmt(Math.floor(hrs[b].h) + 1).replace(':00', '')}`;
+    return { hrs, text: Math.floor(hrs[a].h / 24) > Math.floor(h0 / 24) ? `Tomorrow ${t}` : t };
+  }
+  ensureActs(I, force) {
+    const k = I.id, cur = this.state.acts[k]; this._aInflight = this._aInflight || {};
+    if (this._aInflight[k] || (!force && cur && cur !== 'err')) return;
+    this._aInflight[k] = true;
+    if (!cur || cur === 'err') this.setState(s => ({ acts: { ...s.acts, [k]: 'loading' } }));
+    this.getJSON(`/islands/${k}/activity-scores`).then(j => { const A = this.procActs(j); if (!A) throw new Error('bad payload'); if (!this._dead) this.setState(s => ({ acts: { ...s.acts, [k]: A } })); })
+      .catch(() => { if (!this._dead) this.setState(s => ({ acts: { ...s.acts, [k]: s.acts[k] && s.acts[k].list ? s.acts[k] : 'err' } })); })
+      .finally(() => { this._aInflight[k] = false; });
+  }
+  procActs(j) {
+    if (!j || !Array.isArray(j.scores)) return null;
+    const P = (x) => ({ s: clamp(+x.overall_score || 0, 0, 10), c: x.conditions_score != null ? +x.conditions_score : null, rec: x.recommendation || '', br: x.breakdown || {}, lim: Array.isArray(x.limiting_factors) ? x.limiting_factors : [], tideOk: x.tide_available !== false });
+    const dayOf = (ds) => { const u = Date.parse(ds + 'T12:00:00+05:00') / 1000; return isNaN(u) ? null : Math.floor(hOfUnix(u) / 24); };
+    const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z]/g, ''), seen = {};
+    const list = j.scores.filter(x => x && x.activity).map(x => {
+      const n = norm(x.activity), id = ACT_ALIAS[n] || ACT_ALIAS[norm(x.label)] || 'x' + n;
+      return { id, label: x.label || capF(String(x.activity).replace(/_/g, ' ')), now: P(x),
+        hours: (x.hours || []).filter(y => y && y.dt).map(y => ({ ...P(y), h: hOfUnix(y.dt) })).sort((a, b) => a.h - b.h),
+        days: (x.days || []).map(y => ({ ...P(y), di: dayOf(y.date) })).filter(y => y.di != null) };
+    }).filter(x => !seen[x.id] && (seen[x.id] = true));
+    return list.length ? { list, byId: Object.fromEntries(list.map(x => [x.id, x])), at: nowH(), fetched: Date.now() } : null;
+  }
+  actData() { const A = this.state.acts[this.state.loc]; return A && A.list ? A : null; }
+  apiAt(AD, x, h) {
+    if (Math.floor(h + 1e-6) === Math.floor(AD.at)) return x.now;
+    const H = x.hours; if (!H.length) return null;
+    const i = Math.floor(h - H[0].h + 1e-6); return i < 0 ? x.now : i < H.length ? H[i] : null;
+  }
+  actDefs(AD) {
+    if (!AD) return ACTS.map((a, i) => ({ ...a, i, api: null }));
+    return AD.list.map(x => { const i = ACTS.findIndex(a => a.id === x.id); return i >= 0 ? { ...ACTS[i], i, api: x } : { id: x.id, name: x.label, icon: actIcon(x.id), key: 'wind', tip: 'Check the spot with locals before you head out.', i: -1, api: x }; });
+  }
+  actAt(m, AD, a, h) {
+    const e = a.api && AD ? this.apiAt(AD, a.api, h) : null;
+    if (e) return { s: e.s, k: REC[e.rec] || vKey(e.s), e };
+    const s = a.i >= 0 ? this.scoreAt(m, a.i, h) : 5; return { s, k: vKey(s), e: null };
+  }
+
+  openSheet(name, extra) {
+    clearTimeout(this._sheetT); clearTimeout(this._scrollT);
+    this.setState({ sheet: name, sheetOpen: true, bubbleOpen: false, focus: null, ...(name === 'island' && this.state.geo.st !== 'locating' ? { geo: { st: 'idle' } } : {}), ...(extra || {}) });
+    this._scrollT = setTimeout(() => { const sc = this.sheetScrollRef.current; if (!sc) return; const el = sc.querySelector('[data-focus="true"]'); sc.scrollTop = el ? Math.max(0, el.offsetTop - 64) : 0; }, 40);
+  }
+  openIsle = () => { this.ensureIsle(this.curIsland()); this.openSheet('isle'); };
+  isleView(o) {
+    const D = o.D || {}, B = D.beaches || [], R = D.reefs || [], A = D.access || [];
+    const vd = (id) => { const a = o.acts.find(x => x.id === id); return a ? { bg: a.lBg, ink: a.lInk, v: a.v } : null; };
+    const surf = vd('surf'), snork = vd('snorkel'), none = { t: '', bg: 'transparent', ink: 'transparent' };
+    const sandyN = B.filter(b => /sand/i.test(b.type || '')).length;
+    const beaches = B.map(b => {
+      const nm = b.name || 'Unnamed beach', sandy = /sand/i.test(b.type || ''), bank = /sandbank|finolhu/i.test(nm), sb = /surf/i.test(nm);
+      const tag = sb && surf ? { t: `Surf: ${surf.v}`, bg: surf.bg, ink: surf.ink } : bank ? (o.tideN < .35 ? { t: 'Low tide now', bg: '#D3F4E9', ink: '#0B6B57' } : { t: 'Best at low tide', bg: '#F1E9DA', ink: '#5B4A2A' }) : null;
+      return { name: nm, type: sb ? `${b.type || 'Rocky'} · surf break` : bank ? 'Sandbank' : (b.type || 'Shore'), icon: sb ? 'surfing' : sandy ? 'beach_access' : 'landscape', tile: sandy ? '#FFF0C6' : '#E4EAEC', ic: sandy ? '#A87000' : '#4F6F79', hasTag: !!tag, tag: tag || none };
+    });
+    const reefs = R.map(r => ({ name: r.name || 'Reef', meta: [capF(String(r.type || 'reef').replace(/_/g, ' ')), r.distance].filter(Boolean).join(' · '), hasTag: !!snork, tag: snork ? { t: `Snorkel: ${snork.v}`, bg: snork.bg, ink: snork.ink } : none }));
+    const any = B.length || R.length || A.length || D.description;
+    let la = o.lat, lo = o.lon; const cm = String(o.coords || '').match(/([\d.]+)° ([NS]) · ([\d.]+)° ([EW])/); if ((la == null || isNaN(la)) && cm) { la = parseFloat(cm[1]) * (cm[2] === 'S' ? -1 : 1); lo = parseFloat(cm[3]) * (cm[4] === 'W' ? -1 : 1); }
+    const mapUrl = la != null && !isNaN(la) ? `https://www.google.com/maps/search/?api=1&query=${la},${lo}` : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(o.en + ', Maldives');
+    return { mapUrl, eyebrow: o.atoll, en: o.en, dv: o.dv || '', coords: o.coords || '', desc: D.description || '', hasDesc: !!D.description,
+      now: [{ icon: o.icon, t: `${o.temp}° · ${o.cond}` }, { icon: o.tideRising ? 'north_east' : 'south_east', t: `Tide ${o.tideRising ? 'rising' : 'falling'}` }, { icon: 'beach_access', t: `Beach ${o.beachWord}` }],
+      access: A.map(x => ({ label: x, icon: accIcon(x) })), hasAccess: !!A.length,
+      beaches, hasBeaches: !!B.length, beachCount: String(B.length), sandyN: String(sandyN), rockyN: String(B.length - sandyN), sandPct: B.length ? sandyN / B.length * 100 : 0,
+      reefs, hasReefs: !!R.length, reefCount: String(R.length),
+      countLine: B.length || R.length ? `${B.length} beach${B.length === 1 ? '' : 'es'} · ${R.length} reef${R.length === 1 ? '' : 's'}` : '',
+      loading: !!o.loading, empty: !o.loading && !any,
+      emptyLine: o.err ? 'Couldn\u2019t load island details right now. Try again in a bit.' : `We\u2019re still mapping ${o.en}. Beaches, reefs and ways to get there will show up here.`,
+      change: () => this.openSheet('island', { query: '' }) };
+  }
+  weekDays(m) {
+    if (!m.live) return [];
+    return m.W.days.filter(d => Math.floor(d.h / 24) >= 0).slice(0, 8).map(d => {
+      const di = Math.floor(d.h / 24), x = dateOf(di * 24 + 12), id = d.id ?? 800, key = isThunder(id) ? 'stormy' : isWet(id) ? 'rainy' : d.wind >= 30 ? 'windy' : d.clouds >= 75 ? 'overcast' : d.clouds >= 30 ? 'partly' : 'sunny';
+      return { di, label: `${x.dow} ${x.d}`, key, icon: owmIcon(id, true), lo: Math.round(d.lo), hi: Math.round(d.hi), pop: Math.round((d.pop || 0) / 5) * 5, wind: Math.round(d.wind || 0), wet: isWet(id) && (d.pop || 0) >= 40 };
+    });
+  }
+  closeSheet = () => { this.setState({ sheetOpen: false }); clearTimeout(this._sheetT); this._sheetT = setTimeout(() => this.setState({ sheet: null, query: '' }), 450); };
+  openBubble(kind, x, y) { this.setState({ bubble: { kind, x, y }, bubbleOpen: true, hintSeen: true }); }
+  onSceneClick = (e) => {
+    const c = e.currentTarget, r = c.getBoundingClientRect();
+    const x = (e.clientX - r.left) * (c.clientWidth / r.width), y = (e.clientY - r.top) * (c.clientHeight / r.height);
+    const H = this._hits || {}, inB = (b) => b && x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h;
+    let kind;
+    if (inB(H.dhoni)) kind = 'dhoni';
+    else if (inB(H.sign)) kind = 'island';
+    else if ((H.palms || []).some(inB)) kind = 'palm';
+    else if (H.sun && Math.hypot(x - H.sun.x, y - H.sun.y) < H.sun.r) kind = H.sun.kind;
+    else if (H.moon && Math.hypot(x - H.moon.x, y - H.moon.y) < H.moon.r) kind = 'moon';
+    else if (inB(H.island)) kind = 'island';
+    else if ((H.clouds || []).some(inB)) kind = this._m && this._m.rainAmt ? 'rain' : 'sky';
+    else if (y > HZ) kind = 'sea';
+    else kind = this._m && this._m.rainAmt ? 'rain' : 'sky';
+    this._ripples.push({ x, y, a: 0, sea: y > HZ });
+    if (this.state.bubbleOpen && this.state.bubble && this.state.bubble.kind === kind) return this.setState({ bubbleOpen: false });
+    this.openBubble(kind, x, y);
+  };
+
+  renderVals() {
+    const p = this.props, st = this.state;
+    const m = this.mood(); this._m = m;
+    const hSel = m.hour + Math.round(st.offset), isLater = Math.round(st.offset) > 0;
+    const ct = this.curTide(); if (ct === 'err') TIDE = null; else if (ct && ct.v) TIDE = ct;
+    if (m.live && isLater) Object.assign(m, this.hourView(m, hSel));
+    const Lt = lightOf(hSel, m.gloom), skyL = lum(Lt.pal.sky[0]) * .6 + lum(Lt.pal.sky[1]) * .4;
+    const darkSky = skyL < .42;
+    const lightPanel = Lt.D > .5 && m.gloom < .5;
+    const hud = {
+      ink: darkSky ? '#FFFFFF' : '#05314A', sub: darkSky ? 'rgba(255,255,255,.9)' : '#0B4560', chip: darkSky ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.58)', shadow: darkSky ? '0 1px 14px rgba(0,0,0,.22)' : 'none',
+      panel: lightPanel ? 'rgba(255,255,255,.8)' : 'rgba(6,22,36,.58)', panelSolid: lightPanel ? '#F4FAFA' : '#0E2333', pEdge: lightPanel ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.1)',
+      pInk: lightPanel ? '#0A3346' : '#FFFFFF', pSub: lightPanel ? '#4F6F79' : 'rgba(255,255,255,.75)', pBtn: lightPanel ? 'rgba(10,51,70,.07)' : 'rgba(255,255,255,.12)', pCard: lightPanel ? '#FFFFFF' : 'rgba(255,255,255,.08)',
+    };
+    const tone = lightPanel ? 'light' : 'dark';
+    const wind = this.windAt(m, hSel), temp = this.tempAt(m, hSel), tide = this.tide(hSel);
+    const rainAt = (h) => m.live ? Math.round(this.sample(m.W, h).pop / 5) * 5 : Math.round(clamp(m.rain * (1 + .35 * (Math.sin((h - 12) / 24 * TAU) - Math.sin((m.hour - 12) / 24 * TAU))), 0, 100) / 5) * 5;
+    const rainSel = isLater ? rainAt(hSel) : m.rain;
+    const rainLine = isLater ? (rainSel >= 70 ? 'Showers likely' : rainSel >= 40 ? 'Could get wet' : rainSel >= 15 ? 'Small chance of a shower' : 'Should stay dry') : m.phrases.rain;
+    const ssH = sunState(hSel), isDayH = ssH.el > 0, uvNow = isDayH ? (m.live ? Math.round(this.sample(m.W, hSel).uvi) : Math.round(m.uvMax * Math.sin(Math.PI * ssH.f))) : 0;
+    const ph = { ...m.phrases,
+      uv: isDayH ? (uvNow >= 8 ? `UV ${uvNow}. Reef-safe sunscreen!` : `UV ${uvNow}. ${uvWordOf(uvNow)}`) : `No sun till ${fmt(RISE)}`,
+      vis: isDayH ? (m.key === 'night' ? 'Water clarity looks good' : m.phrases.vis) : 'Dark water. Bring a torch',
+      cloud: isDayH ? (m.key === 'night' ? 'Clear skies' : m.phrases.cloud) : (m.clouds > 50 ? 'Cloudy night' : 'Clear night sky') };
+    const AD = this.actData(), defs = this.actDefs(AD), ADr = st.acts[st.loc];
+    const limTxt = (f) => f === 'wind' ? `wind, ${wind} km/h` : f === 'rain' ? `rain, ${rainSel}% chance` : f === 'uv' ? `strong sun, UV ${uvNow}` : f === 'visibility' ? `haze, ${m.vis} km visibility` : f === 'tide' ? `the tide, ${tide.dirText.toLowerCase()} at ${tide.levelText} m` : f === 'temp' ? `the heat, ${temp}°` : f === 'daylight' ? (isDayH ? 'fading light' : `the dark, sunrise ${fmt(RISE)}`) : String(f).replace(/_/g, ' ');
+    const acts = defs.map((a) => {
+      const r = this.actAt(m, AD, a, hSel), s = r.s, k = r.k, e = r.e, c = VC[k][tone], cl = VC[k].light;
+      const base = a.key === 'tide' ? `${tide.dirText} tide, ${tide.levelText} m` : a.key === 'wind' ? `${windWordOf(wind)}, ${wind} km/h` : ph[a.key];
+      const lim = e ? e.lim.filter(f => !(f === 'daylight' && k === 'wait')) : [];
+      const reason = k === 'wait' ? `Too dark till ${fmt(RISE)}${e.c != null ? ` · otherwise ${e.c.toFixed(1)}` : ''}` : lim.length ? `${s >= 7 ? 'Only catch:' : 'Held back by'} ${limTxt(lim[0])}` : base;
+      return { ...a, s, k, e, base, v: e && e.rec === 'ideal' ? 'Ideal' : vWord[k], score: s.toFixed(1), reason, vBg: c.bg, vInk: c.ink, vWord: c.word, lBg: cl.bg, lInk: cl.ink, open: () => this.openSheet('act', { actId: a.id }) };
+    }).sort((x, y) => y.s - x.s);
+    const actsSrc = AD ? `Activity scores from moodhu.dev, updated ${fmt(AD.at)}.` : ADr === 'err' ? 'Couldn\u2019t load activity scores, so these are our own estimate from the weather.' : 'Loading activity scores\u2026 showing our own estimate for now.';
+    const top3 = acts.slice(0, 3);
+    const dayName = (h) => dayLabel(h);
+    const whenLabel = isLater ? `Forecast · ${dayName(hSel)} · ${fmt(Math.floor(hSel))}` : `Today · Now`;
+    const best = acts[0];
+    const word = best.s >= 8.5 ? 'brilliant' : best.s >= 7 ? 'good' : best.s >= 5 ? 'so-so' : 'grim';
+    const head = isLater ? `${fmt(Math.floor(hSel)).replace(':00', '')} looks ${word}.` : m.headEn;
+    const sub = isLater ? `Best bet: ${best.name}. ${temp}°, wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.` : m.offline ? 'Couldn\u2019t reach the live feed. Showing sample conditions.' : (!m.live && m.loading) ? 'Fetching live conditions\u2026' : m.sub;
+    const eyebrow = isLater ? `${dayName(hSel)} · ${fmt(Math.floor(hSel))}` : `Today · ${dayLabel(m.hour)} · ${fmt(m.hour)}${m.loading && m.live ? ' · Updating' : ''}`;
+
+    const ribbon = [], o0 = Math.round(st.offset);
+    for (let o = 0; o < 24; o++) { const h = m.hour + o; let bs = -1, bk = 'skip'; for (const a of defs) { const r = this.actAt(m, AD, a, h); if (r.s > bs) { bs = r.s; bk = r.k; } } ribbon.push({ h: 22 + bs * 7.8, c: VC[bk].fill, o: o === o0 ? 1 : .6 }); }
+    const axis = [0, 6, 12, 18, 23].map((o, i) => ({ x: o / 23 * 100, tx: i === 0 ? 0 : i === 4 ? -100 : -50, label: o === 0 ? 'Now' : fmtHr(m.hour + o) }));
+
+    // bubble
+    const b = st.bubble || { kind: 'sky', x: 200, y: 300 };
+    const ss = sunState(hSel);
+    const untilSet = SET - md24(hSel), untilRise = md24(RISE - md24(hSel));
+    const dur = (x) => `${Math.floor(x)}h ${Math.round((x % 1) * 60)}m`;
+    const sailDef = defs.find(x => x.id === 'sail') || { ...ACTS[1], i: 1, api: null }, sailIn = acts.some(a => a.id === 'sail');
+    const sail = acts.find(a => a.id === 'sail') || (() => { const r = this.actAt(m, AD, sailDef, hSel); return { s: r.s, k: r.k, v: vWord[r.k], score: r.s.toFixed(1), reason: `${windWordOf(wind)}, ${wind} km/h` }; })();
+    const LI = this.curIsland(), locLabel = this.labelOf(LI), nm = LI.english_name;
+    const mi = this.moonInfo(m, hSel);
+    const wxGo = (focus) => ({ label: 'Weather details', go: () => this.openSheet('wx', { focus }) });
+    const IDr = st.isle[LI.id], IDd = IDr && typeof IDr === 'object' ? IDr : null;
+    const iLat = IDd && !isNaN(IDd.lat) ? IDd.lat : parseFloat(LI.latitude_decimal), iLon = IDd && !isNaN(IDd.lon) ? IDd.lon : parseFloat(LI.longitude_decimal);
+    const isle = this.isleView({ en: nm, dv: (IDd && IDd.dv) || LI.dhivehi_name, atoll: this.atollLine(LI, true), lat: iLat, lon: iLon, coords: isNaN(iLat) ? '' : `${Math.abs(iLat).toFixed(2)}° ${iLat < 0 ? 'S' : 'N'} · ${iLon.toFixed(2)}° E`, D: IDd, loading: !IDr || IDr === 'loading', err: IDr === 'err', acts, temp, cond: m.cond, icon: m.icon, tideN: tide.n, tideRising: tide.rising, beachWord: tide.n > .72 ? 'narrow' : tide.n < .3 ? 'wide' : 'average' });
+    this._signName = isle.en;
+    const B = {
+      sun: { icon: 'sunny', tile: '#FFF0C6', title: 'The sun', big: `Sets ${fmt(SET)}`, lines: [`${dur(Math.max(0, untilSet))} of sun left`, `UV ${uvNow} · ${uvWordOf(uvNow)}`, `Sunrise ${fmt(RISE)} · ${dur(SET - RISE)} of daylight`], action: wxGo('sun') },
+      moon: { icon: 'bedtime', tile: '#DDE3F6', title: 'The moon', big: mi.name, lines: [`${mi.illum}% lit`, `Moonrise ${mi.rise} · set ${mi.set}`, mi.nextTxt], action: wxGo('moon') },
+      sky: { icon: m.icon, tile: '#DAEFFB', title: 'The sky', big: m.cond, lines: [`Clouds ${m.clouds}% · rain ${rainSel}%`, `Humidity ${m.hum}%`, ph.cloud], action: wxGo('sky') },
+      rain: { icon: 'rainy', tile: '#DAEFFB', title: 'The rain', big: `${rainSel}% chance`, lines: [rainLine, `Humidity ${m.hum}% · visibility ${m.vis} km`], action: wxGo('rain') },
+      palm: { icon: 'air', tile: '#D3F1EE', title: 'The wind', big: `${wind} km/h ${m.dir}`, lines: [palmWordOf(wind), `${windWordOf(wind)} · gusts to ${Math.round(m.gust * wind / m.wind)} km/h`], action: wxGo('wind') },
+      island: { icon: 'location_on', tile: '#FFF0C6', title: 'The island', big: nm, lines: [this.atollLine(LI, true), isle.countLine, `Beach ${tide.n > .72 ? 'narrow, high tide' : tide.n < .3 ? 'wide, low tide' : 'average'}`].filter(Boolean), action: { label: `Explore ${nm}`, go: this.openIsle } },
+      sea: { icon: 'waves', tile: '#D3F1EE', title: 'The sea', big: `${tide.levelText} m · ${tide.dirText}`, lines: [`Until ${tide.until}`, `Next high ${tide.nh}`, `Next low ${tide.nl}`, `Lagoon: ${wind < 10 ? 'glassy' : wind < 20 ? 'rippled' : wind < 35 ? 'choppy' : 'rough'}`], action: { label: 'Tide details', go: () => this.openSheet('tide') } },
+      dhoni: { icon: 'sailing', tile: '#D3F1EE', title: 'Sailing', big: `${sail.v} · ${sail.score}`, bigColor: VC[sail.k].light.word, lines: [sail.reason, `Best window ${this.windowOf(h => this.actAt(m, AD, sailDef, h), m.hour).text}`], action: { label: sailIn ? 'Sailing details' : 'All activities', go: () => sailIn ? this.openSheet('act', { actId: 'sail' }) : this.openSheet('acts') } },
+      temp: { icon: 'thermostat', tile: '#FFF0C6', title: 'Temperature', big: `${temp}°`, lines: [`Feels like ${temp + (m.feels - m.temp)}°`, `High ${m.hi}° · low ${m.lo}°`, m.tempWord], action: wxGo('temp') },
+      warning: { icon: 'warning', tile: '#FFE0D6', title: (m.warning || {}).title || 'Heads up', big: 'Stay ashore', bigColor: '#E2522F', lines: [(m.warning || {}).body || '', `Until ${(m.warning || {}).until || 'later'}`], action: wxGo('warning') },
+    }[b.kind] || {};
+    const bw = 268, bh = 70 + 30 + (B.lines || []).length * 24 + (B.action ? 56 : 0);
+    const bx = clamp(b.x - bw / 2, 12, 402 - bw - 12), below = b.y < 360;
+    const by = clamp(below ? b.y + 22 : b.y - bh - 22, 112, 874 - 210 - bh);
+    const bub = { x: bx, y: by, o: st.bubbleOpen ? 1 : 0, s: st.bubbleOpen ? 1 : .85, pe: st.bubbleOpen ? 'auto' : 'none', origin: `${clamp(b.x - bx, 20, bw - 20)}px ${below ? '0px' : '100%'}`,
+      icon: B.icon, tileBg: B.tile, title: B.title, big: B.big, bigColor: B.bigColor || '#0A3346', lines: B.lines || [], hasAction: !!B.action, actionLabel: B.action ? B.action.label : '', action: B.action ? B.action.go : () => {} };
+
+    // all activities
+    const groups = [['go', 'Go'], ['maybe', 'Maybe'], ['wait', 'After sunrise'], ['skip', 'Skip']].map(([k, title]) => { const items = acts.filter(a => a.k === k).map((a, j) => ({ ...a, vBg: a.lBg, vInk: a.lInk, sep: j ? '1px solid rgba(10,51,70,.07)' : 'none' })); return { title, items, count: String(items.length), dot: VC[k].fill }; }).filter(g => g.items.length);
+    let d = {};
+    const A = acts.find(a => a.id === st.actId);
+    if (A) {
+      const vc = VC[A.k], def = defs.find(x => x.id === A.id), win = this.windowOf(h => this.actAt(m, AD, def, h), m.hour), selIdx = Math.round(st.offset), e = A.e, ideal = !!e && e.rec === 'ideal';
+      const lim0 = e ? e.lim.find(f => !(f === 'daylight' && A.k === 'wait')) : null;
+      const br = e ? FACTORS.filter(F => e.br[F[0]] != null).map(([f, label, icon]) => {
+        const v = clamp(+e.br[f] || 0, 0, 10), isLim = e.lim.includes(f), noData = f === 'tide' && e.tideOk === false, kk = f === 'daylight' && A.k === 'wait' ? 'wait' : v >= 7 ? 'go' : v >= 5 ? 'maybe' : 'skip';
+        return { label, icon, val: noData ? '\u2013' : String(Math.round(v * 10) / 10), w: noData ? 0 : Math.max(3, v * 10), c: VC[kk].fill, ink: isLim ? '#B23A1C' : '#0A3346', tag: isLim ? 'The catch' : noData ? 'No live data' : '', tagC: isLim ? '#B23A1C' : '#4F6F79' };
+      }) : [];
+      const d0 = Math.floor(m.hour / 24), dSel = Math.floor(hSel / 24), DD = A.api ? A.api.days.filter(y => y.di >= d0).slice(0, 7) : [];
+      const dLab = (di) => di === d0 ? 'Today' : di === d0 + 1 ? 'Tomorrow' : `${dateOf(di * 24 + 12).dow} ${dateOf(di * 24 + 12).d}`;
+      const bestD = DD.reduce((b, y) => !b || y.s > b.s ? y : b, null);
+      const days = DD.map((y, j) => { const kk = REC[y.rec] || vKey(y.s), c = VC[kk].light, l = y.lim[0];
+        return { label: dLab(y.di), w: Math.max(3, y.s * 10), c: VC[kk].fill, note: l ? `${capF(FWORD[l] || String(l).replace(/_/g, ' '))} is the catch` : 'Nothing holding it back', score: y.s.toFixed(1), v: y.rec === 'ideal' ? 'Ideal' : vWord[kk], vBg: c.bg, vInk: c.ink, sep: j ? '1px solid rgba(10,51,70,.07)' : 'none', bg: y.di === dSel ? 'rgba(18,181,176,.08)' : 'transparent' }; });
+      d = { ...A, headBg: vc.head, vBig: ideal ? 'Ideal.' : vc.big, vWord: vc.light.word, vInk: vc.light.ink,
+        line: A.k === 'wait' ? `${vc.line} ${e.c != null ? `Conditions otherwise score ${e.c.toFixed(1)}. ` : ''}Sunrise is at ${fmt(RISE)}.` : ideal ? `Couldn\u2019t ask for better. ${A.base}.` : `${vc.line} ${A.reason}.`,
+        window: win.text, tip: lim0 && FTIP[lim0] ? `${FTIP[lim0]} ${A.tip}` : A.tip,
+        hours: win.hrs.map((x, j) => ({ h: Math.max(6, x.s * 10), c: VC[x.k].fill, ring: j === selIdx ? '0 0 0 2px #FFFFFF, 0 0 0 3.5px #0A3346' : 'none', label: j % 6 === 0 ? (j ? fmtHr(x.h) : 'Now') : '' })),
+        hasBr: br.length > 0, br, condTxt: e && e.c != null && Math.abs(e.c - e.s) >= .3 ? `Conditions ${e.c.toFixed(1)}` : '',
+        hasDays: days.length > 0, days, weekLine: !bestD ? '' : bestD.di === d0 ? `Today is your best shot this week, at ${bestD.s.toFixed(1)}.` : `Best day: ${dLab(bestD.di)}, scoring ${bestD.s.toFixed(1)}.` };
+    }
+    const q = st.query.trim().toLowerCase();
+    const list = this.matches(q), dayS = sunState(hSel).el > 0;
+    const islandList = list.map((I, j) => {
+      const cur = I.id === st.loc, W = this.wxFor(I), s = W && W.hrs ? this.sample(W, hSel) : null;
+      return { name: I.english_name, atoll: this.atollLine(I), icon: cur ? 'my_location' : 'location_on', ic: cur ? '#087F7A' : '#9AAFB5', sep: j ? '1px solid rgba(10,51,70,.07)' : 'none',
+        wxIcon: s ? owmIcon(s.id, dayS) : (W === 'err' ? 'cloud_off' : 'more_horiz'), wxTint: s ? (WX_TINT[this.keyOf(s, hSel)] || '#0A3346') : '#9AAFB5', wxCond: s ? owmCond(s.id, dayS) : (W === 'err' ? 'No data' : 'Loading\u2026'), wxTemp: s ? Math.round(s.temp) : '\u2013',
+        bg: cur ? 'rgba(18,181,176,.08)' : 'transparent', pick: () => this.pickIsland(I) };
+    });
+    const GM = { locating: ['radar', 'Finding your island\u2026', 'Hang on a few seconds'], denied: ['location_disabled', 'Location is off', 'Allow location for Naiboli in Settings, then tap to try again'], far: ['wrong_location', 'You\u2019re not on an island we know', 'Tap to try again, or pick one below'], fail: ['location_off', 'Couldn\u2019t find you', 'Tap to try again'] };
+    const gk = st.geo.st, gm = GM[gk] || ['near_me', 'Use my current location', st.perm === 'granted' ? 'Jump to the island you\u2019re on' : 'We\u2019ll ask to use your location'], gWarn = gk === 'denied' || gk === 'far' || gk === 'fail';
+    const geoRow = { icon: gm[0], title: gm[1], sub: gm[2], tile: gWarn ? '#FFE0D6' : '#D3F1EE', ic: gWarn ? '#E2522F' : '#087F7A', tap: () => this.locate(false) };
+    const WM = { denied: 'Location is off for Naiboli. Pick an island yourself, or allow location in Settings and try again.', far: 'You don\u2019t seem to be on a Maldivian island right now. Pick one yourself.', fail: 'Couldn\u2019t get your location. Try again, or pick an island yourself.' };
+    const wel = { btn: gk === 'locating' ? 'Finding your island\u2026' : 'Use my location', hasMsg: !!WM[gk], msg: WM[gk] || '', msgIcon: gm[0], locate: () => this.locate(false), manual: () => this.openSheet('island', { query: '' }) };
+    const sh = { welcome: st.sheet === 'welcome', acts: st.sheet === 'acts', act: st.sheet === 'act', island: st.sheet === 'island', menu: st.sheet === 'menu', wx: st.sheet === 'wx', tide: st.sheet === 'tide', isle: st.sheet === 'isle' };
+
+    // weather detail
+    const fz = st.focus, FK = ['temp', 'warning', 'wind', 'uv', 'rain', 'hum', 'sky', 'vis', 'sun', 'moon'];
+    const iconAt = (h) => m.live ? owmIcon(this.sample(m.W, h).id, sunState(h).el > 0) : sunState(h).el > 0 ? (m.key === 'night' || m.key === 'golden' ? 'sunny' : m.icon) : (m.rainAmt ? m.icon : m.clouds > 60 ? 'cloud' : m.key === 'partly' ? 'partly_cloudy_night' : 'bedtime');
+    const condAt = (h) => m.live ? owmCond(this.sample(m.W, h).id, sunState(h).el > 0) : sunState(h).el > 0 ? (m.key === 'night' || (m.key === 'golden' && Math.abs(md24(h) - SET) > 1.2) ? 'Sunny' : m.cond) : (m.rainAmt ? m.cond : m.clouds > 60 ? 'Cloudy night' : 'Clear night');
+    const qx = (f) => (1 - f) * (1 - f) * 12 + 2 * (1 - f) * f * 150 + f * f * 288, qy = (f) => (1 - f) * (1 - f) * 84 + 2 * (1 - f) * f * -36 + f * f * 84;
+    const sf = ss.day ? ss.f : 0, tint = WX_TINT[m.key] || '#0A3346';
+    const wx = {
+      eyebrow: `${nm} · ${isLater ? `${dayName(hSel)} · ${fmt(Math.floor(hSel))}` : 'Now'}`,
+      heroBg: WX_HERO[m.key] || '#FFF0C6', tint, icon: iconAt(hSel), cond: condAt(hSel), temp, feels: temp + (m.feels - m.temp), hi: m.hi, lo: m.lo, tempWord: m.tempWord,
+      hasWarning: !!m.warning, warnTitle: (m.warning || {}).title || 'Heads up', warnUntil: (m.warning || {}).until || 'later', warnBody: (m.warning || {}).body || '', rise: fmt(RISE), set: fmt(SET), moon: mi,
+      wind, dir: m.dir, gust: Math.round(m.gust * wind / m.wind), windWord: windWordOf(wind), arrow: m.deg + 180,
+      uv: uvNow, uvWord: uvWordOf(uvNow), uvPct: clamp(uvNow / 11 * 100, 3, 97), uvLine: uvNow >= 6 ? 'Shade from 11 to 3' : uvNow >= 3 ? 'Sunscreen still' : 'Easy on the skin',
+      rain: rainSel, rainLine, hum: m.hum, humWord: m.hum > 84 ? 'Very humid' : m.hum > 70 ? 'Humid' : 'Comfortable',
+      clouds: m.clouds, cloudLine: ph.cloud, vis: m.vis, visLine: ph.vis,
+      sunX: qx(sf), sunY: qy(sf), sunO: ss.day ? 1 : 0, sunLine: ss.day ? `${dur(Math.max(0, untilSet))} of sun left` : `Sun's back in ${dur(untilRise)}`,
+      f: Object.fromEntries(FK.map(k => [k, fz === k])), r: Object.fromEntries(FK.map(k => [k, fz === k ? '0 0 0 2.5px #0A3346' : '0 1px 2px rgba(10,51,70,.05)'])),
+      hourly: Array.from({ length: 24 }, (_, o) => { const h = m.hour + o, sel = o === o0, r = rainAt(h); return { label: o ? fmtHr(h) : 'Now', icon: iconAt(h), temp: this.tempAt(m, h), rain: r + '%', bg: sel ? '#0A3346' : '#F6F1E6', ink: sel ? '#FFFFFF' : '#0A3346', sub: sel ? 'rgba(255,255,255,.72)' : '#4F6F79', ic: sel ? '#FFFFFF' : tint, rc: sel ? '#9FD8FF' : r >= 50 ? '#2F86C2' : '#4F6F79' }; }),
+    };
+
+    {
+      const wk = this.weekDays(m), wLo = Math.min(...wk.map(d => d.lo)), wHi = Math.max(...wk.map(d => d.hi)), wSpan = Math.max(1, wHi - wLo), selDi = Math.floor(hSel / 24);
+      const nm3 = (d) => d.di === 0 ? 'today' : d.label.split(' ')[0], listOf = (a) => a.length <= 2 ? a.join(' and ') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+      wx.hasWeek = wk.length > 1;
+      wx.days = wk.map((d, j) => { const w = Math.max(8, (d.hi - d.lo) / wSpan * 100); return { label: d.di === 0 ? 'Today' : d.label, icon: d.icon, ic: WX_TINT[d.key] || '#0A3346', rain: d.pop >= 20 ? d.pop + '%' : '', lo: d.lo, hi: d.hi, w, l: Math.min(100 - w, (d.lo - wLo) / wSpan * 100), sep: j ? '1px solid rgba(10,51,70,.07)' : 'none', bg: d.di === selDi ? 'rgba(18,181,176,.08)' : 'transparent' }; });
+      const wet = wk.filter(d => d.wet), windy = wk.filter(d => d.wind >= 30), dry = wk.slice(1).reduce((b, d) => !b || d.pop < b.pop || (d.pop === b.pop && d.hi < b.hi) ? d : b, null);
+      wx.weekLine = !wk.length ? '' : !wet.length ? 'Mostly dry all week.' : wet.length >= wk.length - 1 ? 'Showers about most days. Check the hourly for dry gaps.' : `Showers likely ${listOf(wet.map(nm3))}.${dry && !dry.wet ? ` Driest: ${nm3(dry)}.` : ''}`;
+      if (windy.length && wk.length) wx.weekLine += ` Windy ${listOf(windy.map(nm3))}.`;
+    }
+    // tide detail
+    const tLo = TIDE ? TIDE.lo : -.3, tHi = TIDE ? TIDE.hi : .5, yOf = (l) => 18 + (tHi + .02 - l) / (tHi - tLo + .04) * 120;
+    let tLine = ''; for (let i = 0; i <= 96; i++) { const x = i / 96 * 354, y = yOf(tideAt(m.hour + i / 4)); tLine += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); }
+    const exAll = this.extrema();
+    const dTag = (h) => h >= 24 ? ' · ' + dateOf(h).dow : '';
+    const td = {
+      eyebrow: wx.eyebrow, levelText: tide.levelText, dirIcon: tide.rising ? 'north_east' : 'south_east', dirText: tide.dirText, until: tide.until,
+      line: tLine, area: tLine + ' L354 150 L0 150 Z', nowPct: o0 / 24 * 100, nowY: yOf(tideAt(hSel)),
+      marks: exAll.filter(e => e.h > m.hour + .3 && e.h < m.hour + 23.7).map(e => { const x = (e.h - m.hour) / 24 * 100, y = yOf(e.lvl); return { x, y, ly: e.high ? y - 26 : y + 10, c: e.high ? '#12B5B0' : '#C9A35E', label: fmt(e.h).replace(' AM', 'a').replace(' PM', 'p'), tx: x < 10 ? -15 : x > 90 ? -85 : -50 }; }),
+      axis: [0, 6, 12, 18, 24].map((o, i) => ({ x: o / 24 * 100, tx: i === 0 ? 0 : i === 4 ? -100 : -50, label: o === 0 ? 'Now' : fmtHr(m.hour + o) })),
+      next: exAll.filter(e => e.h > hSel + .01).slice(0, 4).map((e, j) => ({ icon: e.high ? 'water' : 'footprint', kind: e.high ? 'High tide' : 'Low tide', time: fmt(e.h) + dTag(e.h), lvl: fmtLvl(e.lvl) + ' m', ic: e.high ? '#087F7A' : '#7A5600', icBg: e.high ? '#D3F1EE' : '#FFF0C6', sep: j ? '1px solid rgba(10,51,70,.07)' : 'none' })),
+      beach: tide.n > .72 ? 'Narrow' : tide.n < .3 ? 'Wide' : 'Average', beachLine: tide.n > .72 ? 'High water, less sand to sit on' : tide.n < .3 ? 'Lots of sand. Reef walk time' : 'Room for a towel or two',
+      src: this.tideSrc(), lagoon: wind < 10 ? 'Glassy' : wind < 20 ? 'Rippled' : wind < 35 ? 'Choppy' : 'Rough', lagoonLine: `${wind} km/h from the ${m.dir}`,
+    };
+
+    return {
+      frameW: Math.round(402 * st.scale), frameH: Math.round(874 * st.scale), scale: st.scale, statusDark: st.sp < 3 ? false : darkSky,
+      sp: { on: st.sp < 3, op: st.sp === 2 ? 0 : 1, sc: st.sp === 2 ? 1.05 : 1, shellRot: st.sp === 0 ? -150 : 0, shellSc: st.sp === 0 ? .25 : 1, txtOp: st.sp === 0 ? 0 : 1, txtY: st.sp === 0 ? 12 : 0, skip: this.endSplash },
+      sceneRef: this.sceneRef, scrubRef: this.scrubRef, onSceneClick: this.onSceneClick,
+      hud, loc: locLabel, updated: m.updated || 'just now', now: { icon: m.live ? m.icon : isLater ? (ss.day ? (m.key === 'night' || m.key === 'golden' ? 'sunny' : m.icon) : 'bedtime') : m.icon, temp },
+      eyebrow, head, sub, hasWarning: !!m.warning && !isLater, warning: m.warning || { short: '' },
+      hintOpacity: st.hintSeen ? 0 : 1,
+      whenLabel, isLater, backToNow: () => this.setState({ offset: 0, bubbleOpen: false }),
+      top3, ribbon, axis, thumbPct: st.offset / 23 * 100,
+      bub, closeBubble: () => this.setState({ bubbleOpen: false }),
+      sheetPE: st.sheetOpen ? 'auto' : 'none', sheetScrim: st.sheetOpen ? 1 : 0, sheetY: st.sheetOpen ? '0%' : '105%', closeSheet: this.closeSheet, sh,
+      wx, td, isle, sheetScrollRef: this.sheetScrollRef,
+      groups, d, actCount: String(acts.length), actsSrc, query: st.query, onQuery: (e) => this.setState({ query: e.target.value }), islandList, noResults: !!q && !list.length,
+      geoRow, wel, openMenu: () => this.openSheet('menu'), openIsland: () => this.openSheet('island', { query: '' }), openActs: () => this.openSheet('acts'),
+      openTemp: () => this.openBubble('temp', 340, 90), openWarning: () => this.openBubble('warning', 200, 250),
+    };
+  }
+}
+</script>
+</body>
+</html>
