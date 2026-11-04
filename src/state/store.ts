@@ -33,6 +33,8 @@ export interface DataState {
   acts: Record<number, Entry<Acts>>;
   /** last good weather shown for the current island (bridges island switches) */
   lastW: Weather | null;
+  /** tide shown for the current island: kept while a new island's tide loads, cleared on error/midnight (prototype `TIDE`) */
+  lastTide: Tide | null;
   /** last known sunrise/sunset */
   sun: Sun;
   /** Date.now() of the last clock tick — changes once a minute so views re-render */
@@ -63,6 +65,7 @@ export function createDataStore(deps: StoreDeps) {
     isle: {},
     acts: {},
     lastW: null,
+    lastTide: null,
     sun: DEFAULT_SUN,
     clock: now(),
   };
@@ -80,6 +83,9 @@ export function createDataStore(deps: StoreDeps) {
     // Track the last good weather for the current island (prototype `_lastW`) and its sun times.
     const W = next.wx[wxKey(next.island)];
     if (isData(W) && W !== next.lastW) next = { ...next, lastW: W, sun: sunOf(W, next.sun) };
+    const Tc = next.tides[next.island.id];
+    if (Tc === 'err' && next.lastTide) next = { ...next, lastTide: null };
+    else if (isData(Tc) && Tc !== next.lastTide) next = { ...next, lastTide: Tc };
     state = next;
     listeners.forEach((l) => l());
   }
@@ -184,7 +190,7 @@ export function createDataStore(deps: StoreDeps) {
     if (hOfUnix(t / 1000, state.day0) >= 24) {
       gen++;
       inflight = { wx: {}, tide: {}, isle: {}, acts: {} };
-      set({ day0: day0Of(t), wx: {}, tides: {}, acts: {}, lastW: null, clock: t });
+      set({ day0: day0Of(t), wx: {}, tides: {}, acts: {}, lastW: null, lastTide: null, clock: t });
       const c = state.island;
       ensureWx(c);
       ensureTide(c);

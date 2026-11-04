@@ -106,7 +106,7 @@ export function tideView(h: number, T: Tide | null): TideView {
 }
 
 /** Scene water level target (−.27….45 range) — `lvT` in `paint()`. */
-export function sceneTideLevel(h: number, T: Tide | null): number {
+export function sceneTideLevel(h: number, T: Pick<Tide, 'v' | 'lo' | 'hi'> | null): number {
   'worklet';
   return T ? -0.27 + (0.72 * (tideAt(h, T) - T.lo)) / (T.hi - T.lo) : tideAt(h, null);
 }

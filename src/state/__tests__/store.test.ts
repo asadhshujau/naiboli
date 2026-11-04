@@ -77,6 +77,7 @@ describe('data store', () => {
     expect(st.island.latitude_decimal).toBe('4.17');
     expect(s.kv.size).toBe(0);
     expect(st.lastW).toBe(st.wx['27']);
+    expect(st.lastTide).toBe(st.tides[1069]);
     expect(st.sun.rise).toBeCloseTo(5.83, 1);
     await expect(s.store.listPromise).resolves.toHaveLength(3);
   });
@@ -110,7 +111,10 @@ describe('data store', () => {
     expect(s.store.getState().wx['28']).toBe('loading');
     // last good weather (Malé's) bridges the switch
     expect(s.store.getState().lastW).toBe(s.store.getState().wx['27']);
+    // Malé's tide stays on screen while Thulusdhoo's loads
+    expect(s.store.getState().lastTide).toBe(s.store.getState().tides[1069]);
     await flush();
+    expect(s.store.getState().lastTide).toBe(s.store.getState().tides[1017]);
     expect(JSON.parse(s.kv.get('naiboli.island.v1')!).id).toBe(1017);
     expect(s.count('/tide-for-island/1017') + s.count('/islands/1017')).toBe(3); // tide, details, scores
     expect(s.store.getState().lastW).toBe(s.store.getState().wx['28']);
@@ -154,6 +158,7 @@ describe('data store', () => {
     expect(st.acts[1069]).toBe('err');
     expect(st.wx['27']).toBe('err'); // bad payload
     expect(st.tides[1069]).toBe('err');
+    expect(st.lastTide).toBeNull();
     await expect(s.store.listPromise).resolves.toBeNull();
     s.advance(CLOCK_MS);
     s.tick();
@@ -193,6 +198,7 @@ describe('data store', () => {
     const st = s.store.getState();
     expect(st.day0).toBe(day0 + 86400);
     expect(st.lastW).toBeNull();
+    expect(st.lastTide).toBeNull();
     expect(st.wx['27']).toBe('loading');
     expect(st.tides[1069]).toBe('loading');
     expect(st.acts[1069]).toBe('loading');
