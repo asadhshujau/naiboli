@@ -6,9 +6,9 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Data layer, types, tests | ✅ done (`92ea374`) |
-| 2 | Scene canvas, scrubber, bottom panel, top HUD | ✅ done (this commit) |
-| 3 | Info bubbles and all bottom sheets | ⏭ **resume here** |
-| 4 | Location / first-run flow, persistence, splash | — |
+| 2 | Scene canvas, scrubber, bottom panel, top HUD | ✅ done (`c85e8a9`) |
+| 3 | Info bubbles and all bottom sheets | ✅ built, awaiting review (not yet seen on a device) |
+| 4 | Location / first-run flow, persistence, splash | ⏭ **resume here** |
 | 5 | Polish: side-by-side with the prototype, list of unmatched differences | — |
 
 ## Decisions already made
@@ -32,18 +32,28 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 - `src/app/index.tsx` — the scene screen. Phase 3 hooks are stubbed there (`openBubble`, `noop` handlers for
   menu / island chip / All / top-3 cards).
 
-## Phase 3 — what to build next
-1. Extend `src/state/view.ts` with the rest of `renderVals()`: bubble content (`B` object), `groups` (All
-   activities), `d` (activity detail), `islandList` + `geoRow` + `wel` (picker/welcome), `wx` (weather sheet), `td`
-   (tide sheet), `isle` (`isleView`). The prototype script is lines ~1300–1480 of the HTML.
-2. `Bubble` (README §3): 268 wide, positioned from the tap (`bub` maths), open/close animation, glass blur 14 —
-   add a `'bubble'` alpha + scale to `src/scene/glass.tsx`. Same object tapped again closes it.
-3. Sheet shell (README §4): scrim, translateY 105%→0 over 450 ms `bezier(.2,.85,.25,1)`, max 86 %, grabber,
-   header, focus-ring scrolling for the weather sheet.
-4. Sheets: All activities, Activity detail, Weather, Tide, About the island, Island picker (search + prefetch
-   weather 250 ms after typing), Menu. Welcome sheet UI too (its flow is Phase 4).
-5. Wire the stubs in `src/app/index.tsx`.
-6. Icons: if a sheet needs a name that isn't generated, add it to `scripts/gen-icons.mjs` and run `npm run gen:icons`.
+## Phase 3 — what was built
+- `src/state/sheets.ts` — rest of `renderVals()`: bubble content `B` (actions as data: `SheetTarget`), `bubblePos`
+  (`bub` maths in screen dp), `buildGroups`, `buildDetail`, `buildWx`, `buildTide`, `buildIsle`/`isleView`,
+  `buildIslandList`, `geoRowOf`, `welcomeOf`. Parity-tested against the prototype's real `renderVals()`
+  (`src/state/__tests__/sheets.parity.test.ts`, 8 scenarios incl. edge-case score/week payloads).
+- `src/state/ui.ts` — reducer for bubble/sheet/query/geo state (`openSheet`, `closeSheet` + `sheetGone` after 450 ms,
+  scene-tap toggle, `picked`). Tests in `ui.test.ts`.
+- `src/ui/Bubble.tsx`, `src/ui/sheet/*` (shell `Sheet.tsx` + 8 sheets + `parts.tsx`), `src/ui/Wordmark.tsx`
+  (shell as an inline view on the text baseline), `src/ui/MsroBadge.tsx` (bundled copy of the badge SVG),
+  `assets/images/openweather-logo.png`.
+- Glass: `'bubble'` alpha + `bubbleScale` around the bubble's origin. Glass rects are now measured relative to the
+  screen root (`measureLayout`), not `measureInWindow` — the window offset on Android put the panel blur above
+  the panel, over the front waves.
+- Sheet conventions added: drag down from the top to dismiss, Android back closes sheet then bubble, keyboard
+  lifts the sheet (minus any window resize).
+
+## Phase 4 — what to build next
+1. Location flow in `src/app/index.tsx`: `locate` and `perm` are stubs (picker row + welcome buttons call `locate`).
+   Port `locate()` / `maybeWelcome()` / `permState()` with expo-location (README "Location & last-island behaviour"),
+   `interpretWhereAmI` already exists in `src/data/location.ts`; dispatch `{ type: 'geo' }` / `picked`.
+2. Splash (README §1) — `Wordmark` exists but the splash animates "naib", shell and "li" separately.
+3. Native splash colour `#FBF6EC`, iOS permission string and Android permissions in `app.json`.
 
 ## Open items carried forward
 - **Performance is unverified on a real device.** CPU-only emulator: ~7 fps (not representative; blur isn't the
@@ -51,6 +61,11 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   Hermes will be slower. Check on a phone in Expo Go; if it stutters: cache static layers as pictures, reuse paints.
 - Headline `text-wrap: balance` has no RN equivalent (uses platform "balanced" strategies).
 - Native splash is still the template's (Phase 4 sets `#FBF6EC`).
+- Phase 3 UI not yet checked on a device (no simulator on the dev machine). Check: 92 px / .84 line-height
+  verdict and temperature text clipping, wordmark baseline, sheet drag vs. scroll, keyboard lift on Android.
+- Known small differences: tide hero "m" uses Bricolage 700 (no 600 instance); pressed states dim to .6
+  (prototype is pointer-only); search placeholder colour #757575 (Chrome default).
+- `scripts/scene-compare/proto.mjs` currently crashes under Node 26 (native step still works).
 
 ## Commands
 ```bash

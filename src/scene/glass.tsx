@@ -3,7 +3,7 @@
  * the scene canvas blurs (and optionally saturates) the scene behind each one — the native
  * equivalent of CSS `backdrop-filter`, identical on iOS and Android.
  */
-import { createContext, useCallback, useContext, useEffect, useRef, type ComponentRef, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, type ComponentRef, type ReactNode } from 'react';
 import { View, type ViewProps } from 'react-native';
 import { useSharedValue, type SharedValue } from 'react-native-reanimated';
 
@@ -17,21 +17,36 @@ export interface GlassRect {
   blur: number;
   /** CSS saturate(), e.g. 1.5 */
   sat?: number;
-  /** which shared alpha fades this glass (hint fade-out) */
-  alpha?: 'hint';
+  /** which shared alpha fades this glass (hint fade-out, bubble open/close) */
+  alpha?: GlassAlpha;
+  /** transform origin inside the rect for the bubble's open/close scale */
+  origin?: [number, number];
 }
+
+export type GlassAlpha = 'hint' | 'bubble';
 
 export interface GlassApi {
   rects: SharedValue<Record<string, GlassRect>>;
-  alphas: { hint: SharedValue<number> };
+  alphas: Record<GlassAlpha, SharedValue<number>>;
+  /** the bubble's current scale (applied around `origin`) */
+  bubbleScale: SharedValue<number>;
+  /**
+   * The screen's root view (an ancestor of the canvas and every glass view, with the canvas at its
+   * origin). Glass rects are measured relative to it: `measureInWindow` can be offset by the status
+   * bar on Android edge-to-edge, which moved the panel blur above the panel.
+   */
+  root: ComponentRef<typeof View> | null;
 }
 
 const Ctx = createContext<GlassApi | null>(null);
 
-export function useGlassRegistry(): GlassApi {
+/** `root`: the screen's root view (held in state by the screen, set through its callback ref). */
+export function useGlassRegistry(root: ComponentRef<typeof View> | null): GlassApi {
   const rects = useSharedValue<Record<string, GlassRect>>({});
   const hint = useSharedValue(1);
-  return { rects, alphas: { hint } };
+  const bubble = useSharedValue(0);
+  const bubbleScale = useSharedValue(0.85);
+  return useMemo(() => ({ rects, alphas: { hint, bubble }, bubbleScale, root }), [rects, hint, bubble, bubbleScale, root]);
 }
 
 export function GlassProvider({ api, children }: { api: GlassApi; children: ReactNode }) {
@@ -49,15 +64,27 @@ type GlassViewProps = ViewProps & {
   blur: number;
   sat?: number;
   radius: number;
-  alpha?: 'hint';
+  alpha?: GlassAlpha;
 };
 
-/** A View whose window rect is registered as a glass backdrop. */
+/** Register (or update) a glass rect directly — for views whose rect is known without measuring. */
+export function setGlassRect(rects: GlassApi['rects'], id: string, g: GlassRect | null) {
+  rects.modify((r) => {
+    'worklet';
+    if (g) r[id] = g;
+    else delete r[id];
+    return r;
+  });
+}
+
+/** A View whose rect (relative to the screen root = canvas space) is registered as a glass backdrop. */
 export function GlassView({ id, blur, sat, radius, alpha, onLayout, ...rest }: GlassViewProps) {
-  const { rects } = useGlass();
+  const { rects, root } = useGlass();
   const ref = useRef<ComponentRef<typeof View>>(null);
   const measure = useCallback(() => {
-    ref.current?.measureInWindow((x, y, w, h) => {
+    const el = ref.current;
+    if (!el || !root) return;
+    el.measureLayout(root, (x: number, y: number, w: number, h: number) => {
       if (!w || !h) return;
       rects.modify((r) => {
         'worklet';
@@ -65,7 +92,9 @@ export function GlassView({ id, blur, sat, radius, alpha, onLayout, ...rest }: G
         return r;
       });
     });
-  }, [rects, id, radius, blur, sat, alpha]);
+  }, [rects, root, id, radius, blur, sat, alpha]);
+  // the root may attach after this view's first layout
+  useEffect(() => measure(), [measure]);
   useEffect(
     () => () =>
       rects.modify((r) => {

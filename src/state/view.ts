@@ -1,6 +1,6 @@
 /**
  * View model for the selected hour — port of the prototype's `renderVals()`.
- * Phase 2 covers the HUD, bottom panel and scene input; bubble/sheet values come later.
+ * HUD, bottom panel and scene input; bubble and sheet values are in `./sheets`.
  */
 import { actAt, actDefs, apiAt, makeScorer, SAIL_INDEX, type ActDefLive, type Scorer } from '@/data/activities';
 import { labelOf, wxKey } from '@/data/islands';
@@ -101,6 +101,8 @@ export function buildSceneInput(b: ViewBase, signName: string, animate: boolean)
 export interface View {
   m: Mood;
   hSel: number;
+  /** whole-hour scrubber offset (prototype `o0`) */
+  o0: number;
   isLater: boolean;
   darkSky: boolean;
   lightPanel: boolean;
@@ -261,6 +263,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   return {
     m,
     hSel,
+    o0: offsetH,
     isLater,
     darkSky,
     lightPanel,

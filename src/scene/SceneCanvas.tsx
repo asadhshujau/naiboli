@@ -31,7 +31,7 @@ function saturate(s: number): number[] {
   ];
 }
 
-function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: { hint: number }) {
+function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: { hint: number; bubble: number }, bubbleScale: number) {
   'worklet';
   for (const k in rects) {
     const g = rects[k];
@@ -40,6 +40,14 @@ function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: { hint
     let f = Skia.ImageFilter.MakeBlur(g.blur, g.blur, TileMode.Clamp, null);
     if (g.sat) f = Skia.ImageFilter.MakeColorFilter(Skia.ColorFilter.MakeMatrix(saturate(g.sat)), f);
     c.save();
+    if (g.alpha === 'bubble' && g.origin && bubbleScale !== 1) {
+      // follow the bubble's open/close scale so the blur never shows outside it
+      const ox = g.x + g.origin[0];
+      const oy = g.y + g.origin[1];
+      c.translate(ox, oy);
+      c.scale(bubbleScale, bubbleScale);
+      c.translate(-ox, -oy);
+    }
     c.clipRRect(Skia.RRectXY(Skia.XYWHRect(g.x, g.y, g.w, g.h), g.r, g.r), ClipOp.Intersect, true);
     const p = Skia.Paint();
     p.setAlphaf(a);
@@ -82,7 +90,7 @@ export function SceneCanvas({ input, offset, glass, onTap }: Props) {
   });
   const picture = useSharedValue<SkPicture>(empty);
 
-  const { rects, alphas } = glass;
+  const { rects, alphas, bubbleScale } = glass;
   useFrameCallback((fi) => {
     'worklet';
     const dt = (fi.timeSincePreviousFrame ?? 16) / 1000;
@@ -100,7 +108,7 @@ export function SceneCanvas({ input, offset, glass, onTap }: Props) {
       return S;
     }, false);
     c.restore();
-    drawGlass(c, rects.value, { hint: alphas.hint.value });
+    drawGlass(c, rects.value, { hint: alphas.hint.value, bubble: alphas.bubble.value }, bubbleScale.value);
     picture.value = rec.finishRecordingAsPicture();
   });
 
