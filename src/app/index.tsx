@@ -4,7 +4,8 @@ import { BackHandler, StyleSheet, useWindowDimensions, View } from 'react-native
 import { useReducedMotion, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { matches } from '@/data/islands';
+import { matches, wxKey } from '@/data/islands';
+import type { GeoStatus } from '@/data/location';
 import type { ApiIsland } from '@/data/types';
 import { GlassProvider, useGlassRegistry } from '@/scene/glass';
 import { ARTBOARD_W, type SceneKind } from '@/scene/paint';
@@ -22,14 +23,15 @@ import {
   geoRowOf,
   welcomeOf,
   type BubbleKind,
-  type Perm,
 } from '@/state/sheets';
 import { initialUi, openTarget, SHEET_MS, uiReducer, type OpenSheet } from '@/state/ui';
+import { locator, useLocator } from '@/state/useLocator';
 import { buildBase, buildSceneInput, buildView, type ActRow } from '@/state/view';
 import { Bubble } from '@/ui/Bubble';
 import { BottomPanel } from '@/ui/hud/BottomPanel';
 import { TapHint } from '@/ui/hud/TapHint';
 import { TopHud } from '@/ui/hud/TopHud';
+import { Splash } from '@/ui/Splash';
 import { ActSheet } from '@/ui/sheet/ActSheet';
 import { ActsSheet } from '@/ui/sheet/ActsSheet';
 import { IslandSheet } from '@/ui/sheet/IslandSheet';
@@ -52,8 +54,6 @@ export default function SceneScreen() {
   const [frame, setFrame] = useState({ w: win.width, h: win.height });
   const [offsetH, setOffsetH] = useState(0);
   const [ui, dispatch] = useReducer(uiReducer, initialUi);
-  // Phase 4 wires the real permission state and the location flow.
-  const perm: Perm = 'unknown';
   const offset = useSharedValue(0);
   const [rootView, setRootView] = useState<ComponentRef<typeof View> | null>(null);
   const glass = useGlassRegistry(rootView);
@@ -94,8 +94,21 @@ export default function SceneScreen() {
     dataStore.pickIsland(I);
     dispatch({ type: 'picked' });
   }, []);
-  // Phase 4: location lookup (permission, where-am-i).
-  const locate = useCallback(() => {}, []);
+
+  // ── location / first run ──
+  const setGeo = useCallback((g: GeoStatus) => dispatch({ type: 'geo', geo: g }), []);
+  const openWelcome = useCallback(() => dispatch({ type: 'openSheet', sheet: 'welcome' }), []);
+  const perm = useLocator({ geo: ui.geo, sheetOpen: ui.sheetOpen, setGeo, openWelcome, pick: pickIsland });
+  const locate = useCallback(() => void locator.locate(), []);
+
+  // ── splash ──
+  const [splash, setSplash] = useState(true);
+  const wxNow = d.wx[wxKey(d.island)];
+  const splashReady = !!wxNow && wxNow !== 'loading' && ui.geo !== 'locating';
+  const onSplashDone = useCallback(() => {
+    setSplash(false);
+    locator.splashDone();
+  }, []);
 
   // ── bubble ──
   const onSceneTap = useCallback(
@@ -226,7 +239,8 @@ export default function SceneScreen() {
         <Sheet open={ui.sheetOpen} seq={ui.seq} focus={ui.focus} frameH={frame.h} onClose={closeSheet}>
           {sheetBody}
         </Sheet>
-        <StatusBar style={v.darkSky ? 'light' : 'dark'} />
+        {splash ? <Splash ready={splashReady} onDone={onSplashDone} /> : null}
+        <StatusBar style={splash ? 'dark' : v.darkSky ? 'light' : 'dark'} />
       </View>
     </GlassProvider>
   );

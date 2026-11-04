@@ -1,15 +1,18 @@
 # Naiboli — implementation progress
 
-Porting `design_handoff_naiboli/` (HTML prototype) to native Expo SDK 58. Brief: `design_handoff_naiboli/PROMPT.md`,
+Porting `design_handoff_naiboli/` (HTML prototype) to native Expo SDK 58.
+
+**Testing plan:** no device/build testing between phases. When all 5 phases are done, the user tests an EAS build;
+the fix round starts after that, working from the "Open items" list below. Brief: `design_handoff_naiboli/PROMPT.md`,
 spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop after each.
 
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Data layer, types, tests | ✅ done (`92ea374`) |
 | 2 | Scene canvas, scrubber, bottom panel, top HUD | ✅ done (`c85e8a9`) |
-| 3 | Info bubbles and all bottom sheets | ✅ built, awaiting review (not yet seen on a device) |
-| 4 | Location / first-run flow, persistence, splash | ⏭ **resume here** |
-| 5 | Polish: side-by-side with the prototype, list of unmatched differences | — |
+| 3 | Info bubbles and all bottom sheets | ✅ done (`d72a164`) |
+| 4 | Location / first-run flow, persistence, splash | ✅ done (this commit) |
+| 5 | Polish: side-by-side with the prototype, list of unmatched differences | ⏭ **resume here** |
 
 ## Decisions already made
 - iOS and Android only (no web target).
@@ -48,12 +51,20 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 - Sheet conventions added: drag down from the top to dismiss, Android back closes sheet then bubble, keyboard
   lifts the sheet (minus any window resize).
 
-## Phase 4 — what to build next
-1. Location flow in `src/app/index.tsx`: `locate` and `perm` are stubs (picker row + welcome buttons call `locate`).
-   Port `locate()` / `maybeWelcome()` / `permState()` with expo-location (README "Location & last-island behaviour"),
-   `interpretWhereAmI` already exists in `src/data/location.ts`; dispatch `{ type: 'geo' }` / `picked`.
-2. Splash (README §1) — `Wordmark` exists but the splash animates "naib", shell and "li" separately.
-3. Native splash colour `#FBF6EC`, iOS permission string and Android permissions in `app.json`.
+## Phase 4 — what was built
+- `src/state/locate.ts` — `createLocator(deps)`: port of `permState()` / `maybeWelcome()` / `locate()` with the README
+  rules (silent locate on first run when granted, Welcome once with `locAsked`, ask only from the two buttons,
+  blocked → "Location is off" then Settings on the next tap). Platform APIs injected; tests in `locate.test.ts`.
+- `src/state/useLocator.ts` — singleton locator on expo-location (balanced accuracy, last fix ≤ 5 min, 15 s timeout),
+  `/where-am-i`, AsyncStorage `locAsked`, `Linking.openSettings()`; re-reads the permission on app foreground.
+- `src/ui/Splash.tsx` — README §1 timeline. The animated "naib" / shell / "li" are placed on an invisible copy of
+  the real wordmark (measured), so the baseline matches the platform's text layout. Native splash is plain
+  `#FBF6EC` (1×1 transparent image) so it hands over seamlessly; `SplashScreen.hide()` when fonts + data are ready.
+- `app.json`: expo-location plugin (When-In-Use string only, no background, Always strings removed),
+  `android.blockedPermissions: ACCESS_FINE_LOCATION` (coarse only), splash colour.
+
+## Phase 5 — what to do next
+Side-by-side with the prototype in a browser; list differences that can't be matched. Device checks below first.
 
 ## Open items carried forward
 - **Performance is unverified on a real device.** CPU-only emulator: ~7 fps (not representative; blur isn't the
@@ -61,6 +72,9 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   Hermes will be slower. Check on a phone in Expo Go; if it stutters: cache static layers as pictures, reuse paints.
 - Headline `text-wrap: balance` has no RN equivalent (uses platform "balanced" strategies).
 - Native splash is still the template's (Phase 4 sets `#FBF6EC`).
+- Status bar during the splash is dark text (prototype `dark={false}`), although the README says "light content".
+- Phase 4 needs a development build (native config changed: location permission strings, splash). Check on Android
+  that coarse-only location resolves with Balanced accuracy.
 - Phase 3 UI not yet checked on a device (no simulator on the dev machine). Check: 92 px / .84 line-height
   verdict and temperature text clipping, wordmark baseline, sheet drag vs. scroll, keyboard lift on Android.
 - Known small differences: tide hero "m" uses Bricolage 700 (no 600 instance); pressed states dim to .6

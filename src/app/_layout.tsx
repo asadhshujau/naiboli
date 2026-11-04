@@ -35,8 +35,9 @@ export default function RootLayout() {
   }, []);
 
   const ready = (fontsLoaded || !!fontError) && dataReady;
+  // The JS splash (src/ui/Splash.tsx) takes over on the same #FBF6EC background.
   useEffect(() => {
-    if (ready) SplashScreen.hideAsync();
+    if (ready) SplashScreen.hide();
   }, [ready]);
 
   if (!ready) return null;
