@@ -13,11 +13,11 @@ import { T } from './fonts';
 import { ShellLogo } from './ShellLogo';
 import { C } from './theme';
 
-export const Wordmark = memo(function Wordmark({ size }: { size: number }) {
+export const Wordmark = memo(function Wordmark({ size, color = C.ink }: { size: number; color?: string }) {
   const shell = size * 0.6;
   const mx = size * 0.03;
   return (
-    <Text style={T.bric(800, size, { lh: 1, ls: -0.045, color: C.ink })} accessibilityRole="header" accessibilityLabel="Naiboli">
+    <Text style={T.bric(800, size, { lh: 1, ls: -0.045, color })} accessibilityRole="header" accessibilityLabel="Naiboli">
       naib
       <View style={{ width: shell + 2 * mx, height: shell, paddingHorizontal: mx }}>
         <ShellLogo size={shell} />

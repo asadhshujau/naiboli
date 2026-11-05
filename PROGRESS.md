@@ -16,21 +16,48 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | — | EAS build test by the user, then the fix round | ⏭ **next** |
 
 ## Pending — start here when asked "what's pending?"
-All 5 phases are done. Next steps, in order:
-1. **User tests an EAS build** (development or preview profile — Phase 4 changed native config, so Expo Go is not
-   representative). Nothing has been checked on a device yet.
-2. **Fix round**, from the user's findings plus the known items below.
+All 5 phases are done; the fix round is under way.
 
-Known issues to bring up (reported by the user or found without a device):
-- **Splash wordmark doesn't show** (reported 2026-11-04, seen in Expo Go): "naib", the shell and "li" never appear
-  and don't animate; "FORECAST FOR FUN" does. Likely cause: `src/ui/Splash.tsx` renders the animated parts only
-  after measuring an invisible copy of the wordmark (`onLayout` of the inline shell view inside the Text, plus the
-  Text width). If the inline view's `onLayout` never fires (Expo Go / platform), nothing renders. Fix idea: render
-  the parts with a computed fallback position (Bricolage baseline ≈ 0.83 em at line-height 1) and only refine
-  from measurement, or animate the static `Wordmark` as a whole plus the shell. Re-check in the EAS build first.
-- Device checks (see "Open items" below): big text with line-height < 1 (92 px / .84 verdict and temperature,
-  40 px / .98 headline) clipping on Android; wordmark shell on the baseline (menu); `BalancedText` on iOS;
-  sheet drag vs scroll; keyboard lift on Android; coarse-only location on Android; glass blur positions.
+**Android dev build tested 2026-11-05** (user's findings):
+- OK on device: no big-text clipping, menu wordmark baseline, sheet drag to close, keyboard lift in the picker,
+  glass blur positions, scene/scrubber performance acceptable, nothing else off vs the prototype.
+- **Splash wordmark didn't show** (also in Expo Go). Cause: the animated parts waited for `onLayout` of the inline
+  shell view inside the Text, which never fires on Android. Fixed (JS): the shell now animates in place inside the
+  real (transparent-letter) wordmark layout; "naib" / "li" copies are pinned to its left / right edges, no
+  measuring. **Re-check on device.**
+- **Precise location wanted** (user decision): `ACCESS_FINE_LOCATION` is no longer blocked; request stays
+  Balanced accuracy. **Native change: needs a new dev build** to take effect.
+- **Sheets open with a noticeable delay / glitchy slide.** Fixes kept (JS):
+  1. `SceneCanvas` takes `paused` (= a sheet is open) and skips painting once the bubble/hint glass fades are still
+     — the scene repainted every frame (tick + Skia recording + blur) on the UI thread the sheet's slide, scroll and
+     mount also need. The last frame stays behind the scrim; painting resumes as soon as the sheet starts closing.
+  2. `Sheet` keeps the keyboard lift (`bottom`, `maxHeight`) and the slide transform in separate animated styles.
+  3. "Opened twice" after another sheet had closed: the closed position was 105 % of the *measured* height, which
+     drops to the grabber (~60 dp) when the content unmounts (`sheetGone`), so the next sheet showed almost open
+     at that stale offset, jumped off-screen when its height arrived, then slid in. Now 105 % of the max sheet height.
+  Tried and reverted: deferring Weather's below-the-fold content until after the slide (`Later`). With 1–3 in place
+  the full mount is fast enough (sun bubble → Weather, which mounted everything, felt right), and the deferred
+  pop-in made the temp pill → Weather path feel slow. **Re-check on device**; if it ever needs more, icons as a
+  font instead of one SVG view each is the next idea.
+
+**New feature (user request 2026-11-05): "the day is the theme"** — sheets and bubbles follow the scene's light
+at the selected hour (`src/ui/dayTheme.ts`; provided in `src/app/index.tsx` from `lightOf(hSel, gloom, sun)`).
+- Light/dark switches exactly with the bottom panel (`lightPanel`). Light = the prototype's cream at clear midday,
+  warming toward peach as the sun gets low (from elevation .5) and cooling toward grey under cloud. Dark = surfaces
+  on the sky's hue at fixed lightness (dusk plum, night navy, storm slate).
+- Builder colours (verdict chips, tags, hourly cells, hero tints) are light-design hexes; `t.bg()` / `t.fg()` map
+  them (identity in light; token lookups, then hue-preserving muted grounds / lightened inks in dark).
+  OpenWeather logo gets a light pill in dark mode; MSRO badge is already a dark badge.
+- Tests: `src/ui/__tests__/dayTheme.test.ts` — clear midday = prototype tokens, switch matches the panel, cache,
+  WCAG contrast (ink ≥ 7, secondary ≥ 4.5, chips ≥ 4.5) at every half hour × 6 gloom levels.
+- Performance pass: styles are built once per theme look (`themed()` cache by quantised key, ≤ ~30 looks);
+  all inline `T.*()` text styles in sheets/bubble hoisted into those cached sheets; data colours use cached style
+  objects (`t.fgS()` / `t.bgS()`), so re-renders (typing in the picker, data updates) allocate no new style
+  objects and Fabric sees unchanged props. Theme objects are cached, so the context only changes when the look does.
+- **Check on device:** scrub to dusk / night and open each sheet and bubble; morning / late-afternoon warmth;
+  overcast day.
+
+Still unchecked: iOS (no build yet — `BalancedText`, wordmark baseline, keyboard), performance in a release build.
 
 ## Decisions already made
 - iOS and Android only (no web target).
@@ -79,7 +106,7 @@ Known issues to bring up (reported by the user or found without a device):
   the real wordmark (measured), so the baseline matches the platform's text layout. Native splash is plain
   `#FBF6EC` (1×1 transparent image) so it hands over seamlessly; `SplashScreen.hide()` when fonts + data are ready.
 - `app.json`: expo-location plugin (When-In-Use string only, no background, Always strings removed),
-  `android.blockedPermissions: ACCESS_FINE_LOCATION` (coarse only), splash colour.
+  `android.blockedPermissions: ACCESS_FINE_LOCATION` (coarse only — reverted in the fix round: precise allowed), splash colour.
 
 ## Phase 5 — what was done
 - Scene: `npm run scene:compare` (fixed Chrome detection on macOS; diff step now Node/pngjs instead of Python Pillow).
@@ -105,6 +132,8 @@ Known issues to bring up (reported by the user or found without a device):
 - MSRO badge: bundled copy of the SVG; its text uses the system font, as in the original.
 - Copy/spec conflicts resolved toward the markup: wordmark is "naib" + shell + "li" (README says "oli"); status
   bar text is dark during the splash (README says "light content", invisible on #FBF6EC).
+- Sheet slide distance is 105 % of the max sheet height, not of the sheet's own height (avoids a stale-height
+  flash; identical for tall sheets, short sheets start lower).
 - Added platform conventions not in the prototype: pressed states dim, drag a sheet down to close, keyboard lifts
   the picker, Android back closes sheet then bubble.
 
@@ -115,8 +144,8 @@ Known issues to bring up (reported by the user or found without a device):
 - Headline `text-wrap: balance` has no RN equivalent (uses platform "balanced" strategies).
 - Native splash is still the template's (Phase 4 sets `#FBF6EC`).
 - Status bar during the splash is dark text (prototype `dark={false}`), although the README says "light content".
-- Phase 4 needs a development build (native config changed: location permission strings, splash). Check on Android
-  that coarse-only location resolves with Balanced accuracy.
+- Phase 4 needs a development build (native config changed: location permission strings, splash). Fine location is
+  allowed since the fix round (was coarse-only).
 - Phase 3 UI not yet checked on a device (no simulator on the dev machine). Check: 92 px / .84 line-height
   verdict and temperature text clipping, wordmark baseline, sheet drag vs. scroll, keyboard lift on Android.
 - Known small differences: tide hero "m" uses Bricolage 700 (no 600 instance); pressed states dim to .6

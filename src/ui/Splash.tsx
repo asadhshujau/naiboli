@@ -76,11 +76,6 @@ export function Splash({ ready, onDone }: Props) {
     return () => clearTimeout(t);
   }, [ending, out, outScale, onDone]);
 
-  // Lay out the real wordmark invisibly, then place the animated parts exactly on it.
-  const [shellAt, setShellAt] = useState<{ x: number; y: number } | null>(null);
-  const [fullW, setFullW] = useState(0);
-  const [liW, setLiW] = useState(0);
-
   const rootStyle = useAnimatedStyle(() => ({ opacity: 1 - out.get(), transform: [{ scale: 1 + 0.05 * outScale.get() }] }));
   const shellStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${-150 * (1 - spin.get())}deg` }, { scale: 0.25 + 0.75 * spin.get() }],
@@ -92,27 +87,19 @@ export function Splash({ ready, onDone }: Props) {
   return (
     <Animated.View style={[s.root, rootStyle]} pointerEvents={ending ? 'none' : 'auto'}>
       <Pressable style={s.fill} onPress={end} accessibilityRole="button" accessibilityLabel="Naiboli. Tap to skip">
+        {/* The real wordmark layout (as in `Wordmark`) with transparent letters: the shell animates in place
+            on the platform's baseline. "naib" and "li" are copies pinned to its left and right edges, so
+            nothing needs measuring (the inline view's onLayout never fired on Android). */}
         <View>
-          <Text
-            style={[s.word, s.hidden]}
-            onLayout={(e) => setFullW(e.nativeEvent.layout.width)}
-            importantForAccessibility="no-hide-descendants"
-            accessibilityElementsHidden>
+          <Text style={[s.word, s.ghost]} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
             naib
-            <View style={s.slot} onLayout={(e) => setShellAt({ x: e.nativeEvent.layout.x, y: e.nativeEvent.layout.y })} />
+            <Animated.View style={[s.slot, shellStyle]}>
+              <ShellLogo size={SHELL} />
+            </Animated.View>
             li
           </Text>
-          {shellAt && fullW ? (
-            <>
-              <Animated.Text style={[s.word, s.abs, { left: 0 }, naibStyle]}>naib</Animated.Text>
-              <Animated.View style={[s.abs, { left: shellAt.x + MX, top: shellAt.y }, shellStyle]}>
-                <ShellLogo size={SHELL} />
-              </Animated.View>
-              <Animated.Text style={[s.word, s.abs, { left: fullW - liW, opacity: liW ? undefined : 0 }, liStyle]} onLayout={(e) => setLiW(e.nativeEvent.layout.width)}>
-                li
-              </Animated.Text>
-            </>
-          ) : null}
+          <Animated.Text style={[s.word, s.abs, s.left, naibStyle]}>naib</Animated.Text>
+          <Animated.Text style={[s.word, s.abs, s.right, liStyle]}>li</Animated.Text>
         </View>
         <Animated.Text style={[s.tagline, tagStyle]}>Forecast for fun</Animated.Text>
       </Pressable>
@@ -124,8 +111,10 @@ const s = StyleSheet.create({
   root: { ...StyleSheet.absoluteFill, zIndex: 60, backgroundColor: C.sheet },
   fill: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
   word: T.bric(800, SIZE, { lh: 1, ls: -0.045, color: C.ink }),
-  hidden: { opacity: 0 },
-  slot: { width: SHELL + 2 * MX, height: SHELL },
+  ghost: { color: 'transparent' },
+  slot: { width: SHELL + 2 * MX, height: SHELL, paddingHorizontal: MX },
   abs: { position: 'absolute', top: 0 },
+  left: { left: 0 },
+  right: { right: 0 },
   tagline: T.mono(11, { ls: 0.3, upper: true, color: C.secondary }),
 });

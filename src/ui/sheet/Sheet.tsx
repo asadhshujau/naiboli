@@ -11,7 +11,8 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from '
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
-import { C, SHADOW } from '@/ui/theme';
+import { themed } from '@/ui/dayTheme';
+import { SHADOW } from '@/ui/theme';
 
 const SLIDE = { duration: 450, easing: Easing.bezier(0.2, 0.85, 0.25, 1) };
 /** CSS `transition: opacity .35s` (default `ease`) */
@@ -46,6 +47,7 @@ interface Props {
 }
 
 export function Sheet({ open, seq, focus, frameH, onClose, children }: Props) {
+  const tc = useTone();
   const insets = useSafeAreaInsets();
   const p = useSharedValue(0);
   const scrim = useSharedValue(0);
@@ -123,14 +125,16 @@ export function Sheet({ open, seq, focus, frameH, onClose, children }: Props) {
   if (frameH > fullH) setFullH(frameH);
   const resized = fullH - frameH;
   const maxH = fullH * 0.86;
-  const sheetStyle = useAnimatedStyle(() => {
+  // Layout (keyboard lift) and the slide are separate styles, so the slide's per-frame updates are
+  // transform-only and never go through layout. The closed position is 105 % of the *largest* sheet, not
+  // of the measured one: after a sheet closes its content unmounts and the measured height drops to the
+  // grabber, so the next sheet's content would show at that stale offset until its own height was
+  // measured (it looked like the sheet opened twice).
+  const liftStyle = useAnimatedStyle(() => {
     const lift = Math.max(0, kb.get() - resized);
-    return {
-      bottom: lift,
-      maxHeight: Math.min(maxH, frameH - lift - insets.top - 8),
-      transform: [{ translateY: (1 - p.get()) * 1.05 * h.get() + drag.get() }],
-    };
+    return { bottom: lift, maxHeight: Math.min(maxH, frameH - lift - insets.top - 8) };
   });
+  const slideStyle = useAnimatedStyle(() => ({ transform: [{ translateY: (1 - p.get()) * 1.05 * maxH + drag.get() }] }));
   const scrimStyle = useAnimatedStyle(() => ({ opacity: scrim.get() * (1 - Math.min(1, drag.get() / Math.max(1, h.get()))) }));
 
   return (
@@ -140,11 +144,11 @@ export function Sheet({ open, seq, focus, frameH, onClose, children }: Props) {
       </Animated.View>
       <GestureDetector gesture={pan}>
         <Animated.View
-          style={[s.sheet, sheetStyle]}
+          style={[s.sheet, tc.sheet, liftStyle, slideStyle]}
           onLayout={(e) => h.set(e.nativeEvent.layout.height)}
           accessibilityViewIsModal={open}>
           <View style={s.grabberRow}>
-            <View style={s.grabber} />
+            <View style={[s.grabber, tc.grabber]} />
           </View>
           <ScrollView
             ref={scrollRef}
@@ -175,12 +179,18 @@ const s = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    backgroundColor: C.sheet,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     boxShadow: SHADOW.sheet,
   },
   grabberRow: { alignItems: 'center', paddingTop: 10, paddingBottom: 4 },
-  grabber: { width: 40, height: 5, borderRadius: 3, backgroundColor: 'rgba(10,51,70,.18)' },
+  grabber: { width: 40, height: 5, borderRadius: 3 },
   content: { paddingTop: 8, paddingHorizontal: 20 },
 });
+
+const useTone = themed((c) =>
+  StyleSheet.create({
+    sheet: { backgroundColor: c.sheet },
+    grabber: { backgroundColor: c.grabber },
+  }),
+);

@@ -18,6 +18,17 @@ interface Props {
   glass: GlassApi;
   /** tap in artboard units */
   onTap: (kind: SceneKind, x: number, y: number) => void;
+  /**
+   * A sheet covers the scene: stop painting (the last frame stays) once the glass fades have settled, so
+   * the UI thread is free for the sheet's slide, scrolling and mounting. Painting resumes at once on false.
+   */
+  paused?: boolean;
+}
+
+/** a glass alpha that isn't mid-fade */
+function still(a: number) {
+  'worklet';
+  return a <= 0.001 || a >= 0.999;
 }
 
 /** CSS saturate(s) colour matrix. */
@@ -61,7 +72,7 @@ function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: { hint
  * Full-screen animated island scene. Scale = screenWidth / 402; the artboard is as tall as the
  * screen allows (the sea fills extra height). Painted on the UI thread every frame.
  */
-export function SceneCanvas({ input, offset, glass, onTap }: Props) {
+export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Props) {
   // Size from the canvas's own layout: on Android edge-to-edge, window dimensions exclude the
   // navigation bar, which would leave a strip below the scene.
   const win = useWindowDimensions();
@@ -89,10 +100,15 @@ export function SceneCanvas({ input, offset, glass, onTap }: Props) {
     return r.finishRecordingAsPicture();
   });
   const picture = useSharedValue<SkPicture>(empty);
+  const pausedSV = useSharedValue(paused);
+  useEffect(() => {
+    pausedSV.set(paused);
+  }, [paused, pausedSV]);
 
   const { rects, alphas, bubbleScale } = glass;
   useFrameCallback((fi) => {
     'worklet';
+    if (pausedSV.value && still(alphas.bubble.value) && still(alphas.hint.value)) return;
     const dt = (fi.timeSincePreviousFrame ?? 16) / 1000;
     const rec = Skia.PictureRecorder();
     const c = rec.beginRecording(Skia.XYWHRect(0, 0, width, height));

@@ -1,6 +1,6 @@
 /**
  * Wires the location flow (`./locate`) to expo-location, the API, storage and the screen's UI state.
- * Location request: balanced accuracy (coarse is enough), cached fix up to 5 min, 15 s timeout.
+ * Location request: balanced accuracy (precise or approximate, whichever the user grants), cached fix up to 5 min, 15 s timeout.
  *
  * The locator is an app-wide singleton (like `dataStore`); the scene screen binds its UI handlers.
  */

@@ -9,6 +9,7 @@ import type { GeoStatus } from '@/data/location';
 import type { ApiIsland } from '@/data/types';
 import { GlassProvider, useGlassRegistry } from '@/scene/glass';
 import { ARTBOARD_W, type SceneKind } from '@/scene/paint';
+import { lightOf } from '@/scene/palette';
 import { SceneCanvas } from '@/scene/SceneCanvas';
 import { dataStore, useDataState } from '@/state/app';
 import {
@@ -28,6 +29,7 @@ import { initialUi, openTarget, SHEET_MS, uiReducer, type OpenSheet } from '@/st
 import { locator, useLocator } from '@/state/useLocator';
 import { buildBase, buildSceneInput, buildView, type ActRow } from '@/state/view';
 import { Bubble } from '@/ui/Bubble';
+import { dayTheme, DayThemeProvider } from '@/ui/dayTheme';
 import { BottomPanel } from '@/ui/hud/BottomPanel';
 import { TapHint } from '@/ui/hud/TapHint';
 import { TopHud } from '@/ui/hud/TopHud';
@@ -61,6 +63,8 @@ export default function SceneScreen() {
   // `now` follows the store's 60 s clock so the scene input stays stable between ticks.
   const base = useMemo(() => buildBase(d, d.clock), [d]);
   const v = useMemo(() => buildView(base, d, offsetH), [base, d, offsetH]);
+  // The day is the theme: sheets and bubbles follow the scene's light at the selected hour.
+  const theme = useMemo(() => dayTheme(lightOf(v.hSel, v.m.gloom, base.sun), v.m.gloom), [v.hSel, v.m.gloom, base.sun]);
   const sceneInput = useMemo(() => buildSceneInput(base, d.island.english_name, !reduceMotion), [base, d.island.english_name, reduceMotion]);
 
   // ── sheets ──
@@ -196,52 +200,54 @@ export default function SceneScreen() {
 
   return (
     <GlassProvider api={glass}>
-      <View
-        ref={setRootView}
-        collapsable={false}
-        style={s.root}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          if (width && height && (width !== frame.w || height !== frame.h)) setFrame({ w: width, h: height });
-        }}>
-        <SceneCanvas input={sceneInput} offset={offset} glass={glass} onTap={onSceneTap} />
-        <TopHud
-          v={v}
-          onMenu={() => openSheet({ sheet: 'menu' })}
-          onIsland={() => openSheet({ sheet: 'island' })}
-          onTemp={() => dispatch({ type: 'openBubble', kind: 'temp', x: 340, y: 90 })}
-          onWarning={() => dispatch({ type: 'openBubble', kind: 'warning', x: 200, y: 250 })}
-        />
-        <TapHint seen={ui.hintSeen} />
-        <BottomPanel
-          v={v}
-          offset={offset}
-          onHour={setOffsetH}
-          onScrubStart={() => dispatch({ type: 'scrub' })}
-          onNow={onNow}
-          onAll={() => openSheet({ sheet: 'acts' })}
-          onAct={onAct}
-        />
-        {bubble ? (
-          <Bubble
-            content={bubble.content}
-            pos={bubble.pos}
-            open={ui.bubbleOpen}
-            onClose={() => dispatch({ type: 'closeBubble' })}
-            onAction={() => {
-              const go = bubble.content.action?.go;
-              if (!go) return;
-              if (go.sheet === 'isle') dataStore.ensureIsle(dataStore.getState().island);
-              dispatch(openTarget(go));
-            }}
+      <DayThemeProvider value={theme}>
+        <View
+          ref={setRootView}
+          collapsable={false}
+          style={s.root}
+          onLayout={(e) => {
+            const { width, height } = e.nativeEvent.layout;
+            if (width && height && (width !== frame.w || height !== frame.h)) setFrame({ w: width, h: height });
+          }}>
+          <SceneCanvas input={sceneInput} offset={offset} glass={glass} onTap={onSceneTap} paused={ui.sheetOpen} />
+          <TopHud
+            v={v}
+            onMenu={() => openSheet({ sheet: 'menu' })}
+            onIsland={() => openSheet({ sheet: 'island' })}
+            onTemp={() => dispatch({ type: 'openBubble', kind: 'temp', x: 340, y: 90 })}
+            onWarning={() => dispatch({ type: 'openBubble', kind: 'warning', x: 200, y: 250 })}
           />
-        ) : null}
-        <Sheet open={ui.sheetOpen} seq={ui.seq} focus={ui.focus} frameH={frame.h} onClose={closeSheet}>
-          {sheetBody}
-        </Sheet>
-        {splash ? <Splash ready={splashReady} onDone={onSplashDone} /> : null}
-        <StatusBar style={splash ? 'dark' : v.darkSky ? 'light' : 'dark'} />
-      </View>
+          <TapHint seen={ui.hintSeen} />
+          <BottomPanel
+            v={v}
+            offset={offset}
+            onHour={setOffsetH}
+            onScrubStart={() => dispatch({ type: 'scrub' })}
+            onNow={onNow}
+            onAll={() => openSheet({ sheet: 'acts' })}
+            onAct={onAct}
+          />
+          {bubble ? (
+            <Bubble
+              content={bubble.content}
+              pos={bubble.pos}
+              open={ui.bubbleOpen}
+              onClose={() => dispatch({ type: 'closeBubble' })}
+              onAction={() => {
+                const go = bubble.content.action?.go;
+                if (!go) return;
+                if (go.sheet === 'isle') dataStore.ensureIsle(dataStore.getState().island);
+                dispatch(openTarget(go));
+              }}
+            />
+          ) : null}
+          <Sheet open={ui.sheetOpen} seq={ui.seq} focus={ui.focus} frameH={frame.h} onClose={closeSheet}>
+            {sheetBody}
+          </Sheet>
+          {splash ? <Splash ready={splashReady} onDone={onSplashDone} /> : null}
+          <StatusBar style={splash ? 'dark' : v.darkSky ? 'light' : 'dark'} />
+        </View>
+      </DayThemeProvider>
     </GlassProvider>
   );
 }

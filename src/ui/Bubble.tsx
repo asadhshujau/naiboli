@@ -8,10 +8,11 @@ import Animated, { Easing, useAnimatedStyle, withTiming } from 'react-native-rea
 
 import { setGlassRect, useGlass } from '@/scene/glass';
 import { BUBBLE_W, type BubbleContent, type BubblePos } from '@/state/sheets';
+import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
 import { Icon } from '@/ui/Icon';
 import { CloseButton, Press } from '@/ui/sheet/parts';
-import { C, SHADOW } from '@/ui/theme';
+import { SHADOW } from '@/ui/theme';
 
 const FADE = { duration: 180, easing: Easing.bezier(0.25, 0.1, 0.25, 1) };
 const POP = { duration: 280, easing: Easing.bezier(0.2, 0.9, 0.3, 1.25) };
@@ -25,6 +26,9 @@ interface Props {
 }
 
 export function Bubble({ content: B, pos, open, onClose, onAction }: Props) {
+  const s = useS();
+  const t = useDayTheme();
+  const { c } = t;
   const { rects, alphas, bubbleScale } = useGlass();
   const alpha = alphas.bubble;
   const [h, setH] = useState(0);
@@ -51,13 +55,13 @@ export function Bubble({ content: B, pos, open, onClose, onAction }: Props) {
       onLayout={(e) => setH(e.nativeEvent.layout.height)}
       style={[s.root, { left: pos.x, top: pos.y, transformOrigin: [pos.ox, pos.oy === 'top' ? 0 : '100%', 0] }, anim]}>
       <View style={s.row}>
-        <View style={[s.tile, { backgroundColor: B.tile }]}>
-          <Icon name={B.icon} size={20} color={C.ink} fill />
+        <View style={[s.tile, t.bgS(B.tile)]}>
+          <Icon name={B.icon} size={20} color={c.ink} fill />
         </View>
         <Text style={s.title}>{B.title}</Text>
         <CloseButton onPress={onClose} size={30} />
       </View>
-      <Text style={[s.big, { color: B.bigColor }]}>{B.big}</Text>
+      <Text style={[s.big, t.fgS(B.bigColor)]}>{B.big}</Text>
       <View style={s.lines}>
         {B.lines.map((ln, i) => (
           <Text key={i} style={s.line}>
@@ -68,38 +72,40 @@ export function Bubble({ content: B, pos, open, onClose, onAction }: Props) {
       {B.action ? (
         <Press onPress={onAction} style={s.action} accessibilityRole="button">
           <Text style={s.actionText}>{B.action.label}</Text>
-          <Icon name="arrow_forward" size={18} color="#FFFFFF" />
+          <Icon name="arrow_forward" size={18} color={c.onInverse} />
         </Press>
       ) : null}
     </Animated.View>
   );
 }
 
-const s = StyleSheet.create({
-  root: {
-    position: 'absolute',
-    zIndex: 30,
-    width: BUBBLE_W,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,.95)',
-    boxShadow: SHADOW.bubble,
-    padding: 16,
-  },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  tile: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  title: { flex: 1, ...T.mono(11, { ls: 0.09, upper: true, color: C.secondary }) },
-  big: { marginTop: 12, ...T.bric(800, 28, { lh: 1.05, ls: -0.03 }) },
-  lines: { marginTop: 8, gap: 5 },
-  line: T.fig(500, 14, { lh: 1.35, color: C.bodySecondary }),
-  action: {
-    marginTop: 12,
-    height: 42,
-    borderRadius: 999,
-    backgroundColor: C.ink,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-  },
-  actionText: T.fig(700, 14, { color: '#FFFFFF' }),
-});
+const useS = themed((c) =>
+  StyleSheet.create({
+    root: {
+      position: 'absolute',
+      zIndex: 30,
+      width: BUBBLE_W,
+      borderRadius: 24,
+      backgroundColor: c.bubble,
+      boxShadow: SHADOW.bubble,
+      padding: 16,
+    },
+    row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    tile: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+    title: { flex: 1, ...T.mono(11, { ls: 0.09, upper: true, color: c.secondary }) },
+    big: { marginTop: 12, ...T.bric(800, 28, { lh: 1.05, ls: -0.03 }) },
+    lines: { marginTop: 8, gap: 5 },
+    line: T.fig(500, 14, { lh: 1.35, color: c.bodySecondary }),
+    action: {
+      marginTop: 12,
+      height: 42,
+      borderRadius: 999,
+      backgroundColor: c.inverse,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+    },
+    actionText: T.fig(700, 14, { color: c.onInverse }),
+  }),
+);
