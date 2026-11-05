@@ -24,10 +24,25 @@ happen:
 1. **Environment config for the API.** The base URL is hard-coded: `API = 'https://moodhu.dev/api'` in
    `src/data/api.ts`. Production will be `naiboli.shujau.dev` (exact API path to confirm). Plan: `EXPO_PUBLIC_API_URL`
    per EAS build profile (`env` in `eas.json`, or EAS environment variables) with a local `.env` for `expo start`;
-   read once in `api.ts` with a fallback. Also decide what the user-facing "moodhu.dev" texts become: the
-   activity-scores source line (`src/state/view.ts`), the Menu links "Activity scores" and "Privacy Policy"
-   (`src/ui/sheet/MenuSheet.tsx`). Tests mock the API module, so they stay as they are.
-2. **Immersive mode.** A clean view of the scene without the bottom activity panel; everything the panel offers
+   read once in `api.ts` with a fallback. Tests mock the API module, so they stay as they are.
+   Decided (user, 2026-11-05) for the user-facing "moodhu.dev" texts:
+   - **Don't show where activity scores come from, anywhere.** Remove the source line under the activity
+     sheets (`SourceLine` with `actsSrc` in `ActsSheet.tsx` / `ActSheet.tsx`, text built in `src/state/view.ts`) and
+     the Menu row "Activity scores — moodhu.dev" (`MenuSheet.tsx` `LINKS`). Update the parity tests that compare
+     `actsSrc` (expected difference from the prototype; list it under "Differences").
+   - **Privacy Policy always points to `<origin of the API URL in use>/privacy-policy`** (today
+     `https://moodhu.dev/privacy-policy`, production `https://naiboli.shujau.dev/privacy-policy`), derived from the
+     same env setting, never hard-coded.
+2. **Island picker default list: current island + recents** (user, 2026-11-05). With an empty search, the list
+   currently shows the fixed popular six (`POP` in `src/data/islands.ts`, via `matches('')`). Wanted: the **current
+   island at the top**, then the **last 5 islands loaded** (most recent first, no duplicates, current excluded),
+   and if there are fewer than 5 recents, **pad the end with popular islands** (`POP`, skipping ones already
+   listed). Needs a persisted recents list (AsyncStorage key in `src/state/storage.ts`, updated on every island
+   pick, manual or by location; cap 5). Keep the existing row look (current row highlighted with `my_location`),
+   the weather prefetch for shown rows, and the README's search behaviour once there's a query. Update
+   `buildIslandList` and its parity test (expected difference from the prototype). To confirm while building:
+   "5" = recents only, so up to 6 rows with the current one.
+3. **Immersive mode.** A clean view of the scene without the bottom activity panel; everything the panel offers
    reachable some other way (e.g. a tap/gesture to toggle, the scrubber kept or revealed on demand, activities
    from the menu or a small button). Design to agree before building: how to enter/leave it, what stays on screen
    (top HUD? scrubber?), whether it's remembered (AsyncStorage). Mind the glass blur rects (`useGlassRegistry`) and the
@@ -70,7 +85,8 @@ Google Play
       used for app functionality only, not shared or used for ads; no account, no analytics. Confirm what the
       server logs/stores before filling it in.
 - [ ] Content rating questionnaire, target audience (not for children), ads: none.
-- [ ] Privacy policy URL that works (currently `https://moodhu.dev/privacy-policy`; move with the domain?).
+- [ ] Privacy policy URL that works: `<API origin>/privacy-policy` (planned feature 1); the store listings need the
+      production one, `https://naiboli.shujau.dev/privacy-policy`, to be live.
 
 App Store
 - [ ] Apple Developer Program membership; App Store Connect app record (bundle ID, SKU); `ascAppId` for `eas submit`.
