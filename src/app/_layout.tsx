@@ -1,3 +1,4 @@
+import NetInfo from '@react-native-community/netinfo';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -6,6 +7,7 @@ import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { dataStore, storage } from '@/state/app';
+import { onReconnect } from '@/state/network';
 import { FONT_SOURCES } from '@/ui/fonts';
 
 SplashScreen.preventAutoHideAsync();
@@ -30,9 +32,12 @@ export default function RootLayout() {
       dataStore.tick();
       dataStore.retryNow();
     });
+    // Connection back (e.g. airplane mode off): retry whatever failed right away.
+    const offNet = onReconnect(NetInfo.addEventListener, () => dataStore.retryNow());
     return () => {
       alive = false;
       sub.remove();
+      offNet();
       dataStore.stop();
     };
   }, []);

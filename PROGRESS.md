@@ -48,9 +48,9 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 7. **🔧 native · OTA updates** (`expo-updates` + `eas update`, `runtimeVersion` policy): JS fixes and copy changes
    ship without a new build or store review. Worth adding before the next build: every later JS change (copy
    review, immersive mode, API config) could then reach the installed build without rebuilding.
-8. **🔧 native · Refetch on network reconnect** (`@react-native-community/netinfo`): data reloads the moment the
-   connection is back, instead of at the next backoff retry or foreground. Small; the current retries already
-   cover it within minutes.
+8. ✅ **🔧 native · Refetch on network reconnect** (2026-11-05): `@react-native-community/netinfo` 12.0.1;
+   `onReconnect` (`src/state/network.ts`, offline → online transitions only) → `dataStore.retryNow()` in
+   `_layout.tsx`. Native module: works from the next build (Expo Go also has it).
 9. **🔧 native · Crash reporting** (e.g. Sentry, `@sentry/react-native`): before real users / the closed test.
 10. **iOS export compliance:** `ios.config.usesNonExemptEncryption: false` in `app.json` (iOS only; one line).
 11. **Remove template leftovers:** unused `web` block in `app.json`, `scripts/reset-project.js`,
@@ -71,7 +71,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Menu: no "Activity scores" row; Privacy Policy opens `https://moodhu.dev/privacy-policy` (dev build).
 - Activity sheets: no "Activity scores from moodhu.dev" line once scores load.
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
-- Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
+- Data refresh: airplane mode on → launch → offline line; off → data arrives within seconds (reconnect); tap
   the line → reloads at once; background / foreground while offline → no errors.
 - Tap the time line above the headline → "· Updating" briefly, then fresh data; it doesn't steal sky taps much.
 - Tide sheet: "Towel room" / "Extra sand" fit the Beach stat column (26 pt) or wrap nicely.
