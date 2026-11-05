@@ -13,71 +13,41 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | 3 | Info bubbles and all bottom sheets | ✅ done (`d72a164`) |
 | 4 | Location / first-run flow, persistence, splash | ✅ done (`0e4e0f8`) |
 | 5 | Polish: side-by-side with the prototype, list of unmatched differences | ✅ done (this commit) |
-| — | EAS build test by the user, then the fix round | ⏭ **next** |
+| — | EAS build test by the user, then the fix round | ✅ round 1 done; round 2 built, dev build queued |
 
 ## Pending — start here when asked "what's pending?"
-All 5 phases and the first fix round are done. Android dev build tested on device 2026-11-05: all good. Since then
-(2026-11-05, not yet on a device): app ID `dev.shujau.naiboli`, name "Naiboli", island picker recents, varied
-messages, data refresh retries + reconnect + tap to refresh, API env config, OTA updates. **Next: a new Android
-dev build** (`npx eas-cli@latest build --profile development --platform android`), then section D. Items marked **🔧 native** change the native app: do them *before* the next dev
-build so it isn't wasted; everything else is JS and can follow later (Metro / OTA).
 
-### A. To build (planned by the user)
-1. ✅ **Environment config for the API** (2026-11-05). `EXPO_PUBLIC_API_URL` (inlined by Metro at bundle time):
-   `.env` for `expo start`, `build.<profile>.env` in `eas.json` for builds — development + preview
-   `https://moodhu.dev/api`, production `https://naiboli.shujau.dev/api` (user, may change). `src/data/api.ts`:
-   `API = apiBaseOf(env)` (trailing slash dropped, falls back to `DEFAULT_API` = moodhu.dev when unset / not a URL).
-   - Activity-score source is never shown: no "Activity scores from moodhu.dev" line (the "our own estimate" notice
-     still shows while scores are loading / failed — it doesn't name a source), no Menu row.
-   - Privacy Policy = `PRIVACY_URL` = `<origin of API>/privacy-policy`.
-   - **OTA updates bundle with the env of the machine running `eas update`**: use the `update:*` scripts (item 7)
-     so an update never points a production build at the wrong API.
-   - Preview builds use moodhu.dev until the production API is live; switch in `eas.json` when it is.
-2. ✅ **Immersive mode** (2026-11-05, design agreed with the user). An "expand" button (`open_in_full`) on the
-   bottom panel's header hides the panel; a thin glass bar takes its place (`src/ui/hud/MiniBar.tsx`): compact
-   scrubber (no axis labels), back to now (when scrubbed ahead), all activities (`format_list_bulleted`), and
-   `close_fullscreen` to bring the panel back. Top HUD stays. Crossfade 250 ms on `alphas.immersive` (0 → 1), which
-   also fades the glass blur (`GlassAlpha` `panel` / `mini`); the hidden one lets touches through. Remembered in
-   AsyncStorage `naiboli.immersive.v1`, read before the first render (`launchPrefs`) so it doesn't flash. Bubbles may
-   go lower in immersive mode (bottom limit = bar height + 30 instead of 210). JS only.
+### Where we are (2026-11-05)
+- All 5 phases + fix round 1 done; Android dev build tested on device 2026-11-05: all good.
+- Round 2 is built (list under "Done in round 2" below), all JS-tested (332 tests, typecheck, lint, expo-doctor),
+  **not yet checked on a device**.
+- **A new Android dev build is queued on EAS** (free tier queue; `npx eas-cli@latest build --profile development
+  --platform android`, package `dev.shujau.naiboli`, new EAS-managed keystore, channel `development`). Runtime
+  fingerprint at submission: `e7cef1d6e0f9a048c42a11bf7adfe9b380da4bce` (check yours with
+  `npx expo-updates runtimeversion:resolve --platform android`; if it differs, OTA updates won't reach that build).
+- Everything committed after the build was submitted (immersive mode, no-repeat messages, template cleanup) is JS
+  only: it reaches the build through Metro (dev) and later through OTA updates. Nothing native is pending.
 
-### B. Needs your decision / review
-3. ✅ **Message copy approved** (user, 2026-11-05).
-4. ✅ **Tide sheet "Beach" stat reworded** (2026-11-05): "Cosy" / "Extra sand" / "Towel room" with tide-fact lines
-   (`beachStat` in `src/data/copy/index.ts`), never Narrow / Wide / Average.
-5. ✅ **🔧 native · Display name: "Naiboli"** (user, 2026-11-05; `name` in `app.json`). Shows from the next build.
-6. ✅ **Production API: `https://naiboli.shujau.dev/api`** (user, 2026-11-05; may change → `eas.json`).
+### Next steps, in order
+1. **Wait for the build.** Failed → read the log (last time: Gradle out of memory in CMake; see Gotchas).
+   Succeeded → uninstall the old `com.anonymous.naiboli` app, install, run `npx expo start` and go through
+   "Device checks" below; findings become the fix list.
+2. **Store prep drafts** (offered by Claude, waiting for the user's go; no code): Play listing (short / long
+   description), Data safety + content rating answers, privacy policy text for
+   `https://naiboli.shujau.dev/privacy-policy` (must be live before release).
+3. **Next native batch** — do all together right before the next build, never alone (app.json and native libraries
+   are in the runtime fingerprint; changing them cuts OTA updates off from the installed build):
+   - iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json`.
+   - Remove the unused `web` block from `app.json` (keep `assets/images/favicon.png` only if web stays).
+   - Crash reporting (Sentry, `@sentry/react-native`) — if wanted; before real users / the closed test.
 
-### C. Suggested by Claude (optional — say which to do)
-7. ✅ **🔧 native · OTA updates** (2026-11-05): `expo-updates` ~58.0.21; `updates.url` = EAS Update for the project,
-   `runtimeVersion.policy: "fingerprint"`, channels `development` / `preview` / `production` (= profile names) in
-   `eas.json`. Default behaviour: release builds check on launch, download in the background, apply on the next
-   cold start. **Publish with `npm run update:preview -- "message"` / `npm run update:production -- "message"`**
-   (`scripts/eas-update.mjs`: takes `EXPO_PUBLIC_*` + channel from `eas.json` → `build.<profile>`, runs
-   `npx eas-cli@latest update --channel … --environment …`; needs `eas login`). Dev builds load JS from Metro;
-   an update can be opened there from the dev menu's Extensions tab. `fingerprint.config.js` skips package.json
-   scripts and .gitignore on top of Expo's defaults (see Gotchas). **Rule from now on: a native change (new native
-   library, app.json native config, plugin, icon / splash asset) = new build; JS-only changes can go out as an update.**
-8. ✅ **🔧 native · Refetch on network reconnect** (2026-11-05): `@react-native-community/netinfo` 12.0.1;
-   `onReconnect` (`src/state/network.ts`, offline → online transitions only) → `dataStore.retryNow()` in
-   `_layout.tsx`. Native module: works from the next build (Expo Go also has it).
-9. **🔧 native · Crash reporting** (e.g. Sentry, `@sentry/react-native`): before real users / the closed test.
-10. **iOS export compliance:** `ios.config.usesNonExemptEncryption: false` in `app.json` (iOS only; one line).
-    With the next native change (app.json is in the runtime fingerprint).
-11. **Template leftovers:** ✅ files removed 2026-11-05 (`scripts/reset-project.js` + its npm script,
-    `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`; README rewritten).
-    Still open: the unused `web` block in `app.json` — with the next native change (app.json is in the runtime
-    fingerprint; changing it alone would cut OTA updates off from the current build).
-12. **Messages, extras from the plan:** ✅ no repeats (2026-11-05): each copy category remembers its last line and
-    the island / date / hour it was for (`CopyMemory`, AsyncStorage `naiboli.copyMemory.v1`, saved 1 s after a
-    change); the same moment keeps its line, the next moment never repeats it. Still open: API `category` + message
-    override. JS only. (Dhivehi copy: not wanted — user, 2026-11-05.)
-13. ✅ **Tap the time line to refresh** (2026-11-05): the HUD eyebrow ("Today · Wed 5 · 2:00 PM", now only) is a
-    button: `dataStore.refresh()` refetches weather + scores unless fetched < 30 s ago (`REFRESH_MIN_MS`), retries
-    failures, and shows "· Updating" until done (`DataState.refreshing`); data stays on screen. Scrubbed ahead, the
-    line lets taps through to the scene as before.
+### Still open (optional, JS only — say which to do)
+- **Messages from the API:** API sends a `category` + optional message override; the app keeps its pools as the
+  fallback. Needs API work first.
+- Release checklist below (accounts, listings, iOS build, release-build performance).
+- Not wanted (user, 2026-11-05): Dhivehi copy.
 
-### D. Check on the next dev build
+### Device checks (next dev build)
 - New package name: installs as a separate app — uninstall the old `com.anonymous.naiboli` build first.
 - Splash wordmark shows (fixed in JS after the last device test).
 - Sheets open without delay / glitch (scene pauses behind sheets, separate animated styles, stale-height fix).
@@ -94,7 +64,52 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Tap the time line above the headline → "· Updating" briefly, then fresh data; it doesn't steal sky taps much.
 - Tide sheet: "Towel room" / "Extra sand" fit the Beach stat column (26 pt) or wrap nicely.
 - Messages: headline length on a small phone (longest ~36 chars); a storm / alert day shows calm "stay ashore"
-  lines; About the island chips and surf / snorkel tags.
+  lines; About the island chips and surf / snorkel tags; the headline changes hour to hour without repeating.
+
+### Done in round 2 (2026-11-05) — details
+- ✅ App identity: package / bundle ID `dev.shujau.naiboli`, display name "Naiboli".
+- ✅ Island picker: current island + recents + popular padding (see "History of the fix round").
+- ✅ Varied, friendly-silly messages with safety-first rules; copy approved by the user; no repeats (below).
+- ✅ Data refresh: backoff retries, tap-to-retry offline line, retry on foreground (see "History").
+- ✅ Tide sheet "Beach" stat reworded: "Cosy" / "Extra sand" / "Towel room" (`beachStat`), never Narrow / Wide / Average.
+- ✅ Production API: `https://naiboli.shujau.dev/api` (user; may change → `eas.json`).
+- ✅ **Environment config for the API** (2026-11-05). `EXPO_PUBLIC_API_URL` (inlined by Metro at bundle time):
+   `.env` for `expo start`, `build.<profile>.env` in `eas.json` for builds — development + preview
+   `https://moodhu.dev/api`, production `https://naiboli.shujau.dev/api` (user, may change). `src/data/api.ts`:
+   `API = apiBaseOf(env)` (trailing slash dropped, falls back to `DEFAULT_API` = moodhu.dev when unset / not a URL).
+   - Activity-score source is never shown: no "Activity scores from moodhu.dev" line (the "our own estimate" notice
+     still shows while scores are loading / failed — it doesn't name a source), no Menu row.
+   - Privacy Policy = `PRIVACY_URL` = `<origin of API>/privacy-policy`.
+   - **OTA updates bundle with the env of the machine running `eas update`**: use the `update:*` scripts (OTA entry below)
+     so an update never points a production build at the wrong API.
+   - Preview builds use moodhu.dev until the production API is live; switch in `eas.json` when it is.
+- ✅ **Immersive mode** (2026-11-05, design agreed with the user). An "expand" button (`open_in_full`) on the
+   bottom panel's header hides the panel; a thin glass bar takes its place (`src/ui/hud/MiniBar.tsx`): compact
+   scrubber (no axis labels), back to now (when scrubbed ahead), all activities (`format_list_bulleted`), and
+   `close_fullscreen` to bring the panel back. Top HUD stays. Crossfade 250 ms on `alphas.immersive` (0 → 1), which
+   also fades the glass blur (`GlassAlpha` `panel` / `mini`); the hidden one lets touches through. Remembered in
+   AsyncStorage `naiboli.immersive.v1`, read before the first render (`launchPrefs`) so it doesn't flash. Bubbles may
+   go lower in immersive mode (bottom limit = bar height + 30 instead of 210). JS only.
+- ✅ **🔧 native · OTA updates** (2026-11-05): `expo-updates` ~58.0.21; `updates.url` = EAS Update for the project,
+   `runtimeVersion.policy: "fingerprint"`, channels `development` / `preview` / `production` (= profile names) in
+   `eas.json`. Default behaviour: release builds check on launch, download in the background, apply on the next
+   cold start. **Publish with `npm run update:preview -- "message"` / `npm run update:production -- "message"`**
+   (`scripts/eas-update.mjs`: takes `EXPO_PUBLIC_*` + channel from `eas.json` → `build.<profile>`, runs
+   `npx eas-cli@latest update --channel … --environment …`; needs `eas login`). Dev builds load JS from Metro;
+   an update can be opened there from the dev menu's Extensions tab. `fingerprint.config.js` skips package.json
+   scripts and .gitignore on top of Expo's defaults (see Gotchas). **Rule from now on: a native change (new native
+   library, app.json native config, plugin, icon / splash asset) = new build; JS-only changes can go out as an update.**
+- ✅ **🔧 native · Refetch on network reconnect** (2026-11-05): `@react-native-community/netinfo` 12.0.1;
+   `onReconnect` (`src/state/network.ts`, offline → online transitions only) → `dataStore.retryNow()` in
+   `_layout.tsx`. Native module: works from the next build (Expo Go also has it).
+- ✅ **Messages: no repeats** (2026-11-05): each copy category remembers its last line and the island / date / hour
+   it was for (`CopyMemory`, AsyncStorage `naiboli.copyMemory.v1`, saved 1 s after a change); the same moment keeps
+   its line, the next moment never repeats it.
+- ✅ **Tap the time line to refresh** (2026-11-05): the HUD eyebrow ("Today · Wed 5 · 2:00 PM", now only) is a
+   button: `dataStore.refresh()` refetches weather + scores unless fetched < 30 s ago (`REFRESH_MIN_MS`), retries
+   failures, and shows "· Updating" until done (`DataState.refreshing`); data stays on screen. Scrubbed ahead, the
+   line lets taps through to the scene as before.
+- ✅ Template leftovers removed (`scripts/reset-project.js`, template images, `tabIcons/`); README rewritten.
 
 ### Before a production release (Google Play + App Store)
 App identity and config
@@ -106,9 +121,9 @@ App identity and config
 - [x] **Display name**: "Naiboli".
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
       (`eas.json` production). Bump `version` per release.
-- [ ] **iOS export compliance** — Pending item 10.
-- [ ] Template leftovers — Pending item 11 (`web` block left).
-- [x] API URL via environment config — Pending item 1. Before release: production API + `/privacy-policy` live.
+- [ ] **iOS export compliance** — Pending → "Next native batch".
+- [ ] Template leftovers: files done; `web` block → Pending "Next native batch".
+- [x] API URL via environment config (round 2). Before release: production API + `/privacy-policy` live.
 
 Builds
 - [ ] **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
@@ -132,7 +147,7 @@ Google Play
       used for app functionality only, not shared or used for ads; no account, no analytics. Confirm what the
       server logs/stores before filling it in.
 - [ ] Content rating questionnaire, target audience (not for children), ads: none.
-- [ ] Privacy policy URL that works: `<API origin>/privacy-policy` (planned feature 1); the store listings need the
+- [ ] Privacy policy URL that works: `<API origin>/privacy-policy` (in the app since round 2); the store listings need the
       production one, `https://naiboli.shujau.dev/privacy-policy`, to be live.
 
 App Store
@@ -147,8 +162,8 @@ App Store
 - [ ] TestFlight round before review.
 
 Nice to have (not required)
-- [x] OTA updates — Pending item 7.
-- [ ] Crash reporting — Pending item 9.
+- [x] OTA updates (round 2).
+- [ ] Crash reporting — Pending → "Next native batch".
 - [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
 
 ### History of the fix round
