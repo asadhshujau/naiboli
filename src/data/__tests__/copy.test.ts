@@ -1,5 +1,5 @@
 import { ACTS } from '../activities';
-import { actLead, beachNow, beachStat, headPool, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type LeadArgs } from '../copy';
+import { actLead, beachNow, beachStat, headPool, initCopyMemory, type CopyMemory, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type LeadArgs } from '../copy';
 import * as A from '../copy/activities';
 import { fill, hash, pickLine, slotsOf } from '../copy/pick';
 import * as W from '../copy/weather';
@@ -139,6 +139,54 @@ describe('picking', () => {
     const p1 = headPool(head({ island: 'Malé' }), 14).lines;
     const p2 = headPool(head({ island: 'Ukulhas' }), 14).lines;
     expect(p1).toEqual(p2);
+  });
+});
+
+describe('no repeats', () => {
+  beforeEach(() => initCopyMemory(null, null));
+  afterAll(() => initCopyMemory(null, null));
+
+  it('same moment → same line; the next moment never repeats the last line of that category', () => {
+    const a = head({ key: 'partly' });
+    let last = weatherHead(a, KEY);
+    expect(weatherHead(a, KEY)).toBe(last);
+    for (let i = 1; i < 200; i++) {
+      const k = { ...KEY, hour: i % 24, day: KEY.day + Math.floor(i / 24) };
+      const line = weatherHead(a, k);
+      expect(line).not.toBe(last);
+      expect(weatherHead(a, k)).toBe(line); // asked again (re-render, clock tick): unchanged
+      last = line;
+    }
+  });
+
+  it('works for scrubbed hours and activity lines too, per category', () => {
+    let last = '';
+    for (let h = 0; h < 48; h++) {
+      const line = hourHead('good', false, 'H', { ...KEY, hour: h % 24, day: KEY.day + Math.floor(h / 24) });
+      expect(line).not.toBe(last);
+      last = line;
+    }
+    const go = actLead(lead({ act: 'surf' }), KEY);
+    const goNext = actLead(lead({ act: 'surf' }), { ...KEY, hour: 15 });
+    expect(goNext).not.toBe(go);
+    // a different activity is its own category
+    expect(typeof actLead(lead({ act: 'swim' }), { ...KEY, hour: 15 })).toBe('string');
+  });
+
+  it('remembers across launches and reports changes for saving', () => {
+    const saved: CopyMemory[] = [];
+    initCopyMemory(null, (m) => saved.push(JSON.parse(JSON.stringify(m))));
+    const first = weatherHead(head(), KEY);
+    expect(saved.at(-1)!['head:sunny'].line).toBeDefined();
+    weatherHead(head(), KEY); // same moment: nothing new to save
+    expect(saved).toHaveLength(1);
+    // relaunch with the saved memory: the same moment shows the same line, the next one a different line
+    initCopyMemory(saved.at(-1)!, null);
+    expect(weatherHead(head(), KEY)).toBe(first);
+    expect(weatherHead(head(), { ...KEY, hour: KEY.hour + 1 })).not.toBe(first);
+    // junk from storage is ignored
+    initCopyMemory('junk' as unknown as CopyMemory, null);
+    expect(typeof weatherHead(head(), KEY)).toBe('string');
   });
 });
 

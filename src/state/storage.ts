@@ -1,3 +1,4 @@
+import type { CopyMemory } from '@/data/copy';
 import { isIsland, RECENTS_MAX } from '@/data/islands';
 import type { ApiIsland } from '@/data/types';
 
@@ -7,6 +8,8 @@ export const LS_ISLE = 'naiboli.island.v1';
 export const LS_RECENTS = 'naiboli.recents.v1';
 /** `1` while immersive mode (scene without the bottom panel) is on. */
 export const LS_IMMERSIVE = 'naiboli.immersive.v1';
+/** Last message shown per copy category (`CopyMemory`), so the next one differs. */
+export const LS_COPY = 'naiboli.copyMemory.v1';
 /** `1` once the first-run "Where are you?" sheet has been shown. */
 export const LS_ASKED = 'naiboli.locAsked.v1';
 
@@ -51,6 +54,11 @@ export function makeStorage(kv: KV) {
       return (await get(LS_IMMERSIVE)) === 1;
     },
     setImmersive: (on: boolean) => set(LS_IMMERSIVE, on ? 1 : 0),
+    async copyMemory(): Promise<CopyMemory | null> {
+      const m = await get(LS_COPY);
+      return m && typeof m === 'object' && !Array.isArray(m) ? (m as CopyMemory) : null;
+    },
+    saveCopyMemory: (m: CopyMemory) => set(LS_COPY, m),
   };
 }
 

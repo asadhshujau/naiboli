@@ -9,8 +9,36 @@
 import type { Factor } from '../types';
 import type { WxKey } from '../weather';
 import { CAUTION, DANGER_FACTORS, GO, GO_ACT, IDEAL, MAYBE, MAYBE_FACTOR, SKIP, SKIP_FUN, SKIP_SAFE, WAIT } from './activities';
-import { fill, pickLine } from './pick';
+import { fill, hash } from './pick';
 import { BREEZY, HEAD, HOT, HOUR, HOUR_DANGER, ISLAND, MORNING, STORM, WARN } from './weather';
+
+/** Last line shown per category, and for which island / date / hour (`seed`). Persisted by the app. */
+export type CopyMemory = Record<string, { seed: string; line: string }>;
+
+let memory: CopyMemory = {};
+let onMemory: ((m: CopyMemory) => void) | null = null;
+
+/** Load the remembered lines (at launch) and get told when they change (to save them). */
+export function initCopyMemory(m: CopyMemory | null, onChange: ((m: CopyMemory) => void) | null) {
+  memory = m && typeof m === 'object' ? { ...m } : {};
+  onMemory = onChange;
+}
+
+/**
+ * Pick a line for a category: stable for the same island / date / hour (asking again returns the same line), and
+ * never the line this category showed last time, at another moment, when there's a choice.
+ */
+function choose(lines: string[], cat: string, k: CopyKey): string {
+  if (!lines.length) return '';
+  const seed = `${k.island}|${k.day}|${k.hour}`;
+  const prev = memory[cat];
+  if (prev && prev.seed === seed && lines.includes(prev.line)) return prev.line;
+  let i = hash(`${cat}|${seed}`) % lines.length;
+  if (prev && lines.length > 1 && lines[i] === prev.line) i = (i + 1) % lines.length;
+  memory[cat] = { seed, line: lines[i] };
+  onMemory?.(memory);
+  return lines[i];
+}
 
 /** Where and when a message is shown: the seed. `day` = days since the epoch (local date), `hour` = 0–23. */
 export interface CopyKey {
@@ -47,7 +75,7 @@ export function headPool(a: HeadArgs, hour: number): { cat: string; lines: strin
 /** Current-weather headline ("Glorious out there."). */
 export function weatherHead(a: HeadArgs, k: CopyKey): string {
   const { cat, lines } = headPool(a, k.hour);
-  return fill(pickLine(lines, cat, k.island, k.day, k.hour), { temp: a.temp, feels: a.feels, wind: a.wind, island: a.island });
+  return fill(choose(lines, cat, k), { temp: a.temp, feels: a.feels, wind: a.wind, island: a.island });
 }
 
 export type HourWord = keyof typeof HOUR;
@@ -55,7 +83,7 @@ export type HourWord = keyof typeof HOUR;
 /** Scrubbed-hour headline ("3 PM looks good."). `danger` = thunder or gusts ≥ 50 km/h at that hour. */
 export function hourHead(word: HourWord, danger: boolean, hourLabel: string, k: CopyKey): string {
   const lines = danger ? HOUR_DANGER : HOUR[word];
-  return fill(pickLine(lines, danger ? 'hour:danger' : 'hour:' + word, k.island, k.day, k.hour), { hour: hourLabel });
+  return fill(choose(lines, danger ? 'hour:danger' : 'hour:' + word, k), { hour: hourLabel });
 }
 
 export interface LeadArgs {
@@ -87,7 +115,7 @@ export function leadPool(a: LeadArgs): { cat: string; lines: string[]; safe: boo
 /** Verdict sentence that leads the activity detail line. */
 export function actLead(a: LeadArgs, k: CopyKey): string {
   const { cat, lines } = leadPool(a);
-  return fill(pickLine(lines, cat, k.island, k.day, k.hour), { activity: a.activity });
+  return fill(choose(lines, cat, k), { activity: a.activity });
 }
 
 /** Island sheet "now" chip about the beach: a tide fact, never a rating of the island. `n` = tide level 0–1. */

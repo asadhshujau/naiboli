@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { initCopyMemory } from '@/data/copy';
 import { dataStore, launchPrefs, storage } from '@/state/app';
 import { onReconnect } from '@/state/network';
 import { FONT_SOURCES } from '@/ui/fonts';
@@ -19,9 +20,15 @@ export default function RootLayout() {
   useEffect(() => {
     let alive = true;
     // Launch always opens the saved island (rendered from the stored object), else Malé unsaved.
-    Promise.all([storage.loadIsland(), storage.loadRecents(), storage.immersive()]).then(([saved, recents, immersive]) => {
+    let saveT: ReturnType<typeof setTimeout> | undefined;
+    Promise.all([storage.loadIsland(), storage.loadRecents(), storage.immersive(), storage.copyMemory()]).then(([saved, recents, immersive, copy]) => {
       if (!alive) return;
       launchPrefs.immersive = immersive;
+      // Messages don't repeat the last line per category; the memory is saved a second after it changes.
+      initCopyMemory(copy, (m) => {
+        clearTimeout(saveT);
+        saveT = setTimeout(() => void storage.saveCopyMemory(m), 1000);
+      });
       dataStore.init(saved, recents);
       dataStore.start();
       setDataReady(true);
@@ -37,6 +44,7 @@ export default function RootLayout() {
     const offNet = onReconnect(NetInfo.addEventListener, () => dataStore.retryNow());
     return () => {
       alive = false;
+      clearTimeout(saveT);
       sub.remove();
       offNet();
       dataStore.stop();
