@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "naiboli",
-    "slug": "naiboli",
+    "slug": "naiboli-forecast-for-fun",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -61,6 +61,17 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "b1b1861a-4225-4e22-9add-ae4f87e4edaf"
+      }
+    },
+    "owner": "shujaudev"
   }
 }
