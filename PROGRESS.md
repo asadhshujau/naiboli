@@ -74,6 +74,10 @@ happen:
      pools as the fallback.
    - **Tone per place** (user): activities can be friendly-brutal / silly / anything ("break a leg"). **Islands:
      friendly and silly, never belittling and never overhyping one island over another.**
+   - **Safety first, everywhere** (user): the tone rules above never apply to safety. When a verdict is "skip" for
+     a dangerous reason (storm, strong wind / gusts, thunder, dark water), the message is clear and calm, no jokes;
+     the forecast alert, activity safety tips (`tip` in `ACTS`, `FTIP` in `sheets.ts`) and "stay ashore" advice are
+     never replaced or softened by playful copy.
    - **Island detail fixes that belong to this** (About the island sheet, `isleView` in `src/state/sheets.ts`):
      - The now-chip "Beach average / narrow / wide" (`Beach ${beachWord}`, word from tide level at line ~218) reads
        like a rating of the island, though it only means how much sand the tide leaves right now. Reword as a tide
