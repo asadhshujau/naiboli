@@ -40,43 +40,11 @@ happen:
    (top HUD? scrubber?), whether it's remembered (AsyncStorage). Mind the glass blur rects (`useGlassRegistry`) and the
    bubble placement limits in `index.tsx` (they assume the panel is there).
 
-4. **Varied, friendly-silly messages** (user, 2026-11-05). Today each weather mood has exactly one headline
-   (`headEn` in `MOODS`, `src/data/mood.ts`: "Glorious out there.", "Bring a towel."…), the scrubbed-hour headline is
-   one template ("3 PM looks good." in `src/state/view.ts`), and the activity detail line is a fixed verdict line +
-   reason (`line` in `buildDetail`, `src/state/sheets.ts`). Same conditions → same words every time.
-   **Decision: app side** (user OK with it as long as it doesn't slow the app):
-   - Cost is nil: a few hundred short strings (~15–20 KB in the bundle) and one array pick inside builders that
-     already run only on data / hour changes (memoised). Works offline and with the local fallback scores; no API
-     round trip. Copy changes without a store release come later via OTA updates (see "Nice to have").
-   - Categories: weather = mood key (sunny, fair, windy, overcast, showers, storm, night, golden) × modifiers (hot,
-     breezy, warning ahead, time of day); scrubbed hour = verdict word (brilliant / good / so-so / grim); activity =
-     verdict (go / maybe / after sunrise / skip) × activity × main limiting factor (wind, rain, tide, daylight, UV…).
-   - Templates with slots (`{temp}`, `{wind}`, `{activity}`, `{hour}`, `{island}`), filled from the same data, so the
-     message is always true to the numbers.
-   - Variety without flicker: deterministic pick, seed = hash(category, island, date, hour). Stable while you look
-     (no change on the 60 s tick or re-render), different across hours, days and islands. Optionally avoid the
-     last-shown line per category (AsyncStorage).
-   - Tone rules: silly is fine; safety never is. Storm / warning categories stay calm and clear, the factual
-     warning text (`warningOf`) is never replaced, and the "Stay ashore" sense must survive in every variant.
-     The factual sub-lines (conditions, feels-like, reasons) stay factual.
-   - Copy in one easy-to-edit module (e.g. `src/data/copy/`), drafted by Claude, reviewed by the user. Tests: every
-     category has ≥ N lines, all slots resolve, picks are deterministic, storm/warning lines pass a "no jokes about
-     danger" list. Leaves room for Dhivehi copy later (Thaana fonts are already bundled).
-   - API alternative, if wanted later: the API sends a `category` + optional message override; the app keeps the
-     pools as the fallback.
-   - **Tone per place** (user): activities can be friendly-brutal / silly / anything ("break a leg"). **Islands:
-     friendly and silly, never belittling and never overhyping one island over another.**
-   - **Safety first, everywhere** (user): the tone rules above never apply to safety. When a verdict is "skip" for
-     a dangerous reason (storm, strong wind / gusts, thunder, dark water), the message is clear and calm, no jokes;
-     the forecast alert, activity safety tips (`tip` in `ACTS`, `FTIP` in `sheets.ts`) and "stay ashore" advice are
-     never replaced or softened by playful copy.
-   - **Island detail fixes that belong to this** (About the island sheet, `isleView` in `src/state/sheets.ts`):
-     - The now-chip "Beach average / narrow / wide" (`Beach ${beachWord}`, word from tide level at line ~218) reads
-       like a rating of the island, though it only means how much sand the tide leaves right now. Reword as a tide
-       fact with a friendly twist (e.g. "Tide's out · extra beach" / "Tide's in · cosy beach"); never "average".
-     - Beach / reef row tags reuse activity verdicts ("Surf: Skip", "Snorkel: Skip"): phrase them as *right now*
-       conditions, not a judgement of the spot (e.g. "Snorkel later" / "Calmer later"), or show them only when
-       positive. Parity tests for `isleView` change accordingly (expected difference from the prototype).
+4. ✅ **Varied, friendly-silly messages** — built 2026-11-05, see "History of the fix round". **Copy needs the
+   user's review:** `src/data/copy/weather.ts` (headlines) and `src/data/copy/activities.ts` (activity lines).
+   Not done (optional, from the plan): avoid repeating the last-shown line (AsyncStorage); API `category` /
+   message override; Dhivehi copy. Open question: the Tide sheet's "Beach: Narrow / Wide / Average" field
+   (`buildTide`) still uses the old words; it sits under the tide so reads as a tide fact — reword too?
 
 5. ✅ **Data refresh** — done 2026-11-05 (retries + tap to retry, no pull-to-refresh), see "History of the fix
    round". Not done (optional): refetch on network reconnect (`@react-native-community/netinfo`, native module →
@@ -141,6 +109,25 @@ Nice to have (not required)
 - [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
 
 ### History of the fix round
+
+**Varied messages (2026-11-05, planned feature 4):** `src/data/copy/` — pools in `weather.ts` / `activities.ts`,
+builders in `index.ts`, hash pick + `{slot}` filling in `pick.ts`. App side, no API, works offline.
+- Current-weather headline (live moods only; sample moods keep the canned line): pool per mood key, plus hot
+  (feels ≥ 36°), breezy (≥ 20 km/h), morning (5–10) and island lines. Storm → `STORM`, any forecast alert → `WARN`:
+  calm, every line says "stay ashore". Scrubbed hour: pool per verdict word; thunder or gusts ≥ 50 km/h at that
+  hour → `HOUR_DANGER` (calm, "stay ashore"). `View.copyKey` / `View.danger`.
+- Activity detail: only the leading verdict sentence varies (`ActDetail.lead`); the reason / "Sunrise is at" part is
+  untouched. Go / ideal draw from generic + per-activity lines; maybe from generic + per-factor; skip for harmless
+  reasons (UV, heat, tide, rain) can be playful; skip for wind / haze / darkness, or any thunder / strong gusts at
+  that hour, uses calm pools (`SKIP_SAFE`, `CAUTION`). Safety tips, `warningOf` text and sub-lines unchanged.
+- Pick = hash(category, island id, local date, hour): stable while you look, varies by hour, day, island.
+- About the island: beach chip is a tide fact ("Tide’s in · cosy beach" / "Tide’s out · bonus beach" / "Mid tide ·
+  towel room"); surf / snorkel tags describe right now ("Surf’s on now", "OK to snorkel", "Surf later",
+  "Snorkel after sunrise"), with "later" tags in a neutral sand colour instead of verdict red.
+- Tests: `src/data/__tests__/copy.test.ts` (pool sizes, slots, length ≤ 36, uniqueness, determinism, variety,
+  calm pools free of jokes / "!" / "?", "ashore" in every storm / alert line, routing of danger cases) and view
+  checks in the sheets parity test; parity tests compare the factual part of `line` with the prototype.
+**Check on device:** headline length on small phones (longest lines ~36 chars), storm / alert days.
 
 **Data refresh (2026-11-05, planned feature 5):** a failed *first* load of weather, tide or the island list used to
 stay failed until island change / midnight / restart. Now (`src/state/store.ts`):
@@ -284,6 +271,9 @@ Still unchecked: iOS (no build yet — `BalancedText`, wordmark baseline, keyboa
   bar text is dark during the splash (README says "light content", invisible on #FBF6EC).
 - Sheet slide distance is 105 % of the max sheet height, not of the sheet's own height (avoids a stale-height
   flash; identical for tall sheets, short sheets start lower).
+- Varied copy (user request): headlines, scrubbed-hour headline and the activity verdict sentence are picked from
+  pools (`src/data/copy/`); the island sheet's beach chip and surf / snorkel tags are reworded. The prototype's
+  lines are the first line of each pool.
 - Island picker with an empty search: current island + recents + popular padding instead of the fixed popular six
   (user request; identical to the prototype on first run at Malé).
 - Added platform conventions not in the prototype: pressed states dim, drag a sheet down to close, keyboard lifts

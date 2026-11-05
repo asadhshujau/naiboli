@@ -3,11 +3,12 @@
  * HUD, bottom panel and scene input; bubble and sheet values are in `./sheets`.
  */
 import { actAt, actDefs, apiAt, makeScorer, SAIL_INDEX, type ActDefLive, type Scorer } from '@/data/activities';
+import { hourHead, weatherHead, type CopyKey } from '@/data/copy';
 import { labelOf, wxKey } from '@/data/islands';
 import { hourView, rainAt, resolveMood, tempAt, windAt, type Mood } from '@/data/mood';
 import { sunState } from '@/data/sun';
 import { tideView, type TideView } from '@/data/tide';
-import { dayLabel, fmt, fmtHr, hOfUnix } from '@/data/time';
+import { dayLabel, fmt, fmtHr, hOfUnix, md24 } from '@/data/time';
 import { isData, type ActEntry, type Acts, type Sun, type Tide } from '@/data/types';
 import { VC, verdictLabel, type VerdictKey } from '@/data/verdict';
 import { moonDataFor, sample, uvWordOf, windWordOf, type Phrases } from '@/data/weather';
@@ -112,6 +113,10 @@ export interface View {
   eyebrow: string;
   head: string;
   sub: string;
+  /** seed for the varied copy at the selected hour (island, date, hour) */
+  copyKey: CopyKey;
+  /** thunder or gusts ≥ 50 km/h at the selected hour: playful copy stays out */
+  danger: boolean;
   /** the sub line is the offline message: tapping it retries */
   retry: boolean;
   warning: Mood['warning'];
@@ -228,7 +233,15 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   const whenLabel = isLater ? `Forecast · ${dayLabel(hSel, day0)} · ${fmt(Math.floor(hSel))}` : `Today · Now`;
   const best = acts[0];
   const word = !best ? 'grim' : best.s >= 8.5 ? 'brilliant' : best.s >= 7 ? 'good' : best.s >= 5 ? 'so-so' : 'grim';
-  const head = isLater ? `${fmt(Math.floor(hSel)).replace(':00', '')} looks ${word}.` : m.headEn;
+  // Varied copy (src/data/copy): seeded by island, local date and hour; sample moods keep their canned line.
+  const keyAt = (h: number): CopyKey => ({ island: d.island.id, day: Math.round(day0 / 86400) + Math.floor(h / 24), hour: Math.floor(md24(h)) });
+  const copyKey = keyAt(hSel);
+  const danger = m.flash || m.gust >= 50;
+  const head = isLater
+    ? hourHead(word, danger, fmt(Math.floor(hSel)).replace(':00', ''), copyKey)
+    : m.live
+      ? weatherHead({ key: m.key, temp: m.temp, feels: m.feels, wind: m.wind, warning: !!m.warning, island: d.island.english_name }, keyAt(m.hour))
+      : m.headEn;
   const sub = isLater
     ? `Best bet: ${best?.name}. ${temp}°, wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.`
     : m.offline
@@ -275,7 +288,8 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
     eyebrow,
     head,
     sub,
-    /** the sub line is the offline message: tapping it retries */
+    copyKey,
+    danger,
     retry: !isLater && m.offline,
     warning: m.warning,
     hasWarning: !!m.warning && !isLater,

@@ -6,6 +6,7 @@
  * Pure: actions are returned as data (`SheetTarget`), never as closures.
  */
 import { ACTS, actAt, FACTORS, FTIP, FWORD, windowOf, type ActDefLive } from '@/data/activities';
+import { actLead, beachNow, spotTag } from '@/data/copy';
 import { accIcon, atollLine, pickerIslands, wxKey } from '@/data/islands';
 import type { GeoStatus } from '@/data/location';
 import { condAt, iconAt, rainAt, tempAt } from '@/data/mood';
@@ -101,7 +102,8 @@ interface IsleArgs {
   icon: string;
   tideN: number;
   tideRising: boolean;
-  beachWord: string;
+  /** "now" chip about the beach (a tide fact, see `beachNow`) */
+  beachLine: string;
 }
 
 /** `isleView()` */
@@ -111,7 +113,12 @@ export function isleView(o: IsleArgs): IsleView {
   const A = o.D?.access ?? [];
   const vd = (id: string) => {
     const a = o.acts.find((x) => x.id === id);
-    return a ? { bg: a.lBg, ink: a.lInk, v: a.v } : null;
+    return a ? { bg: a.lBg, ink: a.lInk, v: a.v, k: a.k } : null;
+  };
+  // Right-now conditions, not a judgement of the spot: "Surf later" in a calm neutral, not a red "Skip".
+  const tagOf = (what: 'Surf' | 'Snorkel', x: NonNullable<ReturnType<typeof vd>>): IsleTag => {
+    const st = spotTag(what, x.k);
+    return st.tone === 'later' ? { t: st.t, bg: '#F1E9DA', ink: '#5B4A2A' } : { t: st.t, bg: x.bg, ink: x.ink };
   };
   const surf = vd('surf');
   const snork = vd('snorkel');
@@ -124,7 +131,7 @@ export function isleView(o: IsleArgs): IsleView {
     const sb = /surf/i.test(nm);
     const tag: IsleTag | null =
       sb && surf
-        ? { t: `Surf: ${surf.v}`, bg: surf.bg, ink: surf.ink }
+        ? tagOf('Surf', surf)
         : bank
           ? o.tideN < 0.35
             ? { t: 'Low tide now', bg: '#D3F4E9', ink: '#0B6B57' }
@@ -144,7 +151,7 @@ export function isleView(o: IsleArgs): IsleView {
     name: r.name || 'Reef',
     meta: [capF(String(r.type || 'reef').replace(/_/g, ' ')), r.distance].filter(Boolean).join(' · '),
     hasTag: !!snork,
-    tag: snork ? { t: `Snorkel: ${snork.v}`, bg: snork.bg, ink: snork.ink } : none,
+    tag: snork ? tagOf('Snorkel', snork) : none,
   }));
   const any = B.length || R.length || A.length || o.D?.description;
   let la = o.lat;
@@ -169,7 +176,7 @@ export function isleView(o: IsleArgs): IsleView {
     now: [
       { icon: o.icon, t: `${o.temp}° · ${o.cond}` },
       { icon: o.tideRising ? 'north_east' : 'south_east', t: `Tide ${o.tideRising ? 'rising' : 'falling'}` },
-      { icon: 'beach_access', t: `Beach ${o.beachWord}` },
+      { icon: 'beach_access', t: o.beachLine },
     ],
     access: A.map((x) => ({ label: x, icon: accIcon(x) })),
     hasAccess: !!A.length,
@@ -215,7 +222,7 @@ export function buildIsle(v: View, d: DataState): IsleView {
     icon: v.m.icon,
     tideN: t.n,
     tideRising: t.rising,
-    beachWord: t.n > 0.72 ? 'narrow' : t.n < 0.3 ? 'wide' : 'average',
+    beachLine: beachNow(t.n),
   });
 }
 
@@ -395,6 +402,8 @@ export interface ActDetail extends ActRow {
   vBig: string;
   vWord: string;
   vInk: string;
+  /** the varied verdict sentence that starts `line` (the rest of `line` is factual) */
+  lead: string;
   line: string;
   window: string;
   tip: string;
@@ -464,18 +473,20 @@ export function buildDetail(b: ViewBase, v: View, actId: string | null): ActDeta
       sel: y.di === dSel,
     };
   });
+  const lead = actLead({ verdict: A.k, ideal, act: A.id, activity: A.name, lim: lim0, danger: v.danger }, v.copyKey);
   return {
     ...A,
     headBg: vc.head,
     vBig: ideal ? 'Ideal.' : vc.big,
     vWord: vc.light.word,
     vInk: vc.light.ink,
+    lead,
     line:
       A.k === 'wait'
-        ? `${vc.line} ${e && e.c != null ? `Conditions otherwise score ${e.c.toFixed(1)}. ` : ''}Sunrise is at ${fmt(b.sun.rise)}.`
+        ? `${lead} ${e && e.c != null ? `Conditions otherwise score ${e.c.toFixed(1)}. ` : ''}Sunrise is at ${fmt(b.sun.rise)}.`
         : ideal
-          ? `Couldn’t ask for better. ${A.base}.`
-          : `${vc.line} ${A.reason}.`,
+          ? `${lead} ${A.base}.`
+          : `${lead} ${A.reason}.`,
     window: win.text,
     tip: lim0 && FTIP[lim0] ? `${FTIP[lim0]} ${A.tip}` : A.tip,
     hours: win.hrs.map((x, j) => ({ h: Math.max(6, x.s * 10), c: VC[x.k].fill, ring: j === selIdx, label: j % 6 === 0 ? (j ? fmtHr(x.h) : 'Now') : '' })),

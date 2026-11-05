@@ -27,7 +27,10 @@ import {
   type BubbleKind,
   type Perm,
   type SheetTarget,
+  type IsleView,
 } from '../sheets';
+import { beachNow, spotTag } from '@/data/copy';
+import { VC } from '@/data/verdict';
 import type { DataState } from '../store';
 import { buildBase, buildView } from '../view';
 
@@ -253,9 +256,15 @@ describe.each(SCENARIOS)('$name', (sc) => {
 
     for (const a of v.acts) {
       const t = render(c, { offset: o, sheet: 'act', actId: a.id });
-      const mine = buildDetail(base, v, a.id)!;
+      const { lead, ...mine } = buildDetail(base, v, a.id)!;
+      // Expected difference: the verdict sentence that leads `line` is varied copy; the factual rest is the prototype's.
+      const protoLead = a.k === 'wait' ? VC.wait.line : mine.vBig === 'Ideal.' ? 'Couldn’t ask for better.' : VC[a.k].line;
+      const tl = (t.d as { line: string }).line;
+      expect(tl.startsWith(protoLead + ' ')).toBe(true);
+      expect(mine.line).toBe(lead + tl.slice(protoLead.length));
       const norm = {
         ...mine,
+        line: tl,
         hours: mine.hours.map((h) => ({ ...h, ring: h.ring ? '0 0 0 2px #FFFFFF, 0 0 0 3.5px #0A3346' : 'none' })),
         days: mine.days.map(({ sel, sep, ...y }) => ({ ...y, sep: css(sep), bg: sel ? 'rgba(18,181,176,.08)' : 'transparent' })),
       };
@@ -285,8 +294,47 @@ describe.each(SCENARIOS)('$name', (sc) => {
   it.each(OFFSETS)('about-the-island matches at +%ih', (o) => {
     const { c, d, base } = setup(sc);
     const v = buildView(base, d, o);
-    const theirs = render(c, { offset: o, sheet: 'isle' });
-    expect(buildIsle(v, d)).toEqual(noFns(theirs.isle));
+    const theirs = noFns(render(c, { offset: o, sheet: 'isle' }).isle) as IsleView;
+    const mine = buildIsle(v, d);
+    // Expected differences: the beach chip is a tide fact, surf / snorkel tags are right-now conditions.
+    const strip = (x: IsleView) => ({
+      ...x,
+      now: x.now.slice(0, 2),
+      beaches: x.beaches.map(({ tag, ...b }) => b),
+      reefs: x.reefs.map(({ tag, ...r }) => r),
+    });
+    expect(strip(mine)).toEqual(strip(theirs));
+    expect(mine.now[2]).toEqual({ icon: 'beach_access', t: beachNow(v.tide.n) });
+    const k = (id: string) => v.acts.find((x) => x.id === id)!.k;
+    mine.beaches.forEach((b, i) => {
+      const th = theirs.beaches[i].tag;
+      if (th.t.startsWith('Surf: ')) expect(b.tag.t).toBe(spotTag('Surf', k('surf')).t);
+      else expect(b.tag).toEqual(th);
+    });
+    mine.reefs.forEach((r) => r.hasTag && expect(r.tag.t).toBe(spotTag('Snorkel', k('snorkel')).t));
+  });
+});
+
+describe('varied copy in the view', () => {
+  it('headline: storm / alert → calm "stay ashore" lines; live weather varies by hour; sample moods keep their line', () => {
+    const storm = setup(SCENARIOS[1]);
+    for (const o of OFFSETS) {
+      const v = buildView(storm.base, storm.d, o);
+      if (o === 0) expect(v.head.toLowerCase()).toContain('ashore');
+      if (v.danger) expect(v.head.toLowerCase()).toContain('ashore');
+      for (const a of v.acts) {
+        const det = buildDetail(storm.base, v, a.id)!;
+        if (v.danger) expect(det.lead).not.toMatch(/!|\?/);
+      }
+    }
+    const live = setup(SCENARIOS[0]);
+    const v0 = buildView(live.base, live.d, 0);
+    expect(buildView(live.base, live.d, 0).head).toBe(v0.head); // stable
+    if (!v0.m.warning && v0.m.key !== 'stormy') expect(v0.head).not.toBe('');
+    const sampleMood = setup(SCENARIOS[4]);
+    const vs = buildView(sampleMood.base, sampleMood.d, 0);
+    expect(vs.m.live).toBe(false);
+    expect(vs.head).toBe(vs.m.headEn);
   });
 });
 
