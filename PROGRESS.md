@@ -17,8 +17,9 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 
 ## Pending — start here when asked "what's pending?"
 All 5 phases and the first fix round are done. Android dev build tested on device 2026-11-05: all good. Since then
-(2026-11-05, not yet on a device): app ID `dev.shujau.naiboli`, island picker recents, varied messages, data refresh
-retries. Nothing is in progress. Items marked **🔧 native** change the native app: do them *before* the next dev
+(2026-11-05, not yet on a device): app ID `dev.shujau.naiboli`, name "Naiboli", island picker recents, varied
+messages, data refresh retries + reconnect + tap to refresh, API env config, OTA updates. **Next: a new Android
+dev build** (`npx eas-cli@latest build --profile development --platform android`), then section D. Items marked **🔧 native** change the native app: do them *before* the next dev
 build so it isn't wasted; everything else is JS and can follow later (Metro / OTA).
 
 ### A. To build (planned by the user)
@@ -62,7 +63,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 11. **Remove template leftovers:** unused `web` block in `app.json`, `scripts/reset-project.js`,
     `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`. Housekeeping.
 12. **Messages, extras from the plan:** don't repeat the last-shown line per category (AsyncStorage); API
-    `category` + message override; Dhivehi copy (Thaana fonts already bundled). JS only.
+    `category` + message override. JS only. (Dhivehi copy: not wanted — user, 2026-11-05.)
 13. ✅ **Tap the time line to refresh** (2026-11-05): the HUD eyebrow ("Today · Wed 5 · 2:00 PM", now only) is a
     button: `dataStore.refresh()` refetches weather + scores unless fetched < 30 s ago (`REFRESH_MIN_MS`), retries
     failures, and shows "· Updating" until done (`DataState.refreshing`); data stays on screen. Scrubbed ahead, the
