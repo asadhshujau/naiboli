@@ -56,7 +56,10 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
     `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`. Housekeeping.
 12. **Messages, extras from the plan:** don't repeat the last-shown line per category (AsyncStorage); API
     `category` + message override; Dhivehi copy (Thaana fonts already bundled). JS only.
-13. **"Updating" eyebrow as a tap-to-refresh** too (only the offline line is tappable now). JS only; small.
+13. ✅ **Tap the time line to refresh** (2026-11-05): the HUD eyebrow ("Today · Wed 5 · 2:00 PM", now only) is a
+    button: `dataStore.refresh()` refetches weather + scores unless fetched < 30 s ago (`REFRESH_MIN_MS`), retries
+    failures, and shows "· Updating" until done (`DataState.refreshing`); data stays on screen. Scrubbed ahead, the
+    line lets taps through to the scene as before.
 
 ### D. Check on the next dev build
 - New package name: installs as a separate app — uninstall the old `com.anonymous.naiboli` build first.
@@ -67,6 +70,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
   the line → reloads at once; background / foreground while offline → no errors.
+- Tap the time line above the headline → "· Updating" briefly, then fresh data; it doesn't steal sky taps much.
 - Tide sheet: "Towel room" / "Extra sand" fit the Beach stat column (26 pt) or wrap nicely.
 - Messages: headline length on a small phone (longest ~36 chars); a storm / alert day shows calm "stay ashore"
   lines; About the island chips and surf / snorkel tags.

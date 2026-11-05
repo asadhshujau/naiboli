@@ -16,10 +16,12 @@ interface Props {
   onTemp: () => void;
   onWarning: () => void;
   onRetry: () => void;
+  /** tap on the time line (now only): refresh */
+  onRefresh: () => void;
 }
 
 /** Top HUD: menu, island chip, temperature chip, eyebrow, headline, sub, warning chip. */
-export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry }: Props) {
+export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry, onRefresh }: Props) {
   const insets = useSafeAreaInsets();
   const { hud } = v;
   const shadow = hud.shadow ? HUD_TEXT_SHADOW : null;
@@ -50,8 +52,18 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry }: Prop
         </GlassView>
       </View>
       <View pointerEvents="box-none">
+        {/* now: the time line is a refresh button ("· Updating" while it runs); scrubbed ahead it lets taps through */}
+        <Pressable
+          onPress={onRefresh}
+          disabled={v.isLater}
+          pointerEvents={v.isLater ? 'none' : 'auto'}
+          hitSlop={{ top: 10, bottom: 6, left: 8, right: 8 }}
+          style={({ pressed }) => [s.eyebrowWrap, pressed && s.pressed]}
+          accessibilityRole="button"
+          accessibilityLabel={`${v.eyebrow}. Refresh`}>
+          <Text style={[T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
+        </Pressable>
         <View pointerEvents="none">
-          <Text style={[s.eyebrow, T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
           <BalancedText style={[s.head, T.bric(800, 40, { lh: 0.98, ls: -0.04 }), { color: hud.ink }, shadow]}>{v.head}</BalancedText>
         </View>
         {/* offline: the sub line is a retry button; otherwise taps go through to the scene */}
@@ -88,7 +100,7 @@ const s = StyleSheet.create({
   tempPad: { gap: 4, paddingLeft: 10, paddingRight: 14 },
   spacer: { flex: 1 },
   shrink: { flexShrink: 1 },
-  eyebrow: { marginTop: 22 },
+  eyebrowWrap: { marginTop: 22, alignSelf: 'flex-start' },
   head: { marginTop: 8 },
   subWrap: { marginTop: 8, maxWidth: 300, alignSelf: 'flex-start' },
   pressed: { opacity: 0.6 },

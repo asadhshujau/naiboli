@@ -251,7 +251,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
         : m.sub;
   const eyebrow = isLater
     ? `${dayLabel(hSel, day0)} · ${fmt(Math.floor(hSel))}`
-    : `Today · ${dayLabel(m.hour, day0)} · ${fmt(m.hour)}${m.loading && m.live ? ' · Updating' : ''}`;
+    : `Today · ${dayLabel(m.hour, day0)} · ${fmt(m.hour)}${(m.loading && m.live) || d.refreshing ? ' · Updating' : ''}`;
 
   const ribbon: View['ribbon'] = [];
   for (let o = 0; o < 24; o++) {

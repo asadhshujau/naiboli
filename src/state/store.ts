@@ -22,6 +22,8 @@ import type { Storage } from './storage';
 export const STALE_MS = 10 * 60 * 1000;
 export const CLOCK_MS = 60 * 1000;
 /** Wait before the n-th clock retry of a failed load (n = failures so far, from 1); last value repeats. */
+/** A manual refresh skips data fetched less than this long ago. */
+export const REFRESH_MIN_MS = 30 * 1000;
 export const RETRY_MS = [1, 2, 4, 8, 10].map((m) => m * 60 * 1000);
 
 export interface DataState {
@@ -43,6 +45,8 @@ export interface DataState {
   lastTide: Tide | null;
   /** last known sunrise/sunset */
   sun: Sun;
+  /** a manual refresh (tap on the HUD time line) is running */
+  refreshing: boolean;
   /** Date.now() of the last clock tick — changes once a minute so views re-render */
   clock: number;
 }
@@ -74,6 +78,7 @@ export function createDataStore(deps: StoreDeps) {
     lastW: null,
     lastTide: null,
     sun: DEFAULT_SUN,
+    refreshing: false,
     clock: now(),
   };
   const listeners = new Set<() => void>();
@@ -105,7 +110,8 @@ export function createDataStore(deps: StoreDeps) {
     listeners.forEach((l) => l());
   }
 
-  function ensureWx(I: ApiIsland, force = false) {
+  /** Returns the request when one starts. */
+  function ensureWx(I: ApiIsland, force = false): Promise<void> | undefined {
     const k = wxKey(I);
     const cur = state.wx[k];
     if (inflight.wx[k] || (!force && cur && cur !== 'err')) return;
@@ -113,7 +119,7 @@ export function createDataStore(deps: StoreDeps) {
     const g = gen;
     const fl = inflight;
     if (!cur || cur === 'err') set((s) => ({ wx: { ...s.wx, [k]: 'loading' } }));
-    api
+    return api
       .weather(I.id, f)
       .then((j) => {
         const W = procWx(j, state.day0, now());
@@ -178,7 +184,8 @@ export function createDataStore(deps: StoreDeps) {
       });
   }
 
-  function ensureActs(I: ApiIsland, force = false) {
+  /** Returns the request when one starts. */
+  function ensureActs(I: ApiIsland, force = false): Promise<void> | undefined {
     const k = I.id;
     const cur = state.acts[k];
     if (inflight.acts[k] || (!force && cur && cur !== 'err')) return;
@@ -186,7 +193,7 @@ export function createDataStore(deps: StoreDeps) {
     const g = gen;
     const fl = inflight;
     if (!cur || cur === 'err') set((s) => ({ acts: { ...s.acts, [k]: 'loading' } }));
-    api
+    return api
       .activityScores(k, f)
       .then((j) => {
         const A = procActs(j, state.day0, now());
@@ -246,6 +253,26 @@ export function createDataStore(deps: StoreDeps) {
     if (!state.islands) loadList();
   }
 
+  /**
+   * Manual refresh (tap on the HUD time line): refetch weather and scores now unless fetched in the last 30 s,
+   * and retry anything that failed. `refreshing` is set while the refetch runs (the HUD shows "· Updating").
+   */
+  function refresh() {
+    if (state.refreshing) return;
+    const c = state.island;
+    const t = now();
+    const W = state.wx[wxKey(c)];
+    const AC = state.acts[c.id];
+    const ps = [
+      isData(W) && t - W.fetched < REFRESH_MIN_MS ? undefined : ensureWx(c, true),
+      isData(AC) && t - AC.fetched < REFRESH_MIN_MS ? undefined : ensureActs(c, true),
+    ].filter((p): p is Promise<void> => !!p);
+    retryNow();
+    if (!ps.length) return;
+    set({ refreshing: true });
+    void Promise.allSettled(ps).then(() => set({ refreshing: false }));
+  }
+
   function ensureAll(I: ApiIsland) {
     ensureWx(I);
     ensureTide(I);
@@ -303,6 +330,7 @@ export function createDataStore(deps: StoreDeps) {
     },
     tick,
     retryNow,
+    refresh,
 
     /** Any pick (manual or location): save, select, load everything for it. */
     pickIsland(I: ApiIsland) {

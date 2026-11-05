@@ -2,7 +2,7 @@ import { acts1069, NOW_MS, synthTide, weather1069 } from '@/data/__tests__/fixtu
 import { POP } from '@/data/islands';
 import { isData, type ApiIsland } from '@/data/types';
 import { makeStorage } from '../storage';
-import { CLOCK_MS, createDataStore, RETRY_MS, STALE_MS } from '../store';
+import { CLOCK_MS, createDataStore, REFRESH_MIN_MS, RETRY_MS, STALE_MS } from '../store';
 
 const male = POP[0];
 const hulhumale = POP[1]; // same weather anchor (27) as Malé
@@ -241,6 +241,36 @@ describe('data store', () => {
     const st = s.store.getState();
     expect(isData(st.wx['27']) && isData(st.tides[1069]) && isData(st.acts[1069]) && isData(st.isle[1069])).toBe(true);
     expect(st.islands).toHaveLength(1);
+  });
+
+  it('manual refresh: refetches weather and scores (not if just fetched), flags refreshing until done', async () => {
+    const s = setup();
+    s.store.start();
+    await flush();
+    const before = s.store.getState();
+    s.store.refresh(); // fetched just now: nothing to do
+    expect(s.count('/weather-for-island/')).toBe(1);
+    expect(s.store.getState().refreshing).toBe(false);
+    s.advance(REFRESH_MIN_MS);
+    s.store.refresh();
+    expect(s.count('/weather-for-island/')).toBe(2);
+    expect(s.count('/islands/1069/activity-scores')).toBe(2);
+    expect(s.store.getState().refreshing).toBe(true);
+    expect(s.store.getState().wx['27']).toBe(before.wx['27']); // data stays on screen
+    s.store.refresh(); // ignored while running
+    expect(s.count('/weather-for-island/')).toBe(2);
+    await flush();
+    await flush();
+    expect(s.store.getState().refreshing).toBe(false);
+    expect(s.store.getState().wx['27']).not.toBe(before.wx['27']);
+    // a failing refresh still ends, keeping the last good data
+    s.setRoute(() => 'network');
+    s.advance(REFRESH_MIN_MS);
+    s.store.refresh();
+    await flush();
+    await flush();
+    expect(s.store.getState().refreshing).toBe(false);
+    expect(isData(s.store.getState().wx['27'])).toBe(true);
   });
 
   it('an island without a usable tide feed is not retried', async () => {

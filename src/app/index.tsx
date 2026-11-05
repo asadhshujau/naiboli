@@ -217,6 +217,7 @@ export default function SceneScreen() {
             onTemp={() => dispatch({ type: 'openBubble', kind: 'temp', x: 340, y: 90 })}
             onWarning={() => dispatch({ type: 'openBubble', kind: 'warning', x: 200, y: 250 })}
             onRetry={dataStore.retryNow}
+            onRefresh={dataStore.refresh}
           />
           <TapHint seen={ui.hintSeen} />
           <BottomPanel

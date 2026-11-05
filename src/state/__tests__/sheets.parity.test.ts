@@ -172,6 +172,7 @@ function setup(sc: Scenario) {
     lastW: W,
     lastTide: T,
     sun: W ? sunOf(W) : DEFAULT_SUN,
+    refreshing: false,
     clock: NOW_MS,
   };
   const base = buildBase(d, NOW_MS);
