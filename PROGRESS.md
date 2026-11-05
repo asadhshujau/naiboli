@@ -139,5 +139,8 @@ npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Go
 - In the CanvasKit Jest harness, colour arrays must come from CanvasKit's realm (`scripts/scene-compare/ckRealm.ts`).
 - EAS Android build (2026-11-05): the Gradle daemon was killed (out of memory) while compiling C++ for 4 ABIs on the
   4 vCPU / 15.6 GB worker. The `development` profile in `eas.json` now builds arm64-v8a only
-  (`ORG_GRADLE_PROJECT_reactNativeArchitectures`). Preview/production still build all ABIs, so watch for the same failure.
+  (`ORG_GRADLE_PROJECT_reactNativeArchitectures`). That alone still ran out of memory (parallel CMake builds of
+  Reanimated / Worklets / Skia / expo-modules-core), so `plugins/withEasGradleLimits.js` sets
+  `org.gradle.workers.max=2` and a 2 GB Kotlin daemon heap, on EAS builds only (`EAS_BUILD=true`). If it still fails:
+  `resourceClass: "large"` in `eas.json` (paid plans) or limit ninja jobs per CMake build.
 - `git push` from the agent sandbox may fail with "Permission denied (publickey)"; it works outside the sandbox.

@@ -22,8 +22,7 @@
         "android.permission.ACCESS_FINE_LOCATION"
       ],
       "permissions": [
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "package": "com.anonymous.naiboli"
     },
@@ -33,6 +32,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withEasGradleLimits",
       [
         "expo-splash-screen",
         {
