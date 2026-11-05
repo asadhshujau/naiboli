@@ -7,6 +7,12 @@
     "icon": "./assets/images/icon.png",
     "scheme": "naiboli",
     "userInterfaceStyle": "automatic",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b1b1861a-4225-4e22-9add-ae4f87e4edaf"
+    },
     "ios": {
       "bundleIdentifier": "dev.shujau.naiboli"
     },

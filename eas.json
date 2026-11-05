@@ -10,19 +10,22 @@
       "env": {
         "ORG_GRADLE_PROJECT_reactNativeArchitectures": "arm64-v8a",
         "EXPO_PUBLIC_API_URL": "https://moodhu.dev/api"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://moodhu.dev/api"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "EXPO_PUBLIC_API_URL": "https://naiboli.shujau.dev/api"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {

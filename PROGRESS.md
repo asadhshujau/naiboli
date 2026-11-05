@@ -45,9 +45,15 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 6. ✅ **Production API: `https://naiboli.shujau.dev/api`** (user, 2026-11-05; may change → `eas.json`).
 
 ### C. Suggested by Claude (optional — say which to do)
-7. **🔧 native · OTA updates** (`expo-updates` + `eas update`, `runtimeVersion` policy): JS fixes and copy changes
-   ship without a new build or store review. Worth adding before the next build: every later JS change (copy
-   review, immersive mode, API config) could then reach the installed build without rebuilding.
+7. ✅ **🔧 native · OTA updates** (2026-11-05): `expo-updates` ~58.0.21; `updates.url` = EAS Update for the project,
+   `runtimeVersion.policy: "fingerprint"`, channels `development` / `preview` / `production` (= profile names) in
+   `eas.json`. Default behaviour: release builds check on launch, download in the background, apply on the next
+   cold start. **Publish with `npm run update:preview -- "message"` / `npm run update:production -- "message"`**
+   (`scripts/eas-update.mjs`: takes `EXPO_PUBLIC_*` + channel from `eas.json` → `build.<profile>`, runs
+   `npx eas-cli@latest update --channel … --environment …`; needs `eas login`). Dev builds load JS from Metro;
+   an update can be opened there from the dev menu's Extensions tab. `fingerprint.config.js` skips package.json
+   scripts and .gitignore on top of Expo's defaults (see Gotchas). **Rule from now on: a native change (new native
+   library, app.json native config, plugin, icon / splash asset) = new build; JS-only changes can go out as an update.**
 8. ✅ **🔧 native · Refetch on network reconnect** (2026-11-05): `@react-native-community/netinfo` 12.0.1;
    `onReconnect` (`src/state/network.ts`, offline → online transitions only) → `dataStore.retryNow()` in
    `_layout.tsx`. Native module: works from the next build (Expo Go also has it).
@@ -129,7 +135,8 @@ App Store
 - [ ] TestFlight round before review.
 
 Nice to have (not required)
-- [ ] OTA updates — Pending item 7. Crash reporting — Pending item 9.
+- [x] OTA updates — Pending item 7.
+- [ ] Crash reporting — Pending item 9.
 - [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
 
 ### History of the fix round
@@ -298,6 +305,8 @@ Still unchecked: iOS (no build yet — `BalancedText`, wordmark baseline, keyboa
 - Varied copy (user request): headlines, scrubbed-hour headline and the activity verdict sentence are picked from
   pools (`src/data/copy/`); the island sheet's beach chip and surf / snorkel tags are reworded. The prototype's
   lines are the first line of each pool.
+- The activity-score source ("Activity scores from moodhu.dev, updated …") and the Menu row for it are removed
+  (user decision); the "our own estimate" notice remains while scores are missing.
 - Island picker with an empty search: current island + recents + popular padding instead of the fixed popular six
   (user request; identical to the prototype on first run at Malé).
 - Added platform conventions not in the prototype: pressed states dim, drag a sheet down to close, keyboard lifts
@@ -338,4 +347,9 @@ npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Go
   Reanimated / Worklets / Skia / expo-modules-core), so `plugins/withEasGradleLimits.js` sets
   `org.gradle.workers.max=2` and a 2 GB Kotlin daemon heap, on EAS builds only (`EAS_BUILD=true`). If it still fails:
   `resourceClass: "large"` in `eas.json` (paid plans) or limit ninja jobs per CMake build.
+- Runtime fingerprint (OTA): anything in it changing = new runtime version = updates published afterwards don't
+  reach builds made before. Check with `npx expo-updates runtimeversion:resolve --platform android --debug`
+  (lists the sources). The local, gitignored `android/` folder doesn't affect it (tested 2026-11-05). Default
+  sources include package.json scripts and .gitignore, so `fingerprint.config.js` skips those (keep the default
+  skips when editing it: a custom `sourceSkips` replaces them).
 - `git push` from the agent sandbox may fail with "Permission denied (publickey)"; it works outside the sandbox.
