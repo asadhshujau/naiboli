@@ -1,5 +1,5 @@
 import { ACTS } from '../activities';
-import { actLead, beachNow, headPool, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type LeadArgs } from '../copy';
+import { actLead, beachNow, beachStat, headPool, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type LeadArgs } from '../copy';
 import * as A from '../copy/activities';
 import { fill, hash, pickLine, slotsOf } from '../copy/pick';
 import * as W from '../copy/weather';
@@ -146,6 +146,11 @@ describe('island sheet wording', () => {
   it('beach chip is a tide fact, never "average"', () => {
     for (const n of [0, 0.2, 0.5, 0.8, 1]) expect(beachNow(n)).toMatch(/^(Tide’s in|Tide’s out|Mid tide)/);
     expect([0, 0.5, 1].map(beachNow).join()).not.toMatch(/average|narrow|wide/i);
+  });
+
+  it('tide sheet Beach stat is a tide fact too', () => {
+    expect([0.9, 0.1, 0.5].map((n) => beachStat(n).value)).toEqual(['Cosy', 'Extra sand', 'Towel room']);
+    for (const n of [0, 0.5, 1]) expect(Object.values(beachStat(n)).join()).not.toMatch(/average|narrow|wide/i);
   });
 
   it('surf / snorkel tags describe right now, never "Skip"', () => {

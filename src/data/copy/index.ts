@@ -95,6 +95,15 @@ export function beachNow(n: number): string {
   return n > 0.72 ? 'Tide’s in · cosy beach' : n < 0.3 ? 'Tide’s out · bonus beach' : 'Mid tide · towel room';
 }
 
+/** Tide sheet "Beach" stat: value + line, a tide fact like `beachNow`, never a rating. */
+export function beachStat(n: number): { value: string; line: string } {
+  return n > 0.72
+    ? { value: 'Cosy', line: 'Tide’s in, so less sand to sit on' }
+    : n < 0.3
+      ? { value: 'Extra sand', line: 'Tide’s out. Reef walk time' }
+      : { value: 'Towel room', line: 'Mid tide. Room for a towel or two' };
+}
+
 /** Surf / snorkel tag on a beach or reef: right-now conditions, not a judgement of the spot. */
 export function spotTag(what: 'Surf' | 'Snorkel', verdict: 'go' | 'maybe' | 'skip' | 'wait'): { t: string; tone: 'go' | 'maybe' | 'later' } {
   if (verdict === 'go') return { t: what === 'Surf' ? 'Surf’s on now' : 'Snorkel now', tone: 'go' };

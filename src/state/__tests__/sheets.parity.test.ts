@@ -29,7 +29,7 @@ import {
   type SheetTarget,
   type IsleView,
 } from '../sheets';
-import { beachNow, spotTag } from '@/data/copy';
+import { beachNow, beachStat, spotTag } from '@/data/copy';
 import { VC } from '@/data/verdict';
 import type { DataState } from '../store';
 import { buildBase, buildView } from '../view';
@@ -288,7 +288,10 @@ describe.each(SCENARIOS)('$name', (sc) => {
 
     const td = buildTide(base, v, d, wx.eyebrow);
     const tt = theirs.td;
-    expect({ ...td, next: td.next.map((x) => ({ ...x, sep: css(x.sep) })) }).toEqual(tt);
+    // Expected difference: the Beach stat is a tide fact ("Cosy" / "Extra sand" / "Towel room"), not Narrow / Wide / Average.
+    const bs = beachStat(v.tide.n);
+    expect([td.beach, td.beachLine]).toEqual([bs.value, bs.line]);
+    expect({ ...td, beach: tt.beach, beachLine: tt.beachLine, next: td.next.map((x) => ({ ...x, sep: css(x.sep) })) }).toEqual(tt);
   });
 
   it.each(OFFSETS)('about-the-island matches at +%ih', (o) => {

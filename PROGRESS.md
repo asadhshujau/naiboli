@@ -37,10 +37,9 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
    limits in `index.tsx`. JS only.
 
 ### B. Needs your decision / review
-3. **Review the message copy:** `src/data/copy/weather.ts` (headlines, hour lines) and
-   `src/data/copy/activities.ts` (activity verdict lines). Edit freely; tests check slots, length and safety rules.
-4. **Tide sheet "Beach: Narrow / Wide / Average"** (`buildTide`, `beach` / `beachLine` in `src/state/sheets.ts`):
-   still the old words. Reword like the island chip ("Tide's in · cosy beach")? JS only.
+3. ✅ **Message copy approved** (user, 2026-11-05).
+4. ✅ **Tide sheet "Beach" stat reworded** (2026-11-05): "Cosy" / "Extra sand" / "Towel room" with tide-fact lines
+   (`beachStat` in `src/data/copy/index.ts`), never Narrow / Wide / Average.
 5. **🔧 native · Display name:** `name` is `"naiboli"` (shows under the launcher icon). "Naiboli" or keep lowercase?
 6. **Production API path** for planned feature 1 (e.g. `https://naiboli.shujau.dev/api`?).
 
@@ -68,6 +67,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
   the line → reloads at once; background / foreground while offline → no errors.
+- Tide sheet: "Towel room" / "Extra sand" fit the Beach stat column (26 pt) or wrap nicely.
 - Messages: headline length on a small phone (longest ~36 chars); a storm / alert day shows calm "stay ashore"
   lines; About the island chips and surf / snorkel tags.
 

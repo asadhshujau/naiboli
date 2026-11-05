@@ -6,7 +6,7 @@
  * Pure: actions are returned as data (`SheetTarget`), never as closures.
  */
 import { ACTS, actAt, FACTORS, FTIP, FWORD, windowOf, type ActDefLive } from '@/data/activities';
-import { actLead, beachNow, spotTag } from '@/data/copy';
+import { actLead, beachNow, beachStat, spotTag } from '@/data/copy';
 import { accIcon, atollLine, pickerIslands, wxKey } from '@/data/islands';
 import type { GeoStatus } from '@/data/location';
 import { condAt, iconAt, rainAt, tempAt } from '@/data/mood';
@@ -729,8 +729,8 @@ export function buildTide(b: ViewBase, v: View, d: DataState, wxEyebrow: string)
         icBg: e.high ? '#D3F1EE' : '#FFF0C6',
         sep: sepOf(j),
       })),
-    beach: tide.n > 0.72 ? 'Narrow' : tide.n < 0.3 ? 'Wide' : 'Average',
-    beachLine: tide.n > 0.72 ? 'High water, less sand to sit on' : tide.n < 0.3 ? 'Lots of sand. Reef walk time' : 'Room for a towel or two',
+    beach: beachStat(tide.n).value,
+    beachLine: beachStat(tide.n).line,
     src: tideSrc(d.tides[d.island.id]),
     lagoon: wind < 10 ? 'Glassy' : wind < 20 ? 'Rippled' : wind < 35 ? 'Choppy' : 'Rough',
     lagoonLine: `${wind} km/h from the ${m.dir}`,
