@@ -4,7 +4,7 @@ import { BackHandler, StyleSheet, useWindowDimensions, View } from 'react-native
 import { useReducedMotion, useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { matches, wxKey } from '@/data/islands';
+import { pickerIslands, wxKey } from '@/data/islands';
 import type { GeoStatus } from '@/data/location';
 import type { ApiIsland } from '@/data/types';
 import { GlassProvider, useGlassRegistry } from '@/scene/glass';
@@ -89,7 +89,7 @@ export default function SceneScreen() {
     if (!pickerOpen) return;
     const t = setTimeout(() => {
       const st = dataStore.getState();
-      matches(ui.query.trim().toLowerCase(), st.islands).forEach((I) => dataStore.ensureWx(I));
+      pickerIslands(ui.query.trim().toLowerCase(), st.islands, st.island, st.recents).forEach((I) => dataStore.ensureWx(I));
     }, PREFETCH_MS);
     return () => clearTimeout(t);
   }, [pickerOpen, ui.query, hasList]);

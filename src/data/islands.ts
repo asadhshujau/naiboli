@@ -89,6 +89,43 @@ export function matches(q: string, L: ApiIsland[] | null): ApiIsland[] {
     .map((x) => x.I);
 }
 
+/** Recent islands kept (current included, so 5 remain once it's left out). */
+export const RECENTS_MAX = 6;
+
+/** Most recent first, no duplicates, capped: `I` moved to the front of `recents`. */
+export function addRecent(recents: ApiIsland[], I: ApiIsland): ApiIsland[] {
+  return [I, ...recents.filter((r) => r.id !== I.id)].slice(0, RECENTS_MAX);
+}
+
+/**
+ * Picker list for an empty search: the current island, then up to 5 recent islands (most recent first,
+ * current left out), padded at the end with popular islands not already listed. Fresh copies from the
+ * island list when it's loaded.
+ */
+export function defaultIslands(current: ApiIsland, recents: ApiIsland[], L: ApiIsland[] | null): ApiIsland[] {
+  const fresh = (I: ApiIsland) => (L && L.find((i) => i.id === I.id)) || I;
+  const out = [fresh(current)];
+  const seen = new Set([current.id]);
+  for (const r of recents) {
+    if (out.length > 5) break;
+    if (seen.has(r.id)) continue;
+    seen.add(r.id);
+    out.push(fresh(r));
+  }
+  for (const p of POP) {
+    if (out.length > 5) break;
+    if (seen.has(p.id)) continue;
+    seen.add(p.id);
+    out.push(fresh(p));
+  }
+  return out;
+}
+
+/** Islands the picker shows: search matches for a query, else current + recents + popular. */
+export function pickerIslands(q: string, L: ApiIsland[] | null, current: ApiIsland, recents: ApiIsland[]): ApiIsland[] {
+  return q ? matches(q, L) : defaultIslands(current, recents, L);
+}
+
 /** `/islands/{id}` → details. */
 export function procIsle(j: ApiIslandDetail): IslandDetail {
   return {

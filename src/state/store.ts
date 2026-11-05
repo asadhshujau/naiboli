@@ -9,7 +9,7 @@
  */
 import { procActs } from '@/data/activities';
 import { api, type Fetcher } from '@/data/api';
-import { cleanIslands, DEFAULT_ISLAND, procIsle, wxKey } from '@/data/islands';
+import { addRecent, cleanIslands, DEFAULT_ISLAND, procIsle, wxKey } from '@/data/islands';
 import { DEFAULT_SUN, sunOf } from '@/data/sun';
 import { procTide } from '@/data/tide';
 import { day0Of, hOfUnix } from '@/data/time';
@@ -27,6 +27,8 @@ export interface DataState {
   /** no island saved yet */
   firstRun: boolean;
   islands: ApiIsland[] | null;
+  /** recently loaded islands, most recent first (current included); see `defaultIslands` */
+  recents: ApiIsland[];
   wx: Record<string, Entry<Weather>>;
   tides: Record<number, Entry<Tide>>;
   isle: Record<number, Entry<IslandDetail>>;
@@ -60,6 +62,7 @@ export function createDataStore(deps: StoreDeps) {
     island: DEFAULT_ISLAND,
     firstRun: true,
     islands: null,
+    recents: [],
     wx: {},
     tides: {},
     isle: {},
@@ -215,9 +218,9 @@ export function createDataStore(deps: StoreDeps) {
     /** Resolves with the island list once `/islands` has loaded (null on failure). */
     listPromise,
 
-    /** Launch with the saved island (rendered immediately), or Malé unsaved. */
-    init(saved: ApiIsland | null) {
-      set({ island: saved || DEFAULT_ISLAND, firstRun: !saved });
+    /** Launch with the saved island (rendered immediately), or Malé unsaved. The saved island counts as recent. */
+    init(saved: ApiIsland | null, recents: ApiIsland[] = []) {
+      set({ island: saved || DEFAULT_ISLAND, firstRun: !saved, recents: saved && !recents.some((r) => r.id === saved.id) ? addRecent(recents, saved) : recents });
     },
 
     /** `loadLive()` — fetch everything for the current island, the island list, and start the clock. */
@@ -245,8 +248,10 @@ export function createDataStore(deps: StoreDeps) {
 
     /** Any pick (manual or location): save, select, load everything for it. */
     pickIsland(I: ApiIsland) {
+      const recents = addRecent(state.recents, I);
       void deps.storage.saveIsland(I);
-      set({ island: I, firstRun: false });
+      void deps.storage.saveRecents(recents);
+      set({ island: I, firstRun: false, recents });
       ensureAll(I);
     },
 

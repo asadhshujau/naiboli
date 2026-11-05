@@ -1,8 +1,10 @@
-import { isIsland } from '@/data/islands';
+import { isIsland, RECENTS_MAX } from '@/data/islands';
 import type { ApiIsland } from '@/data/types';
 
 /** Last selected island (full island object). */
 export const LS_ISLE = 'naiboli.island.v1';
+/** Recently loaded islands, most recent first (full island objects, current included). */
+export const LS_RECENTS = 'naiboli.recents.v1';
 /** `1` once the first-run "Where are you?" sheet has been shown. */
 export const LS_ASKED = 'naiboli.locAsked.v1';
 
@@ -34,6 +36,11 @@ export function makeStorage(kv: KV) {
       return isIsland(I) ? I : null;
     },
     saveIsland: (I: ApiIsland) => set(LS_ISLE, I),
+    async loadRecents(): Promise<ApiIsland[]> {
+      const L = await get(LS_RECENTS);
+      return Array.isArray(L) ? L.filter(isIsland).slice(0, RECENTS_MAX) : [];
+    },
+    saveRecents: (L: ApiIsland[]) => set(LS_RECENTS, L),
     async locAsked(): Promise<boolean> {
       return !!(await get(LS_ASKED));
     },

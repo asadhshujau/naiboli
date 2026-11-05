@@ -6,7 +6,7 @@
  * Pure: actions are returned as data (`SheetTarget`), never as closures.
  */
 import { ACTS, actAt, FACTORS, FTIP, FWORD, windowOf, type ActDefLive } from '@/data/activities';
-import { accIcon, atollLine, matches, wxKey } from '@/data/islands';
+import { accIcon, atollLine, pickerIslands, wxKey } from '@/data/islands';
 import type { GeoStatus } from '@/data/location';
 import { condAt, iconAt, rainAt, tempAt } from '@/data/mood';
 import { sunState } from '@/data/sun';
@@ -743,10 +743,10 @@ export interface IslandRow {
   bg: string;
 }
 
-/** Picker rows for a query (popular islands when empty, max 12 matches otherwise). */
+/** Picker rows for a query (current + recents + popular when empty, max 12 matches otherwise). */
 export function buildIslandList(b: ViewBase, v: View, d: DataState, query: string): { rows: IslandRow[]; noResults: boolean; q: string } {
   const q = query.trim().toLowerCase();
-  const list = matches(q, d.islands);
+  const list = pickerIslands(q, d.islands, d.island, d.recents);
   const hSel = v.hSel;
   const dayS = sunState(hSel, b.sun).el > 0;
   const rows = list.map((I, j) => {

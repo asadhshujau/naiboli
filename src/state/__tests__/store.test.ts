@@ -90,6 +90,27 @@ describe('data store', () => {
     expect(JSON.parse(s.kv.get('naiboli.island.v1')!)).toEqual(thulusdhoo);
   });
 
+  it('recents: every pick goes to the front, saved; the saved island counts as recent at launch', async () => {
+    const s = setup({ saved: thulusdhoo });
+    expect(s.store.getState().recents.map((i) => i.id)).toEqual([1017]);
+    s.store.start();
+    await flush();
+    s.store.pickIsland(male);
+    s.store.pickIsland(hulhumale);
+    s.store.pickIsland(male);
+    expect(s.store.getState().recents.map((i) => i.id)).toEqual([1069, 1068, 1017]);
+    expect(JSON.parse(s.kv.get('naiboli.recents.v1')!).map((i: ApiIsland) => i.id)).toEqual([1069, 1068, 1017]);
+    // stored recents load back (invalid entries dropped)
+    s.kv.set('naiboli.recents.v1', JSON.stringify([hulhumale, { id: 3 }, null, male]));
+    const storage = makeStorage({ getItem: async (k) => s.kv.get(k) ?? null, setItem: async () => {} });
+    expect((await storage.loadRecents()).map((i) => i.id)).toEqual([1068, 1069]);
+    s.store.stop();
+  });
+
+  it('first run without a saved island has no recents', () => {
+    expect(setup().store.getState().recents).toEqual([]);
+  });
+
   it('caches weather by anchor and dedupes in-flight requests', async () => {
     const s = setup();
     s.store.start();

@@ -33,15 +33,7 @@ happen:
    - **Privacy Policy always points to `<origin of the API URL in use>/privacy-policy`** (today
      `https://moodhu.dev/privacy-policy`, production `https://naiboli.shujau.dev/privacy-policy`), derived from the
      same env setting, never hard-coded.
-2. **Island picker default list: current island + recents** (user, 2026-11-05). With an empty search, the list
-   currently shows the fixed popular six (`POP` in `src/data/islands.ts`, via `matches('')`). Wanted: the **current
-   island at the top**, then the **last 5 islands loaded** (most recent first, no duplicates, current excluded),
-   and if there are fewer than 5 recents, **pad the end with popular islands** (`POP`, skipping ones already
-   listed). Needs a persisted recents list (AsyncStorage key in `src/state/storage.ts`, updated on every island
-   pick, manual or by location; cap 5). Keep the existing row look (current row highlighted with `my_location`),
-   the weather prefetch for shown rows, and the README's search behaviour once there's a query. Update
-   `buildIslandList` and its parity test (expected difference from the prototype). To confirm while building:
-   "5" = recents only, so up to 6 rows with the current one.
+2. ✅ **Island picker default list: current island + recents** — done 2026-11-05, see "History of the fix round".
 3. **Immersive mode.** A clean view of the scene without the bottom activity panel; everything the panel offers
    reachable some other way (e.g. a tap/gesture to toggle, the scrubber kept or revealed on demand, activities
    from the menu or a small button). Design to agree before building: how to enter/leave it, what stays on screen
@@ -160,6 +152,14 @@ Nice to have (not required)
 - [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
 
 ### History of the fix round
+
+**Island picker recents (2026-11-05, planned feature 2):** empty search lists the current island (highlighted,
+`my_location`), then up to 5 recently loaded islands (most recent first, current left out), padded at the end with
+popular islands (`POP`) not already listed — always 6 rows. `defaultIslands` / `pickerIslands` / `addRecent` in
+`src/data/islands.ts`; recents kept in `DataState.recents` and AsyncStorage `naiboli.recents.v1` (full island
+objects, current included, cap 6), updated by `pickIsland` (manual and location picks); the saved island counts as
+recent at launch. The weather prefetch uses the same list. Tests: `src/data/__tests__/recents.test.ts`, store and
+picker tests. **Check on device:** pick a few islands, reopen the picker, kill + relaunch the app.
 
 **Android dev build tested 2026-11-05** (user's findings):
 - OK on device: no big-text clipping, menu wordmark baseline, sheet drag to close, keyboard lift in the picker,
@@ -282,6 +282,8 @@ Still unchecked: iOS (no build yet — `BalancedText`, wordmark baseline, keyboa
   bar text is dark during the splash (README says "light content", invisible on #FBF6EC).
 - Sheet slide distance is 105 % of the max sheet height, not of the sheet's own height (avoids a stale-height
   flash; identical for tall sheets, short sheets start lower).
+- Island picker with an empty search: current island + recents + popular padding instead of the fixed popular six
+  (user request; identical to the prototype on first run at Malé).
 - Added platform conventions not in the prototype: pressed states dim, drag a sheet down to close, keyboard lifts
   the picker, Android back closes sheet then bubble.
 

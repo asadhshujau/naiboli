@@ -17,9 +17,9 @@ export default function RootLayout() {
   useEffect(() => {
     let alive = true;
     // Launch always opens the saved island (rendered from the stored object), else Malé unsaved.
-    storage.loadIsland().then((saved) => {
+    Promise.all([storage.loadIsland(), storage.loadRecents()]).then(([saved, recents]) => {
       if (!alive) return;
-      dataStore.init(saved);
+      dataStore.init(saved, recents);
       dataStore.start();
       setDataReady(true);
     });

@@ -161,6 +161,7 @@ function setup(sc: Scenario) {
     island: male,
     firstRun: false,
     islands: islandsSmall,
+    recents: [],
     wx: { [k]: wxEntry, 28: 'err' },
     tides: T ? { 1069: T } : {},
     isle: D === undefined ? {} : { 1069: D },
@@ -301,6 +302,24 @@ describe('island picker and welcome', () => {
         expect(mine.noResults).toBe(theirs.noResults);
       }
     }
+  });
+
+  // Expected difference from the prototype: an empty search lists the current island, then recents,
+  // then popular islands as padding (the prototype always lists the popular six).
+  it('empty search: current island, then recents, padded with popular islands', () => {
+    const { d, base } = setup(SCENARIOS[0]);
+    const pick = (id: number) => islandsSmall.find((i) => i.id === id) ?? ({ ...male, id, english_name: 'Isle ' + id } as ApiIsland);
+    const cur = pick(1017);
+    const recents = [cur, pick(25), pick(1069), pick(1002)];
+    const dd: DataState = { ...d, island: cur, recents };
+    const v = buildView(base, dd, 0);
+    const { rows } = buildIslandList(base, v, dd, '  ');
+    expect(rows.map((r) => r.I.id)).toEqual([1017, 25, 1069, 1002, 1068, 1060]);
+    expect(rows.map((r) => r.cur)).toEqual([true, false, false, false, false, false]);
+    expect(rows[0].icon).toBe('my_location');
+    expect(rows.map((r) => r.sep)).toEqual([false, true, true, true, true, true]);
+    // a query still searches the whole list
+    expect(buildIslandList(base, v, dd, 'hulhu').rows[0].I.id).toBe(1068);
   });
 
   it('location row and welcome copy match for every state', () => {
