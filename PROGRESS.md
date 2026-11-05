@@ -16,7 +16,79 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | — | EAS build test by the user, then the fix round | ⏭ **next** |
 
 ## Pending — start here when asked "what's pending?"
-All 5 phases are done; the fix round is under way.
+All 5 phases and the first fix round are done. Android dev build tested on device 2026-11-05 (icon, splash,
+precise location, day theme, sheets): all good. Nothing is in progress. What's left, in the order it'll probably
+happen:
+
+### Planned features (user, 2026-11-05)
+1. **Environment config for the API.** The base URL is hard-coded: `API = 'https://moodhu.dev/api'` in
+   `src/data/api.ts`. Production will be `naiboli.shujau.dev` (exact API path to confirm). Plan: `EXPO_PUBLIC_API_URL`
+   per EAS build profile (`env` in `eas.json`, or EAS environment variables) with a local `.env` for `expo start`;
+   read once in `api.ts` with a fallback. Also decide what the user-facing "moodhu.dev" texts become: the
+   activity-scores source line (`src/state/view.ts`), the Menu links "Activity scores" and "Privacy Policy"
+   (`src/ui/sheet/MenuSheet.tsx`). Tests mock the API module, so they stay as they are.
+2. **Immersive mode.** A clean view of the scene without the bottom activity panel; everything the panel offers
+   reachable some other way (e.g. a tap/gesture to toggle, the scrubber kept or revealed on demand, activities
+   from the menu or a small button). Design to agree before building: how to enter/leave it, what stays on screen
+   (top HUD? scrubber?), whether it's remembered (AsyncStorage). Mind the glass blur rects (`useGlassRegistry`) and the
+   bubble placement limits in `index.tsx` (they assume the panel is there).
+
+### Before a production release (Google Play + App Store)
+App identity and config
+- [ ] **Android package name**: still `com.anonymous.naiboli` (template). Pick the real one (e.g. `dev.shujau.naiboli`)
+      **before the first Play upload**; it can never change afterwards.
+- [ ] **iOS bundle identifier**: not set (`ios.bundleIdentifier`). Same rule for App Store Connect.
+- [ ] **Display name**: `name` is `"naiboli"` (lowercase, shows under the launcher icon). Decide "Naiboli" or keep the
+      wordmark style.
+- [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
+      (`eas.json` production). Bump `version` per release.
+- [ ] **iOS export compliance**: set `ios.config.usesNonExemptEncryption: false` (only HTTPS), so every upload doesn't
+      ask.
+- [ ] Remove the unused `web` block and the template leftovers (`scripts/reset-project.js`, `assets/images/expo-*`,
+      `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`).
+- [ ] API URL via environment config (planned feature 1): production builds must point at the production API.
+
+Builds
+- [ ] **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
+      on iOS: `BalancedText`, wordmark baseline, keyboard lift, location prompt, glass blur, performance.
+- [ ] **Release-build performance**: test a `preview` build (release JS, no dev tools) on a mid-range Android phone.
+      Scene frame rate is still unmeasured on real hardware outside dev mode.
+- [ ] **Production Android build** builds all four ABIs (only `development` is arm64-only). The Gradle limits plugin
+      applies, but watch for the out-of-memory failure; options if it happens: `resourceClass: "large"` (paid), or
+      `reactNativeArchitectures` = `armeabi-v7a,arm64-v8a` (phones only, no x86).
+- [ ] Production profile builds an AAB (Play) / store IPA by default; signing keys are EAS-managed.
+      Keep the Play upload key backed up in EAS credentials.
+
+Google Play
+- [ ] Google Play developer account. **Personal accounts created after Nov 2023 must run a closed test with at least
+      12 testers for 14 days before they can publish to production.** Start that early.
+- [ ] Create the app in Play Console; the **first AAB is uploaded by hand**, after that `eas submit` with a Google
+      service-account key.
+- [ ] Store listing: short/long description, 512² icon (from `scripts/gen-app-icons.mjs`), 1024×500 feature graphic,
+      phone screenshots (day, dusk and night look great here), category (Weather), contact email, privacy policy URL.
+- [ ] **Data safety form**: location (approximate and precise) is sent to the API's `/where-am-i` to find the island,
+      used for app functionality only, not shared or used for ads; no account, no analytics. Confirm what the
+      server logs/stores before filling it in.
+- [ ] Content rating questionnaire, target audience (not for children), ads: none.
+- [ ] Privacy policy URL that works (currently `https://moodhu.dev/privacy-policy`; move with the domain?).
+
+App Store
+- [ ] Apple Developer Program membership; App Store Connect app record (bundle ID, SKU); `ascAppId` for `eas submit`.
+- [ ] Screenshots for the required iPhone sizes, description, keywords, support URL, privacy policy URL, category.
+- [ ] **App Privacy ("nutrition label")**: Location (precise + coarse) → App Functionality, not linked to identity,
+      not used for tracking. Same server-side check as Play.
+- [ ] Privacy manifest: Expo modules ship their own; confirm the build's `PrivacyInfo.xcprivacy` covers AsyncStorage
+      (UserDefaults) and file timestamps, add `ios.privacyManifests` if the build warns.
+- [ ] Location permission string is set (When-In-Use only). Review guideline 5.1.1: location is only requested from
+      the two buttons, never on launch (already the behaviour).
+- [ ] TestFlight round before review.
+
+Nice to have (not required)
+- [ ] OTA updates (`expo-updates` + `eas update`, `runtimeVersion` policy) so JS fixes ship without store review.
+- [ ] Crash reporting (e.g. Sentry) before real users.
+- [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
+
+### History of the fix round
 
 **Android dev build tested 2026-11-05** (user's findings):
 - OK on device: no big-text clipping, menu wordmark baseline, sheet drag to close, keyboard lift in the picker,
