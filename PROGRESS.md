@@ -29,9 +29,12 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   only: it reaches the build through Metro (dev) and later through OTA updates. Nothing native is pending.
 
 ### Next steps, in order
-1. **Wait for the build.** Failed → read the log (last time: Gradle out of memory in CMake; see Gotchas).
-   Succeeded → uninstall the old `com.anonymous.naiboli` app, install, run `npx expo start` and go through
-   "Device checks" below; findings become the fix list.
+1. **⏳ Dev build — outcome unknown (submitted 2026-11-05, user went to sleep before it finished).**
+   **When resuming, ask the user first:** did the Android dev build finish, and is it installed on the phone — or
+   did it fail? (EAS dashboard → project `naiboli-forecast-for-fun` → Builds, or `npx eas-cli@latest build:list`.)
+   - Failed → get the error / log from the user (last time: Gradle out of memory in CMake; see Gotchas) and fix.
+   - Succeeded but not installed → uninstall the old `com.anonymous.naiboli` app, install the new one.
+   - Installed → `npx expo start`, go through "Device checks" below; the user's findings become the fix list.
 2. **Store prep drafts** (offered by Claude, waiting for the user's go; no code): Play listing (short / long
    description), Data safety + content rating answers, privacy policy text for
    `https://naiboli.shujau.dev/privacy-policy` (must be live before release).
