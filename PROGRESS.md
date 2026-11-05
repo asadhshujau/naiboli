@@ -63,8 +63,11 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
    `_layout.tsx`. Native module: works from the next build (Expo Go also has it).
 9. **🔧 native · Crash reporting** (e.g. Sentry, `@sentry/react-native`): before real users / the closed test.
 10. **iOS export compliance:** `ios.config.usesNonExemptEncryption: false` in `app.json` (iOS only; one line).
-11. **Remove template leftovers:** unused `web` block in `app.json`, `scripts/reset-project.js`,
-    `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`. Housekeeping.
+    With the next native change (app.json is in the runtime fingerprint).
+11. **Template leftovers:** ✅ files removed 2026-11-05 (`scripts/reset-project.js` + its npm script,
+    `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`; README rewritten).
+    Still open: the unused `web` block in `app.json` — with the next native change (app.json is in the runtime
+    fingerprint; changing it alone would cut OTA updates off from the current build).
 12. **Messages, extras from the plan:** ✅ no repeats (2026-11-05): each copy category remembers its last line and
     the island / date / hour it was for (`CopyMemory`, AsyncStorage `naiboli.copyMemory.v1`, saved 1 s after a
     change); the same moment keeps its line, the next moment never repeats it. Still open: API `category` + message
@@ -104,7 +107,7 @@ App identity and config
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
       (`eas.json` production). Bump `version` per release.
 - [ ] **iOS export compliance** — Pending item 10.
-- [ ] Template leftovers — Pending item 11.
+- [ ] Template leftovers — Pending item 11 (`web` block left).
 - [x] API URL via environment config — Pending item 1. Before release: production API + `/privacy-policy` live.
 
 Builds
