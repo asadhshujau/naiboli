@@ -40,7 +40,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 3. ✅ **Message copy approved** (user, 2026-11-05).
 4. ✅ **Tide sheet "Beach" stat reworded** (2026-11-05): "Cosy" / "Extra sand" / "Towel room" with tide-fact lines
    (`beachStat` in `src/data/copy/index.ts`), never Narrow / Wide / Average.
-5. **🔧 native · Display name:** `name` is `"naiboli"` (shows under the launcher icon). "Naiboli" or keep lowercase?
+5. ✅ **🔧 native · Display name: "Naiboli"** (user, 2026-11-05; `name` in `app.json`). Shows from the next build.
 6. **Production API path** for planned feature 1 (e.g. `https://naiboli.shujau.dev/api`?).
 
 ### C. Suggested by Claude (optional — say which to do)
@@ -66,7 +66,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Splash wordmark shows (fixed in JS after the last device test).
 - Sheets open without delay / glitch (scene pauses behind sheets, separate animated styles, stale-height fix).
 - Day theme: scrub to dusk / night and open every sheet and bubble; morning / late-afternoon warmth; overcast day.
-- Launcher icon and themed icon (Android 13+).
+- Launcher icon and themed icon (Android 13+); name under the icon reads "Naiboli".
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
   the line → reloads at once; background / foreground while offline → no errors.
@@ -82,7 +82,7 @@ App identity and config
       next dev build installs as a separate app (uninstall the old one), and EAS makes a new Android keystore for
       the new package. A local `android/` folder (ignored) needs `npx expo prebuild --clean`.
 - [x] **iOS bundle identifier**: `dev.shujau.naiboli` (same rule for App Store Connect).
-- [ ] **Display name** — see Pending item 5.
+- [x] **Display name**: "Naiboli".
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
       (`eas.json` production). Bump `version` per release.
 - [ ] **iOS export compliance** — Pending item 10.
