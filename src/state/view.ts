@@ -112,6 +112,8 @@ export interface View {
   eyebrow: string;
   head: string;
   sub: string;
+  /** the sub line is the offline message: tapping it retries */
+  retry: boolean;
   warning: Mood['warning'];
   hasWarning: boolean;
   whenLabel: string;
@@ -230,7 +232,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   const sub = isLater
     ? `Best bet: ${best?.name}. ${temp}°, wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.`
     : m.offline
-      ? 'Couldn’t reach the live feed. Showing sample conditions.'
+      ? 'Couldn’t reach the live feed. Showing sample conditions. Tap to try again.'
       : !m.live && m.loading
         ? 'Fetching live conditions…'
         : m.sub;
@@ -273,6 +275,8 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
     eyebrow,
     head,
     sub,
+    /** the sub line is the offline message: tapping it retries */
+    retry: !isLater && m.offline,
     warning: m.warning,
     hasWarning: !!m.warning && !isLater,
     whenLabel,

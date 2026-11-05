@@ -15,10 +15,11 @@ interface Props {
   onIsland: () => void;
   onTemp: () => void;
   onWarning: () => void;
+  onRetry: () => void;
 }
 
 /** Top HUD: menu, island chip, temperature chip, eyebrow, headline, sub, warning chip. */
-export function TopHud({ v, onMenu, onIsland, onTemp, onWarning }: Props) {
+export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry }: Props) {
   const insets = useSafeAreaInsets();
   const { hud } = v;
   const shadow = hud.shadow ? HUD_TEXT_SHADOW : null;
@@ -48,12 +49,23 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning }: Props) {
           </Pressable>
         </GlassView>
       </View>
-      <View pointerEvents="none">
-        <Text style={[s.eyebrow, T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
-        <BalancedText style={[s.head, T.bric(800, 40, { lh: 0.98, ls: -0.04 }), { color: hud.ink }, shadow]}>{v.head}</BalancedText>
-        <Text style={[s.sub, T.fig(500, 16, { lh: 1.35 }), { color: hud.sub }, shadow]} lineBreakStrategyIOS="standard">
-          {v.sub}
-        </Text>
+      <View pointerEvents="box-none">
+        <View pointerEvents="none">
+          <Text style={[s.eyebrow, T.mono(11.5, { ls: 0.09, upper: true }), { color: hud.sub }, shadow]}>{v.eyebrow}</Text>
+          <BalancedText style={[s.head, T.bric(800, 40, { lh: 0.98, ls: -0.04 }), { color: hud.ink }, shadow]}>{v.head}</BalancedText>
+        </View>
+        {/* offline: the sub line is a retry button; otherwise taps go through to the scene */}
+        <Pressable
+          onPress={onRetry}
+          disabled={!v.retry}
+          pointerEvents={v.retry ? 'auto' : 'none'}
+          hitSlop={8}
+          style={({ pressed }) => [s.subWrap, pressed && s.pressed]}
+          accessibilityRole={v.retry ? 'button' : 'text'}>
+          <Text style={[T.fig(500, 16, { lh: 1.35 }), { color: hud.sub }, shadow]} lineBreakStrategyIOS="standard">
+            {v.sub}
+          </Text>
+        </Pressable>
       </View>
       {v.hasWarning && v.warning ? (
         <Pressable onPress={onWarning} style={s.warn} accessibilityRole="button" accessibilityLabel={`Warning: ${v.warning.short}`}>
@@ -78,7 +90,8 @@ const s = StyleSheet.create({
   shrink: { flexShrink: 1 },
   eyebrow: { marginTop: 22 },
   head: { marginTop: 8 },
-  sub: { marginTop: 8, maxWidth: 300 },
+  subWrap: { marginTop: 8, maxWidth: 300, alignSelf: 'flex-start' },
+  pressed: { opacity: 0.6 },
   warn: {
     marginTop: 12,
     alignSelf: 'flex-start',

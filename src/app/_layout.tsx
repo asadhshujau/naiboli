@@ -23,9 +23,12 @@ export default function RootLayout() {
       dataStore.start();
       setDataReady(true);
     });
-    // JS timers pause in the background: run the clock as soon as we're back.
+    // JS timers pause in the background: run the clock as soon as we're back, and retry anything that failed
+    // (the network may well have come back while we were away).
     const sub = AppState.addEventListener('change', (st) => {
-      if (st === 'active') dataStore.tick();
+      if (st !== 'active') return;
+      dataStore.tick();
+      dataStore.retryNow();
     });
     return () => {
       alive = false;

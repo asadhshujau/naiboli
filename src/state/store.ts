@@ -4,6 +4,8 @@
  *
  * - Weather is cached by weather anchor; tide, details and scores by island id.
  * - Weather and scores refetch when older than 10 min; failed scores retry every minute.
+ * - A failed first load of weather, tide or the island list retries on the clock with a backoff
+ *   (1, 2, 4, 8, then every 10 min); `retryNow()` retries everything failed at once (tap to retry, app foreground).
  * - A failed refresh keeps the last good data.
  * - At local midnight the hour axis advances and weather, tide and scores reset and refetch.
  */
@@ -19,6 +21,8 @@ import type { Storage } from './storage';
 
 export const STALE_MS = 10 * 60 * 1000;
 export const CLOCK_MS = 60 * 1000;
+/** Wait before the n-th clock retry of a failed load (n = failures so far, from 1); last value repeats. */
+export const RETRY_MS = [1, 2, 4, 8, 10].map((m) => m * 60 * 1000);
 
 export interface DataState {
   /** unix s of local midnight today — the hour axis origin */
@@ -77,6 +81,14 @@ export function createDataStore(deps: StoreDeps) {
   let gen = 0;
   let inflight = { wx: {} as Record<string, boolean>, tide: {} as Record<number, boolean>, isle: {} as Record<number, boolean>, acts: {} as Record<number, boolean> };
   let clockId: unknown = null;
+  /** failed loads to retry on the clock: key → failures so far and when the last one happened */
+  let fails: Record<string, { n: number; at: number }> = {};
+  let listInflight = false;
+  const failed = (k: string) => (fails[k] = { n: (fails[k]?.n ?? 0) + 1, at: now() });
+  const due = (k: string) => {
+    const r = fails[k];
+    return !!r && now() - r.at >= RETRY_MS[Math.min(r.n, RETRY_MS.length) - 1];
+  };
   let listResolve: (l: ApiIsland[] | null) => void = () => {};
   const listPromise = new Promise<ApiIsland[] | null>((r) => (listResolve = r));
 
@@ -106,10 +118,14 @@ export function createDataStore(deps: StoreDeps) {
       .then((j) => {
         const W = procWx(j, state.day0, now());
         if (!W) throw new Error('bad payload');
-        if (g === gen) set((s) => ({ wx: { ...s.wx, [k]: W } }));
+        if (g !== gen) return;
+        delete fails['wx:' + k];
+        set((s) => ({ wx: { ...s.wx, [k]: W } }));
       })
       .catch(() => {
-        if (g === gen) set((s) => ({ wx: { ...s.wx, [k]: isData(s.wx[k]) ? s.wx[k] : 'err' } }));
+        if (g !== gen) return;
+        if (!isData(state.wx[k])) failed('wx:' + k);
+        set((s) => ({ wx: { ...s.wx, [k]: isData(s.wx[k]) ? s.wx[k] : 'err' } }));
       })
       .finally(() => {
         fl.wx[k] = false;
@@ -128,10 +144,15 @@ export function createDataStore(deps: StoreDeps) {
       .tide(I.id, f)
       .then((j) => {
         const T = procTide(j, state.day0);
-        if (g === gen) set((s) => ({ tides: { ...s.tides, [k]: T || 'err' } }));
+        if (g !== gen) return;
+        // a short / unusable payload means no usable feed for this island: not retried
+        delete fails['tide:' + k];
+        set((s) => ({ tides: { ...s.tides, [k]: T || 'err' } }));
       })
       .catch(() => {
-        if (g === gen) set((s) => ({ tides: { ...s.tides, [k]: 'err' } }));
+        if (g !== gen) return;
+        failed('tide:' + k);
+        set((s) => ({ tides: { ...s.tides, [k]: 'err' } }));
       })
       .finally(() => {
         fl.tide[k] = false;
@@ -180,6 +201,51 @@ export function createDataStore(deps: StoreDeps) {
       });
   }
 
+  /** `/islands`; `listPromise` settles with the first attempt, later retries just fill `islands`. */
+  function loadList() {
+    if (listInflight || state.islands) return;
+    listInflight = true;
+    api
+      .islands(f)
+      .then((raw) => {
+        const list = cleanIslands(raw);
+        if (!list) throw new Error('bad payload');
+        delete fails.list;
+        const found = list.find((i) => i.id === state.island.id);
+        // Refresh the saved copy from the list (never saves during first run).
+        if (found && !state.firstRun) void deps.storage.saveIsland(found);
+        set((s) => ({ islands: list, island: list.find((i) => i.id === s.island.id) || s.island }));
+        listResolve(list);
+      })
+      .catch(() => {
+        failed('list');
+        listResolve(null);
+      })
+      .finally(() => {
+        listInflight = false;
+      });
+  }
+
+  /** Clock retries of failed first loads for the current island (and the list), once their backoff is up. */
+  function retryDue() {
+    const c = state.island;
+    const k = wxKey(c);
+    if (state.wx[k] === 'err' && due('wx:' + k)) ensureWx(c);
+    if (state.tides[c.id] === 'err' && due('tide:' + c.id)) ensureTide(c);
+    if (!state.islands && due('list')) loadList();
+  }
+
+  /** Retry everything that failed for the current island right away (tap to retry, back to foreground). */
+  function retryNow() {
+    const c = state.island;
+    const k = wxKey(c);
+    if (state.wx[k] === 'err') ensureWx(c);
+    if (state.tides[c.id] === 'err' && fails['tide:' + c.id]) ensureTide(c);
+    if (state.acts[c.id] === 'err') ensureActs(c);
+    if (state.isle[c.id] === 'err') ensureIsle(c);
+    if (!state.islands) loadList();
+  }
+
   function ensureAll(I: ApiIsland) {
     ensureWx(I);
     ensureTide(I);
@@ -193,6 +259,7 @@ export function createDataStore(deps: StoreDeps) {
     if (hOfUnix(t / 1000, state.day0) >= 24) {
       gen++;
       inflight = { wx: {}, tide: {}, isle: {}, acts: {} };
+      fails = {};
       set({ day0: day0Of(t), wx: {}, tides: {}, acts: {}, lastW: null, lastTide: null, clock: t });
       const c = state.island;
       ensureWx(c);
@@ -206,6 +273,7 @@ export function createDataStore(deps: StoreDeps) {
     const AC = state.acts[c.id];
     if (isData(AC) && t - AC.fetched > STALE_MS) ensureActs(c, true);
     else if (AC === 'err') ensureActs(c);
+    retryDue();
     set({ clock: t });
   }
 
@@ -226,18 +294,7 @@ export function createDataStore(deps: StoreDeps) {
     /** `loadLive()` — fetch everything for the current island, the island list, and start the clock. */
     start() {
       ensureAll(state.island);
-      api
-        .islands(f)
-        .then((raw) => {
-          const list = cleanIslands(raw);
-          if (!list) return listResolve(null);
-          const found = list.find((i) => i.id === state.island.id);
-          // Refresh the saved copy from the list (never saves during first run).
-          if (found && !state.firstRun) void deps.storage.saveIsland(found);
-          set((s) => ({ islands: list, island: list.find((i) => i.id === s.island.id) || s.island }));
-          listResolve(list);
-        })
-        .catch(() => listResolve(null));
+      loadList();
       if (clockId == null) clockId = setIv(tick, CLOCK_MS);
     },
     stop() {
@@ -245,6 +302,7 @@ export function createDataStore(deps: StoreDeps) {
       clockId = null;
     },
     tick,
+    retryNow,
 
     /** Any pick (manual or location): save, select, load everything for it. */
     pickIsland(I: ApiIsland) {

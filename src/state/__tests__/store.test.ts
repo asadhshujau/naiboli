@@ -2,7 +2,7 @@ import { acts1069, NOW_MS, synthTide, weather1069 } from '@/data/__tests__/fixtu
 import { POP } from '@/data/islands';
 import { isData, type ApiIsland } from '@/data/types';
 import { makeStorage } from '../storage';
-import { CLOCK_MS, createDataStore, STALE_MS } from '../store';
+import { CLOCK_MS, createDataStore, RETRY_MS, STALE_MS } from '../store';
 
 const male = POP[0];
 const hulhumale = POP[1]; // same weather anchor (27) as Malé
@@ -185,8 +185,83 @@ describe('data store', () => {
     s.tick();
     expect(s.store.getState().acts[1069]).toBe('loading');
     expect(s.count('/islands/1069/activity-scores')).toBe(2);
-    // weather is not retried by the clock (only on demand)
-    expect(s.count('/weather-for-island/')).toBe(1);
+    // failed first loads of weather, tide and the list retry on the clock too (after 1 min)
+    expect(s.count('/weather-for-island/')).toBe(2);
+    expect(s.count('/tide-for-island/')).toBe(2);
+    expect(s.calls.filter((c) => c === '/islands')).toHaveLength(2);
+  });
+
+  it('opened offline: failed first loads retry with a backoff, then the data arrives by itself', async () => {
+    const s = setup({ route: () => 'network' });
+    s.store.start();
+    await flush();
+    expect(s.store.getState().wx['27']).toBe('err');
+    const counts = () => [s.count('/weather-for-island/'), s.count('/tide-for-island/'), s.calls.filter((c) => c === '/islands').length];
+    expect(counts()).toEqual([1, 1, 1]);
+    // retries at +1, +2, +4, +8 min after each failure, then every 10 min
+    const at: number[] = [];
+    for (let m = 1; m <= 45; m++) {
+      s.advance(CLOCK_MS);
+      s.tick();
+      await flush();
+      if (counts()[0] > at.length + 1) at.push(m);
+    }
+    expect(at).toEqual([1, 3, 7, 15, 25, 35, 45]);
+    expect(counts()).toEqual([8, 8, 8]);
+    expect(RETRY_MS).toEqual([1, 2, 4, 8, 10].map((x) => x * CLOCK_MS));
+    // network back: next due retry loads everything
+    s.setRoute((p) =>
+      p === '/islands'
+        ? { status: 200, body: [male, thulusdhoo] }
+        : { status: 200, body: p.startsWith('/weather') ? weather1069 : p.endsWith('/activity-scores') ? acts1069 : p.startsWith('/tide') ? synthTide() : {} },
+    );
+    s.advance(10 * CLOCK_MS);
+    s.tick();
+    await flush();
+    const st = s.store.getState();
+    expect(isData(st.wx['27']) && isData(st.tides[1069]) && isData(st.acts[1069])).toBe(true);
+    expect(st.islands).toHaveLength(2);
+    // nothing left to retry
+    const n = s.calls.length;
+    s.advance(10 * CLOCK_MS);
+    s.tick();
+    expect(s.calls.length).toBe(n);
+  });
+
+  it('retryNow retries everything that failed at once, without waiting for the backoff', async () => {
+    const s = setup({ route: () => 'network' });
+    s.store.start();
+    s.store.ensureIsle(male);
+    await flush();
+    s.setRoute((p) => ({ status: 200, body: p.startsWith('/weather') ? weather1069 : p.endsWith('/activity-scores') ? acts1069 : p.startsWith('/tide') ? synthTide() : p === '/islands' ? [male] : { description: 'x' } }));
+    s.store.retryNow();
+    const st0 = s.store.getState();
+    expect([st0.wx['27'], st0.tides[1069], st0.acts[1069], st0.isle[1069]]).toEqual(['loading', 'loading', 'loading', 'loading']);
+    await flush();
+    const st = s.store.getState();
+    expect(isData(st.wx['27']) && isData(st.tides[1069]) && isData(st.acts[1069]) && isData(st.isle[1069])).toBe(true);
+    expect(st.islands).toHaveLength(1);
+  });
+
+  it('an island without a usable tide feed is not retried', async () => {
+    const s = setup();
+    s.setRoute((p) => (p.startsWith('/tide') ? { status: 200, body: synthTide({ minutes: 60 }) } : p === '/islands' ? { status: 200, body: [male] } : { status: 200, body: p.endsWith('/activity-scores') ? acts1069 : weather1069 }));
+    s.store.start();
+    await flush();
+    expect(s.store.getState().tides[1069]).toBe('err');
+    s.setRoute(() => 'network');
+    s.advance(STALE_MS + 1);
+    s.tick(); // stale weather + scores refresh, fail
+    await flush();
+    const n = s.calls.length;
+    s.store.retryNow();
+    for (let m = 0; m < 3; m++) {
+      s.advance(CLOCK_MS);
+      s.tick();
+    }
+    // no tide retries (stale weather keeps refreshing every tick as before, and stays on screen)
+    expect(s.calls.slice(n).filter((c) => c.startsWith('/tide'))).toEqual([]);
+    expect(isData(s.store.getState().wx['27'])).toBe(true);
   });
 
   it('a tide payload that is too short is an error, not data', async () => {
