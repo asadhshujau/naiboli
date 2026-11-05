@@ -23,11 +23,19 @@ export interface GlassRect {
   origin?: [number, number];
 }
 
-export type GlassAlpha = 'hint' | 'bubble';
+/** `panel` fades out and `mini` in as immersive mode goes 0 → 1. */
+export type GlassAlpha = 'hint' | 'bubble' | 'panel' | 'mini';
+
+export interface GlassAlphas {
+  hint: SharedValue<number>;
+  bubble: SharedValue<number>;
+  /** immersive mode, 0 (panel) → 1 (mini bar); animated */
+  immersive: SharedValue<number>;
+}
 
 export interface GlassApi {
   rects: SharedValue<Record<string, GlassRect>>;
-  alphas: Record<GlassAlpha, SharedValue<number>>;
+  alphas: GlassAlphas;
   /** the bubble's current scale (applied around `origin`) */
   bubbleScale: SharedValue<number>;
   /**
@@ -41,12 +49,16 @@ export interface GlassApi {
 const Ctx = createContext<GlassApi | null>(null);
 
 /** `root`: the screen's root view (held in state by the screen, set through its callback ref). */
-export function useGlassRegistry(root: ComponentRef<typeof View> | null): GlassApi {
+export function useGlassRegistry(root: ComponentRef<typeof View> | null, immersive0 = 0): GlassApi {
   const rects = useSharedValue<Record<string, GlassRect>>({});
   const hint = useSharedValue(1);
   const bubble = useSharedValue(0);
+  const immersive = useSharedValue(immersive0);
   const bubbleScale = useSharedValue(0.85);
-  return useMemo(() => ({ rects, alphas: { hint, bubble }, bubbleScale, root }), [rects, hint, bubble, bubbleScale, root]);
+  return useMemo(
+    () => ({ rects, alphas: { hint, bubble, immersive }, bubbleScale, root }),
+    [rects, hint, bubble, immersive, bubbleScale, root],
+  );
 }
 
 export function GlassProvider({ api, children }: { api: GlassApi; children: ReactNode }) {

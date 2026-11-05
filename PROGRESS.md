@@ -33,10 +33,13 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
    - **OTA updates bundle with the env of the machine running `eas update`**: use the `update:*` scripts (item 7)
      so an update never points a production build at the wrong API.
    - Preview builds use moodhu.dev until the production API is live; switch in `eas.json` when it is.
-2. **Immersive mode.** Clean view of the scene without the bottom panel; everything the panel offers reachable
-   another way. **Design to agree first:** how to enter / leave (tap, gesture, button), what stays (top HUD?
-   scrubber?), remembered or not (AsyncStorage). Mind the glass rects (`useGlassRegistry`) and the bubble placement
-   limits in `index.tsx`. JS only.
+2. ✅ **Immersive mode** (2026-11-05, design agreed with the user). An "expand" button (`open_in_full`) on the
+   bottom panel's header hides the panel; a thin glass bar takes its place (`src/ui/hud/MiniBar.tsx`): compact
+   scrubber (no axis labels), back to now (when scrubbed ahead), all activities (`format_list_bulleted`), and
+   `close_fullscreen` to bring the panel back. Top HUD stays. Crossfade 250 ms on `alphas.immersive` (0 → 1), which
+   also fades the glass blur (`GlassAlpha` `panel` / `mini`); the hidden one lets touches through. Remembered in
+   AsyncStorage `naiboli.immersive.v1`, read before the first render (`launchPrefs`) so it doesn't flash. Bubbles may
+   go lower in immersive mode (bottom limit = bar height + 30 instead of 210). JS only.
 
 ### B. Needs your decision / review
 3. ✅ **Message copy approved** (user, 2026-11-05).
@@ -80,6 +83,9 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives within seconds (reconnect); tap
   the line → reloads at once; background / foreground while offline → no errors.
+- Immersive mode: expand button on the panel → thin bar; scrub in the bar (no stutter), "All" opens the list,
+  back-to-now shows when scrubbed ahead, collapse button brings the panel back; blur fades with it; kill and relaunch
+  keeps the mode; bubbles near the bottom don't sit under the bar.
 - Tap the time line above the headline → "· Updating" briefly, then fresh data; it doesn't steal sky taps much.
 - Tide sheet: "Towel room" / "Extra sand" fit the Beach stat column (26 pt) or wrap nicely.
 - Messages: headline length on a small phone (longest ~36 chars); a storm / alert day shows calm "stay ashore"

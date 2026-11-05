@@ -5,6 +5,8 @@ import type { ApiIsland } from '@/data/types';
 export const LS_ISLE = 'naiboli.island.v1';
 /** Recently loaded islands, most recent first (full island objects, current included). */
 export const LS_RECENTS = 'naiboli.recents.v1';
+/** `1` while immersive mode (scene without the bottom panel) is on. */
+export const LS_IMMERSIVE = 'naiboli.immersive.v1';
 /** `1` once the first-run "Where are you?" sheet has been shown. */
 export const LS_ASKED = 'naiboli.locAsked.v1';
 
@@ -45,6 +47,10 @@ export function makeStorage(kv: KV) {
       return !!(await get(LS_ASKED));
     },
     setLocAsked: () => set(LS_ASKED, 1),
+    async immersive(): Promise<boolean> {
+      return (await get(LS_IMMERSIVE)) === 1;
+    },
+    setImmersive: (on: boolean) => set(LS_IMMERSIVE, on ? 1 : 0),
   };
 }
 

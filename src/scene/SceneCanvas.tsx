@@ -8,7 +8,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { FIGTREE_700 } from '@/ui/fonts';
 
 import { makeCtx } from './ctx2d';
-import type { GlassApi, GlassRect } from './glass';
+import type { GlassAlpha, GlassApi, GlassRect } from './glass';
 import { ARTBOARD_W, HZ, hitTest, initialSim, tick, type SceneInput, type SceneKind, type SimState } from './paint';
 
 interface Props {
@@ -42,7 +42,7 @@ function saturate(s: number): number[] {
   ];
 }
 
-function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: { hint: number; bubble: number }, bubbleScale: number) {
+function drawGlass(c: SkCanvas, rects: Record<string, GlassRect>, alphas: Record<GlassAlpha, number>, bubbleScale: number) {
   'worklet';
   for (const k in rects) {
     const g = rects[k];
@@ -108,7 +108,7 @@ export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Pro
   const { rects, alphas, bubbleScale } = glass;
   useFrameCallback((fi) => {
     'worklet';
-    if (pausedSV.value && still(alphas.bubble.value) && still(alphas.hint.value)) return;
+    if (pausedSV.value && still(alphas.bubble.value) && still(alphas.hint.value) && still(alphas.immersive.value)) return;
     const dt = (fi.timeSincePreviousFrame ?? 16) / 1000;
     const rec = Skia.PictureRecorder();
     const c = rec.beginRecording(Skia.XYWHRect(0, 0, width, height));
@@ -124,7 +124,8 @@ export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Pro
       return S;
     }, false);
     c.restore();
-    drawGlass(c, rects.value, { hint: alphas.hint.value, bubble: alphas.bubble.value }, bubbleScale.value);
+    const im = alphas.immersive.value;
+    drawGlass(c, rects.value, { hint: alphas.hint.value, bubble: alphas.bubble.value, panel: 1 - im, mini: im }, bubbleScale.value);
     picture.value = rec.finishRecordingAsPicture();
   });
 

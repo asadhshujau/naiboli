@@ -16,13 +16,15 @@ interface Props {
   onHour: (h: number) => void;
   /** pointer down: close bubble, hide hint */
   onStart: () => void;
+  /** thin version for immersive mode: shorter bars, no axis labels */
+  compact?: boolean;
 }
 
 /**
  * 24-hour scrubber: drag sets the offset continuously; release snaps to the whole hour.
  * Bars: height 22 + best×7.8 %, coloured by that hour's best verdict.
  */
-export function Scrubber({ ribbon, axis, hud, offset, onHour, onStart }: Props) {
+export function Scrubber({ ribbon, axis, hud, offset, onHour, onStart, compact = false }: Props) {
   const width = useSharedValue(1);
   const lastHour = useSharedValue(0);
 
@@ -60,17 +62,17 @@ export function Scrubber({ ribbon, axis, hud, offset, onHour, onStart }: Props) 
   const thumb = useAnimatedStyle(() => ({ left: (offset.get() / 23) * width.get() }));
 
   return (
-    <View style={s.root}>
+    <View style={compact ? s.rootC : s.root}>
       <GestureDetector gesture={pan}>
         <View
-          style={s.area}
+          style={compact ? s.areaC : s.area}
           onLayout={(e) => {
             width.set(e.nativeEvent.layout.width || 1);
           }}
           accessible
           accessibilityRole="adjustable"
           accessibilityLabel="Time of day">
-          <View style={s.bars} pointerEvents="none">
+          <View style={[s.bars, compact && s.barsC]} pointerEvents="none">
             {ribbon.map((b, i) => (
               <View key={i} style={[s.bar, { height: `${b.h}%`, backgroundColor: b.c, opacity: b.o }]} />
             ))}
@@ -81,20 +83,25 @@ export function Scrubber({ ribbon, axis, hud, offset, onHour, onStart }: Props) 
           </Animated.View>
         </View>
       </GestureDetector>
-      <View style={s.axis} pointerEvents="none">
-        {axis.map((a) => (
-          <Text key={a.x} style={[s.axisLabel, T.mono(10), { left: `${a.x}%`, color: hud.pSub, transform: [{ translateX: `${a.tx}%` }] }]} numberOfLines={1}>
-            {a.label}
-          </Text>
-        ))}
-      </View>
+      {compact ? null : (
+        <View style={s.axis} pointerEvents="none">
+          {axis.map((a) => (
+            <Text key={a.x} style={[s.axisLabel, T.mono(10), { left: `${a.x}%`, color: hud.pSub, transform: [{ translateX: `${a.tx}%` }] }]} numberOfLines={1}>
+              {a.label}
+            </Text>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
 
 const s = StyleSheet.create({
   root: { marginTop: 14, paddingHorizontal: 4 },
+  rootC: { flex: 1, minWidth: 0, paddingHorizontal: 6 },
   area: { height: 38 },
+  areaC: { height: 30 },
+  barsC: { height: 22 },
   bars: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 30, flexDirection: 'row', alignItems: 'flex-end', gap: 2 },
   bar: { flex: 1, borderRadius: 3 },
   thumb: { position: 'absolute', top: 0, bottom: -2, width: 0 },

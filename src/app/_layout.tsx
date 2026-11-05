@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { dataStore, storage } from '@/state/app';
+import { dataStore, launchPrefs, storage } from '@/state/app';
 import { onReconnect } from '@/state/network';
 import { FONT_SOURCES } from '@/ui/fonts';
 
@@ -19,8 +19,9 @@ export default function RootLayout() {
   useEffect(() => {
     let alive = true;
     // Launch always opens the saved island (rendered from the stored object), else Malé unsaved.
-    Promise.all([storage.loadIsland(), storage.loadRecents()]).then(([saved, recents]) => {
+    Promise.all([storage.loadIsland(), storage.loadRecents(), storage.immersive()]).then(([saved, recents, immersive]) => {
       if (!alive) return;
+      launchPrefs.immersive = immersive;
       dataStore.init(saved, recents);
       dataStore.start();
       setDataReady(true);

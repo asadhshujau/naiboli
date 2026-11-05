@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useReducer, useState, type ComponentRef } from 'react';
 import { BackHandler, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useReducedMotion, useSharedValue } from 'react-native-reanimated';
+import { Easing, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { pickerIslands, wxKey } from '@/data/islands';
@@ -11,7 +11,7 @@ import { GlassProvider, useGlassRegistry } from '@/scene/glass';
 import { ARTBOARD_W, type SceneKind } from '@/scene/paint';
 import { lightOf } from '@/scene/palette';
 import { SceneCanvas } from '@/scene/SceneCanvas';
-import { dataStore, useDataState } from '@/state/app';
+import { dataStore, launchPrefs, storage, useDataState } from '@/state/app';
 import {
   bubbleContent,
   bubblePos,
@@ -31,6 +31,7 @@ import { buildBase, buildSceneInput, buildView, type ActRow } from '@/state/view
 import { Bubble } from '@/ui/Bubble';
 import { dayTheme, DayThemeProvider } from '@/ui/dayTheme';
 import { BottomPanel } from '@/ui/hud/BottomPanel';
+import { MINI_BAR_H, MiniBar } from '@/ui/hud/MiniBar';
 import { TapHint } from '@/ui/hud/TapHint';
 import { TopHud } from '@/ui/hud/TopHud';
 import { Splash } from '@/ui/Splash';
@@ -58,7 +59,20 @@ export default function SceneScreen() {
   const [ui, dispatch] = useReducer(uiReducer, initialUi);
   const offset = useSharedValue(0);
   const [rootView, setRootView] = useState<ComponentRef<typeof View> | null>(null);
-  const glass = useGlassRegistry(rootView);
+  // Immersive mode: the scene without the bottom panel (a thin bar instead); remembered across launches.
+  const [immersive, setImmersive] = useState(launchPrefs.immersive);
+  const glass = useGlassRegistry(rootView, launchPrefs.immersive ? 1 : 0);
+  const immersiveA = glass.alphas.immersive;
+  useEffect(() => {
+    immersiveA.set(withTiming(immersive ? 1 : 0, { duration: 250, easing: Easing.out(Easing.quad) }));
+  }, [immersive, immersiveA]);
+  useEffect(() => {
+    if (immersive !== launchPrefs.immersive) void storage.setImmersive(immersive);
+  }, [immersive]);
+  const toggleImmersive = useCallback(() => {
+    setImmersive((on) => !on);
+    dispatch({ type: 'closeBubble' });
+  }, []);
 
   // `now` follows the store's 60 s clock so the scene input stays stable between ticks.
   const base = useMemo(() => buildBase(d, d.clock), [d]);
@@ -130,10 +144,10 @@ export default function SceneScreen() {
       w: frame.w,
       scale,
       top: insets.top + 58,
-      bottom: frame.h - (Math.max(14, insets.bottom) - 14) - 210,
+      bottom: frame.h - (Math.max(14, insets.bottom) - 14) - (immersive ? MINI_BAR_H + 30 : 210),
     });
     return { content, pos };
-  }, [ui.bubble, base, v, d, frame, scale, insets.top, insets.bottom]);
+  }, [ui.bubble, base, v, d, frame, scale, insets.top, insets.bottom, immersive]);
 
   // ── panel / HUD ──
   const onNow = useCallback(() => {
@@ -228,6 +242,18 @@ export default function SceneScreen() {
             onNow={onNow}
             onAll={() => openSheet({ sheet: 'acts' })}
             onAct={onAct}
+            immersive={immersive}
+            onImmersive={toggleImmersive}
+          />
+          <MiniBar
+            v={v}
+            offset={offset}
+            onHour={setOffsetH}
+            onScrubStart={() => dispatch({ type: 'scrub' })}
+            onNow={onNow}
+            onAll={() => openSheet({ sheet: 'acts' })}
+            immersive={immersive}
+            onExit={toggleImmersive}
           />
           {bubble ? (
             <Bubble

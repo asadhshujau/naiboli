@@ -13,7 +13,8 @@ directions_boat_filled directions_bus directions_walk expand_more explore flight
 humidity_percentage kayaking kitesurfing landscape light_mode lightbulb local_taxi location_disabled location_off location_on
 map more_horiz my_location navigation near_me north_east open_in_new partly_cloudy_day partly_cloudy_night phishing pool radar
 rainy replay route rowing sailing scuba_diving search south_east speed sunny surfing swap_horiz thermostat thunderstorm umbrella
-visibility warning water waves wb_sunny wb_twilight weather_snowy wrong_location`
+visibility warning water waves wb_sunny wb_twilight weather_snowy wrong_location
+open_in_full close_fullscreen format_list_bulleted`
   .split(/\s+/)
   .filter(Boolean);
 

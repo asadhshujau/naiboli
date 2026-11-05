@@ -107,6 +107,18 @@ describe('data store', () => {
     s.store.stop();
   });
 
+  it('immersive mode preference: off by default, saved and read back', async () => {
+    const kv = new Map<string, string>();
+    const st = makeStorage({ getItem: async (k) => kv.get(k) ?? null, setItem: async (k, v) => void kv.set(k, v) });
+    expect(await st.immersive()).toBe(false);
+    await st.setImmersive(true);
+    expect(await st.immersive()).toBe(true);
+    await st.setImmersive(false);
+    expect(await st.immersive()).toBe(false);
+    kv.set('naiboli.immersive.v1', 'garbage');
+    expect(await st.immersive()).toBe(false);
+  });
+
   it('first run without a saved island has no recents', () => {
     expect(setup().store.getState().recents).toEqual([]);
   });
