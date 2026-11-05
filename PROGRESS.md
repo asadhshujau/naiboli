@@ -86,6 +86,21 @@ happen:
        conditions, not a judgement of the spot (e.g. "Snorkel later" / "Calmer later"), or show them only when
        positive. Parity tests for `isleView` change accordingly (expected difference from the prototype).
 
+5. **Data refresh / pull to refresh — check, build if needed** (user, 2026-11-05). How it works today
+   (`src/state/store.ts`, `src/app/_layout.tsx`):
+   - 60 s clock: weather and activity scores refetch in the background when older than 10 min (`STALE_MS`); a
+     failed refresh keeps the last good data; failed scores retry every minute.
+   - App back to foreground → `dataStore.tick()` at once, so stale data refreshes immediately.
+   - Local midnight → everything resets and refetches. Island change → everything for that island loads.
+   - **Gap:** a *failed first load* of weather (`'err'`) or tide is never retried by the clock (`tick` only refreshes
+     weather that is already data; `ensureTide` runs once per island per day). Opened offline, the app stays on
+     "Couldn't reach the live feed" until island change, midnight or restart.
+   Recommendation: no classic pull-to-refresh (the main screen doesn't scroll; a pull gesture would fight the scene
+   taps and the scrubber). Instead: (1) retry weather / tide `'err'` on the clock tick, with a small backoff;
+   (2) a "tap to retry" on the offline line (and maybe the "Updating" eyebrow) for a manual refresh;
+   (3) optional: refetch on network reconnect (`@react-native-community/netinfo`, native module → needs a build).
+   Add store tests for the retry paths. Check on device: airplane mode on launch → off → data arrives by itself.
+
 ### Before a production release (Google Play + App Store)
 App identity and config
 - [ ] **Android package name**: still `com.anonymous.naiboli` (template). Pick the real one (e.g. `dev.shujau.naiboli`)
