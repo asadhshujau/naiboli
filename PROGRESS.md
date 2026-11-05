@@ -137,4 +137,7 @@ npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Go
 - Android edge-to-edge: `useWindowDimensions()` excludes the nav bar; size the scene from layout.
 - React Compiler lint rejects `sv.value = …` on shared values from props/context — use `.set()` / `.get()`.
 - In the CanvasKit Jest harness, colour arrays must come from CanvasKit's realm (`scripts/scene-compare/ckRealm.ts`).
+- EAS Android build (2026-11-05): the Gradle daemon was killed (out of memory) while compiling C++ for 4 ABIs on the
+  4 vCPU / 15.6 GB worker. The `development` profile in `eas.json` now builds arm64-v8a only
+  (`ORG_GRADLE_PROJECT_reactNativeArchitectures`). Preview/production still build all ABIs, so watch for the same failure.
 - `git push` from the agent sandbox may fail with "Permission denied (publickey)"; it works outside the sandbox.
