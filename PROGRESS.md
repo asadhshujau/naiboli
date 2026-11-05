@@ -103,9 +103,11 @@ happen:
 
 ### Before a production release (Google Play + App Store)
 App identity and config
-- [ ] **Android package name**: still `com.anonymous.naiboli` (template). Pick the real one (e.g. `dev.shujau.naiboli`)
-      **before the first Play upload**; it can never change afterwards.
-- [ ] **iOS bundle identifier**: not set (`ios.bundleIdentifier`). Same rule for App Store Connect.
+- [x] **Android package name**: `dev.shujau.naiboli` (user, 2026-11-05; reverse of the owned domain `shujau.dev`).
+      Can never change after the first Play upload. The installed dev build is still `com.anonymous.naiboli`: the
+      next dev build installs as a separate app (uninstall the old one), and EAS makes a new Android keystore for
+      the new package. A local `android/` folder (ignored) needs `npx expo prebuild --clean`.
+- [x] **iOS bundle identifier**: `dev.shujau.naiboli` (same rule for App Store Connect).
 - [ ] **Display name**: `name` is `"naiboli"` (lowercase, shows under the launcher icon). Decide "Naiboli" or keep the
       wordmark style.
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
