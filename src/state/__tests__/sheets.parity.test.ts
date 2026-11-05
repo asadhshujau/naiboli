@@ -252,7 +252,8 @@ describe.each(SCENARIOS)('$name', (sc) => {
       items: g.items.map((a) => ({ ...a, sep: css(a.sep) })),
     }));
     expect(groups).toEqual(noFns(theirs.groups));
-    expect(v.actsSrc).toBe(theirs.actsSrc);
+    // Expected difference: the score source ("Activity scores from moodhu.dev, …") is never shown.
+    expect(v.actsSrc).toBe(/^Activity scores from/.test(theirs.actsSrc) ? '' : theirs.actsSrc);
     expect(v.whenLabel).toBe(theirs.whenLabel);
 
     for (const a of v.acts) {

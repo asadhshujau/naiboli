@@ -224,8 +224,9 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
       return { ...a, s, k, e, base, v: verdictLabel(k, e), score: s.toFixed(1), reason, vBg: c.bg, vInk: c.ink, vWord: c.word, lBg: cl.bg, lInk: cl.ink };
     })
     .sort((x, y) => y.s - x.s);
+  // Where the scores come from is never shown (user decision); only the "our own estimate" notice while they're missing.
   const actsSrc = AD
-    ? `Activity scores from moodhu.dev, updated ${fmt(AD.at)}.`
+    ? ''
     : b.actsRaw === 'err'
       ? 'Couldn’t load activity scores, so these are our own estimate from the weather.'
       : 'Loading activity scores… showing our own estimate for now.';

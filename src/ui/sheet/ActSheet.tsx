@@ -130,7 +130,7 @@ export function ActSheet({ d, whenLabel, actsSrc, onBack, onClose }: Props) {
       ) : null}
 
       <TipCard text={d.tip} />
-      <SourceLine text={actsSrc} mt={14} />
+      {actsSrc ? <SourceLine text={actsSrc} mt={14} /> : null}
     </>
   );
 }

@@ -56,7 +56,7 @@ export function ActsSheet({ whenLabel, groups, actsSrc, onAct, onClose }: Props)
           </View>
         </View>
       ))}
-      <SourceLine text={actsSrc} mt={16} />
+      {actsSrc ? <SourceLine text={actsSrc} mt={16} /> : null}
     </>
   );
 }

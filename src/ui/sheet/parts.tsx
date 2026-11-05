@@ -78,7 +78,7 @@ export function TipCard({ text, style }: { text: string; style?: StyleProp<ViewS
   );
 }
 
-/** Footer source line (activity scores). */
+/** Footer note under the activity sheets (shown only while scores are our own estimate). */
 export function SourceLine({ text, mt }: { text: string; mt: number }) {
   return <Text style={[usePartStyles().source, { marginTop: mt }]}>{text}</Text>;
 }

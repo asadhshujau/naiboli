@@ -6,7 +6,28 @@ import type {
   ApiWeatherResponse,
 } from './types';
 
-export const API = 'https://moodhu.dev/api';
+/** Used when `EXPO_PUBLIC_API_URL` isn't set (tests, a missing `.env`). */
+export const DEFAULT_API = 'https://moodhu.dev/api';
+
+/** API base URL from the env value (trailing slashes dropped), else the default. */
+export function apiBaseOf(env: string | undefined): string {
+  const v = (env || '').trim().replace(/\/+$/, '');
+  return /^https?:\/\/[^/]+/.test(v) ? v : DEFAULT_API;
+}
+
+/** "https://host/api" → "https://host" */
+export function originOf(url: string): string {
+  return (url.match(/^https?:\/\/[^/]+/) || [DEFAULT_API.replace(/\/api$/, '')])[0];
+}
+
+/**
+ * API base URL. Set per build profile in `eas.json` (`env.EXPO_PUBLIC_API_URL`) and in `.env` for `expo start`;
+ * Metro inlines it at bundle time (must stay a literal `process.env.EXPO_PUBLIC_API_URL`).
+ */
+export const API = apiBaseOf(process.env.EXPO_PUBLIC_API_URL);
+
+/** Privacy policy: always `<origin of the API in use>/privacy-policy`. */
+export const PRIVACY_URL = originOf(API) + '/privacy-policy';
 export const TIMEOUT_MS = 20000;
 
 export type Fetcher = typeof fetch;

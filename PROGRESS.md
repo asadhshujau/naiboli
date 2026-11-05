@@ -22,15 +22,16 @@ retries. Nothing is in progress. Items marked **🔧 native** change the native 
 build so it isn't wasted; everything else is JS and can follow later (Metro / OTA).
 
 ### A. To build (planned by the user)
-1. **Environment config for the API.** Base URL is hard-coded (`API = 'https://moodhu.dev/api'`, `src/data/api.ts`);
-   production will be `naiboli.shujau.dev` (exact API path to confirm). Plan: `EXPO_PUBLIC_API_URL` per EAS build
-   profile (`env` in `eas.json` or EAS environment variables) + local `.env` for `expo start`; read once in `api.ts`
-   with a fallback. Tests mock the API module. Decided (user, 2026-11-05):
-   - **Don't show where activity scores come from, anywhere.** Remove `SourceLine` / `actsSrc` (`ActsSheet.tsx`,
-     `ActSheet.tsx`, text in `src/state/view.ts`) and the Menu row "Activity scores — moodhu.dev" (`MenuSheet.tsx`
-     `LINKS`). Parity tests comparing `actsSrc` → expected difference.
-   - **Privacy Policy → `<origin of the API URL in use>/privacy-policy`**, from the same env setting.
-   JS only, but the value is baked into preview / production builds: must be in place before those.
+1. ✅ **Environment config for the API** (2026-11-05). `EXPO_PUBLIC_API_URL` (inlined by Metro at bundle time):
+   `.env` for `expo start`, `build.<profile>.env` in `eas.json` for builds — development + preview
+   `https://moodhu.dev/api`, production `https://naiboli.shujau.dev/api` (user, may change). `src/data/api.ts`:
+   `API = apiBaseOf(env)` (trailing slash dropped, falls back to `DEFAULT_API` = moodhu.dev when unset / not a URL).
+   - Activity-score source is never shown: no "Activity scores from moodhu.dev" line (the "our own estimate" notice
+     still shows while scores are loading / failed — it doesn't name a source), no Menu row.
+   - Privacy Policy = `PRIVACY_URL` = `<origin of API>/privacy-policy`.
+   - **OTA updates bundle with the env of the machine running `eas update`**: use the `update:*` scripts (item 7)
+     so an update never points a production build at the wrong API.
+   - Preview builds use moodhu.dev until the production API is live; switch in `eas.json` when it is.
 2. **Immersive mode.** Clean view of the scene without the bottom panel; everything the panel offers reachable
    another way. **Design to agree first:** how to enter / leave (tap, gesture, button), what stays (top HUD?
    scrubber?), remembered or not (AsyncStorage). Mind the glass rects (`useGlassRegistry`) and the bubble placement
@@ -41,7 +42,7 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 4. ✅ **Tide sheet "Beach" stat reworded** (2026-11-05): "Cosy" / "Extra sand" / "Towel room" with tide-fact lines
    (`beachStat` in `src/data/copy/index.ts`), never Narrow / Wide / Average.
 5. ✅ **🔧 native · Display name: "Naiboli"** (user, 2026-11-05; `name` in `app.json`). Shows from the next build.
-6. **Production API path** for planned feature 1 (e.g. `https://naiboli.shujau.dev/api`?).
+6. ✅ **Production API: `https://naiboli.shujau.dev/api`** (user, 2026-11-05; may change → `eas.json`).
 
 ### C. Suggested by Claude (optional — say which to do)
 7. **🔧 native · OTA updates** (`expo-updates` + `eas update`, `runtimeVersion` policy): JS fixes and copy changes
@@ -67,6 +68,8 @@ build so it isn't wasted; everything else is JS and can follow later (Metro / OT
 - Sheets open without delay / glitch (scene pauses behind sheets, separate animated styles, stale-height fix).
 - Day theme: scrub to dusk / night and open every sheet and bubble; morning / late-afternoon warmth; overcast day.
 - Launcher icon and themed icon (Android 13+); name under the icon reads "Naiboli".
+- Menu: no "Activity scores" row; Privacy Policy opens `https://moodhu.dev/privacy-policy` (dev build).
+- Activity sheets: no "Activity scores from moodhu.dev" line once scores load.
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
   the line → reloads at once; background / foreground while offline → no errors.
@@ -87,7 +90,7 @@ App identity and config
       (`eas.json` production). Bump `version` per release.
 - [ ] **iOS export compliance** — Pending item 10.
 - [ ] Template leftovers — Pending item 11.
-- [ ] API URL via environment config — Pending item 1: production builds must point at the production API.
+- [x] API URL via environment config — Pending item 1. Before release: production API + `/privacy-policy` live.
 
 Builds
 - [ ] **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked

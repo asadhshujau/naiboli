@@ -1,6 +1,7 @@
 /** Menu: wordmark, disclaimer, story, data sources and privacy links. */
 import { StyleSheet, Text, View } from 'react-native';
 
+import { PRIVACY_URL } from '@/data/api';
 import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
 import { Wordmark } from '@/ui/Wordmark';
@@ -10,8 +11,7 @@ import { CloseButton, openLink, Press, useSep } from './parts';
 const LINKS: [string, string, string][] = [
   ['Weather data', 'OpenWeather', 'https://openweathermap.org/'],
   ['Tide data', 'MSRO', 'https://geohub.msro.mv'],
-  ['Activity scores', 'moodhu.dev', 'https://moodhu.dev'],
-  ['Privacy', 'Privacy Policy', 'https://moodhu.dev/privacy-policy'],
+  ['Privacy', 'Privacy Policy', PRIVACY_URL],
 ];
 
 export function MenuSheet({ onClose }: { onClose: () => void }) {
