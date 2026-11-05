@@ -48,6 +48,40 @@ happen:
    (top HUD? scrubber?), whether it's remembered (AsyncStorage). Mind the glass blur rects (`useGlassRegistry`) and the
    bubble placement limits in `index.tsx` (they assume the panel is there).
 
+4. **Varied, friendly-silly messages** (user, 2026-11-05). Today each weather mood has exactly one headline
+   (`headEn` in `MOODS`, `src/data/mood.ts`: "Glorious out there.", "Bring a towel."…), the scrubbed-hour headline is
+   one template ("3 PM looks good." in `src/state/view.ts`), and the activity detail line is a fixed verdict line +
+   reason (`line` in `buildDetail`, `src/state/sheets.ts`). Same conditions → same words every time.
+   **Decision: app side** (user OK with it as long as it doesn't slow the app):
+   - Cost is nil: a few hundred short strings (~15–20 KB in the bundle) and one array pick inside builders that
+     already run only on data / hour changes (memoised). Works offline and with the local fallback scores; no API
+     round trip. Copy changes without a store release come later via OTA updates (see "Nice to have").
+   - Categories: weather = mood key (sunny, fair, windy, overcast, showers, storm, night, golden) × modifiers (hot,
+     breezy, warning ahead, time of day); scrubbed hour = verdict word (brilliant / good / so-so / grim); activity =
+     verdict (go / maybe / after sunrise / skip) × activity × main limiting factor (wind, rain, tide, daylight, UV…).
+   - Templates with slots (`{temp}`, `{wind}`, `{activity}`, `{hour}`, `{island}`), filled from the same data, so the
+     message is always true to the numbers.
+   - Variety without flicker: deterministic pick, seed = hash(category, island, date, hour). Stable while you look
+     (no change on the 60 s tick or re-render), different across hours, days and islands. Optionally avoid the
+     last-shown line per category (AsyncStorage).
+   - Tone rules: silly is fine; safety never is. Storm / warning categories stay calm and clear, the factual
+     warning text (`warningOf`) is never replaced, and the "Stay ashore" sense must survive in every variant.
+     The factual sub-lines (conditions, feels-like, reasons) stay factual.
+   - Copy in one easy-to-edit module (e.g. `src/data/copy/`), drafted by Claude, reviewed by the user. Tests: every
+     category has ≥ N lines, all slots resolve, picks are deterministic, storm/warning lines pass a "no jokes about
+     danger" list. Leaves room for Dhivehi copy later (Thaana fonts are already bundled).
+   - API alternative, if wanted later: the API sends a `category` + optional message override; the app keeps the
+     pools as the fallback.
+   - **Tone per place** (user): activities can be friendly-brutal / silly / anything ("break a leg"). **Islands:
+     friendly and silly, never belittling and never overhyping one island over another.**
+   - **Island detail fixes that belong to this** (About the island sheet, `isleView` in `src/state/sheets.ts`):
+     - The now-chip "Beach average / narrow / wide" (`Beach ${beachWord}`, word from tide level at line ~218) reads
+       like a rating of the island, though it only means how much sand the tide leaves right now. Reword as a tide
+       fact with a friendly twist (e.g. "Tide's out · extra beach" / "Tide's in · cosy beach"); never "average".
+     - Beach / reef row tags reuse activity verdicts ("Surf: Skip", "Snorkel: Skip"): phrase them as *right now*
+       conditions, not a judgement of the spot (e.g. "Snorkel later" / "Calmer later"), or show them only when
+       positive. Parity tests for `isleView` change accordingly (expected difference from the prototype).
+
 ### Before a production release (Google Play + App Store)
 App identity and config
 - [ ] **Android package name**: still `com.anonymous.naiboli` (template). Pick the real one (e.g. `dev.shujau.naiboli`)
