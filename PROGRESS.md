@@ -16,39 +16,60 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | — | EAS build test by the user, then the fix round | ⏭ **next** |
 
 ## Pending — start here when asked "what's pending?"
-All 5 phases and the first fix round are done. Android dev build tested on device 2026-11-05 (icon, splash,
-precise location, day theme, sheets): all good. Nothing is in progress. What's left, in the order it'll probably
-happen:
+All 5 phases and the first fix round are done. Android dev build tested on device 2026-11-05: all good. Since then
+(2026-11-05, not yet on a device): app ID `dev.shujau.naiboli`, island picker recents, varied messages, data refresh
+retries. Nothing is in progress. Items marked **🔧 native** change the native app: do them *before* the next dev
+build so it isn't wasted; everything else is JS and can follow later (Metro / OTA).
 
-### Planned features (user, 2026-11-05)
-1. **Environment config for the API.** The base URL is hard-coded: `API = 'https://moodhu.dev/api'` in
-   `src/data/api.ts`. Production will be `naiboli.shujau.dev` (exact API path to confirm). Plan: `EXPO_PUBLIC_API_URL`
-   per EAS build profile (`env` in `eas.json`, or EAS environment variables) with a local `.env` for `expo start`;
-   read once in `api.ts` with a fallback. Tests mock the API module, so they stay as they are.
-   Decided (user, 2026-11-05) for the user-facing "moodhu.dev" texts:
-   - **Don't show where activity scores come from, anywhere.** Remove the source line under the activity
-     sheets (`SourceLine` with `actsSrc` in `ActsSheet.tsx` / `ActSheet.tsx`, text built in `src/state/view.ts`) and
-     the Menu row "Activity scores — moodhu.dev" (`MenuSheet.tsx` `LINKS`). Update the parity tests that compare
-     `actsSrc` (expected difference from the prototype; list it under "Differences").
-   - **Privacy Policy always points to `<origin of the API URL in use>/privacy-policy`** (today
-     `https://moodhu.dev/privacy-policy`, production `https://naiboli.shujau.dev/privacy-policy`), derived from the
-     same env setting, never hard-coded.
-2. ✅ **Island picker default list: current island + recents** — done 2026-11-05, see "History of the fix round".
-3. **Immersive mode.** A clean view of the scene without the bottom activity panel; everything the panel offers
-   reachable some other way (e.g. a tap/gesture to toggle, the scrubber kept or revealed on demand, activities
-   from the menu or a small button). Design to agree before building: how to enter/leave it, what stays on screen
-   (top HUD? scrubber?), whether it's remembered (AsyncStorage). Mind the glass blur rects (`useGlassRegistry`) and the
-   bubble placement limits in `index.tsx` (they assume the panel is there).
+### A. To build (planned by the user)
+1. **Environment config for the API.** Base URL is hard-coded (`API = 'https://moodhu.dev/api'`, `src/data/api.ts`);
+   production will be `naiboli.shujau.dev` (exact API path to confirm). Plan: `EXPO_PUBLIC_API_URL` per EAS build
+   profile (`env` in `eas.json` or EAS environment variables) + local `.env` for `expo start`; read once in `api.ts`
+   with a fallback. Tests mock the API module. Decided (user, 2026-11-05):
+   - **Don't show where activity scores come from, anywhere.** Remove `SourceLine` / `actsSrc` (`ActsSheet.tsx`,
+     `ActSheet.tsx`, text in `src/state/view.ts`) and the Menu row "Activity scores — moodhu.dev" (`MenuSheet.tsx`
+     `LINKS`). Parity tests comparing `actsSrc` → expected difference.
+   - **Privacy Policy → `<origin of the API URL in use>/privacy-policy`**, from the same env setting.
+   JS only, but the value is baked into preview / production builds: must be in place before those.
+2. **Immersive mode.** Clean view of the scene without the bottom panel; everything the panel offers reachable
+   another way. **Design to agree first:** how to enter / leave (tap, gesture, button), what stays (top HUD?
+   scrubber?), remembered or not (AsyncStorage). Mind the glass rects (`useGlassRegistry`) and the bubble placement
+   limits in `index.tsx`. JS only.
 
-4. ✅ **Varied, friendly-silly messages** — built 2026-11-05, see "History of the fix round". **Copy needs the
-   user's review:** `src/data/copy/weather.ts` (headlines) and `src/data/copy/activities.ts` (activity lines).
-   Not done (optional, from the plan): avoid repeating the last-shown line (AsyncStorage); API `category` /
-   message override; Dhivehi copy. Open question: the Tide sheet's "Beach: Narrow / Wide / Average" field
-   (`buildTide`) still uses the old words; it sits under the tide so reads as a tide fact — reword too?
+### B. Needs your decision / review
+3. **Review the message copy:** `src/data/copy/weather.ts` (headlines, hour lines) and
+   `src/data/copy/activities.ts` (activity verdict lines). Edit freely; tests check slots, length and safety rules.
+4. **Tide sheet "Beach: Narrow / Wide / Average"** (`buildTide`, `beach` / `beachLine` in `src/state/sheets.ts`):
+   still the old words. Reword like the island chip ("Tide's in · cosy beach")? JS only.
+5. **🔧 native · Display name:** `name` is `"naiboli"` (shows under the launcher icon). "Naiboli" or keep lowercase?
+6. **Production API path** for planned feature 1 (e.g. `https://naiboli.shujau.dev/api`?).
 
-5. ✅ **Data refresh** — done 2026-11-05 (retries + tap to retry, no pull-to-refresh), see "History of the fix
-   round". Not done (optional): refetch on network reconnect (`@react-native-community/netinfo`, native module →
-   needs a build); the foreground retry covers the common case.
+### C. Suggested by Claude (optional — say which to do)
+7. **🔧 native · OTA updates** (`expo-updates` + `eas update`, `runtimeVersion` policy): JS fixes and copy changes
+   ship without a new build or store review. Worth adding before the next build: every later JS change (copy
+   review, immersive mode, API config) could then reach the installed build without rebuilding.
+8. **🔧 native · Refetch on network reconnect** (`@react-native-community/netinfo`): data reloads the moment the
+   connection is back, instead of at the next backoff retry or foreground. Small; the current retries already
+   cover it within minutes.
+9. **🔧 native · Crash reporting** (e.g. Sentry, `@sentry/react-native`): before real users / the closed test.
+10. **iOS export compliance:** `ios.config.usesNonExemptEncryption: false` in `app.json` (iOS only; one line).
+11. **Remove template leftovers:** unused `web` block in `app.json`, `scripts/reset-project.js`,
+    `assets/images/expo-*`, `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`. Housekeeping.
+12. **Messages, extras from the plan:** don't repeat the last-shown line per category (AsyncStorage); API
+    `category` + message override; Dhivehi copy (Thaana fonts already bundled). JS only.
+13. **"Updating" eyebrow as a tap-to-refresh** too (only the offline line is tappable now). JS only; small.
+
+### D. Check on the next dev build
+- New package name: installs as a separate app — uninstall the old `com.anonymous.naiboli` build first.
+- Splash wordmark shows (fixed in JS after the last device test).
+- Sheets open without delay / glitch (scene pauses behind sheets, separate animated styles, stale-height fix).
+- Day theme: scrub to dusk / night and open every sheet and bubble; morning / late-afternoon warmth; overcast day.
+- Launcher icon and themed icon (Android 13+).
+- Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
+- Data refresh: airplane mode on → launch → offline line; off → data arrives by itself within a minute or two; tap
+  the line → reloads at once; background / foreground while offline → no errors.
+- Messages: headline length on a small phone (longest ~36 chars); a storm / alert day shows calm "stay ashore"
+  lines; About the island chips and surf / snorkel tags.
 
 ### Before a production release (Google Play + App Store)
 App identity and config
@@ -57,15 +78,12 @@ App identity and config
       next dev build installs as a separate app (uninstall the old one), and EAS makes a new Android keystore for
       the new package. A local `android/` folder (ignored) needs `npx expo prebuild --clean`.
 - [x] **iOS bundle identifier**: `dev.shujau.naiboli` (same rule for App Store Connect).
-- [ ] **Display name**: `name` is `"naiboli"` (lowercase, shows under the launcher icon). Decide "Naiboli" or keep the
-      wordmark style.
+- [ ] **Display name** — see Pending item 5.
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
       (`eas.json` production). Bump `version` per release.
-- [ ] **iOS export compliance**: set `ios.config.usesNonExemptEncryption: false` (only HTTPS), so every upload doesn't
-      ask.
-- [ ] Remove the unused `web` block and the template leftovers (`scripts/reset-project.js`, `assets/images/expo-*`,
-      `react-logo*`, `logo-glow.png`, `tutorial-web.png`, `tabIcons/`).
-- [ ] API URL via environment config (planned feature 1): production builds must point at the production API.
+- [ ] **iOS export compliance** — Pending item 10.
+- [ ] Template leftovers — Pending item 11.
+- [ ] API URL via environment config — Pending item 1: production builds must point at the production API.
 
 Builds
 - [ ] **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
@@ -104,8 +122,7 @@ App Store
 - [ ] TestFlight round before review.
 
 Nice to have (not required)
-- [ ] OTA updates (`expo-updates` + `eas update`, `runtimeVersion` policy) so JS fixes ship without store review.
-- [ ] Crash reporting (e.g. Sentry) before real users.
+- [ ] OTA updates — Pending item 7. Crash reporting — Pending item 9.
 - [ ] Attribution check: OpenWeather (logo + link in the Weather sheet), MSRO badge (Tide), font licences (OFL).
 
 ### History of the fix round
