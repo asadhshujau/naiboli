@@ -19,8 +19,10 @@ interface Props {
   /** tap in artboard units */
   onTap: (kind: SceneKind, x: number, y: number) => void;
   /**
-   * A sheet covers the scene: stop painting (the last frame stays) once the glass fades have settled, so
-   * the UI thread is free for the sheet's slide, scrolling and mounting. Painting resumes at once on false.
+   * A sheet or the splash covers the scene: stop painting (the last frame stays) once the glass fades have
+   * settled, so the UI thread is free for the sheet's slide, scrolling and mounting, or the splash animation.
+   * The first frame is always painted, so shader setup happens up front, not when the cover goes away.
+   * Painting resumes at once on false.
    */
   paused?: boolean;
 }
@@ -101,6 +103,7 @@ export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Pro
   });
   const picture = useSharedValue<SkPicture>(empty);
   const pausedSV = useSharedValue(paused);
+  const drawn = useSharedValue(false);
   useEffect(() => {
     pausedSV.set(paused);
   }, [paused, pausedSV]);
@@ -108,7 +111,7 @@ export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Pro
   const { rects, alphas, bubbleScale } = glass;
   useFrameCallback((fi) => {
     'worklet';
-    if (pausedSV.value && still(alphas.bubble.value) && still(alphas.hint.value) && still(alphas.immersive.value)) return;
+    if (pausedSV.value && drawn.value && still(alphas.bubble.value) && still(alphas.hint.value) && still(alphas.immersive.value)) return;
     const dt = (fi.timeSincePreviousFrame ?? 16) / 1000;
     const rec = Skia.PictureRecorder();
     const c = rec.beginRecording(Skia.XYWHRect(0, 0, width, height));
@@ -127,6 +130,7 @@ export function SceneCanvas({ input, offset, glass, onTap, paused = false }: Pro
     const im = alphas.immersive.value;
     drawGlass(c, rects.value, { hint: alphas.hint.value, bubble: alphas.bubble.value, panel: 1 - im, mini: im }, bubbleScale.value);
     picture.value = rec.finishRecordingAsPicture();
+    drawn.value = true;
   });
 
   const tap = useTapGesture({

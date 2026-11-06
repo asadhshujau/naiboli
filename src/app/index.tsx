@@ -121,6 +121,9 @@ export default function SceneScreen() {
 
   // ── splash ──
   const [splash, setSplash] = useState(true);
+  // The opaque splash covers the scene until its fade-out starts: no painting behind it.
+  const [splashCover, setSplashCover] = useState(true);
+  const onSplashEnding = useCallback(() => setSplashCover(false), []);
   const wxNow = d.wx[wxKey(d.island)];
   const splashReady = !!wxNow && wxNow !== 'loading' && ui.geo !== 'locating';
   const onSplashDone = useCallback(() => {
@@ -223,7 +226,7 @@ export default function SceneScreen() {
             const { width, height } = e.nativeEvent.layout;
             if (width && height && (width !== frame.w || height !== frame.h)) setFrame({ w: width, h: height });
           }}>
-          <SceneCanvas input={sceneInput} offset={offset} glass={glass} onTap={onSceneTap} paused={ui.sheetOpen} />
+          <SceneCanvas input={sceneInput} offset={offset} glass={glass} onTap={onSceneTap} paused={ui.sheetOpen || splashCover} />
           <TopHud
             v={v}
             onMenu={() => openSheet({ sheet: 'menu' })}
@@ -272,7 +275,7 @@ export default function SceneScreen() {
           <Sheet open={ui.sheetOpen} seq={ui.seq} focus={ui.focus} frameH={frame.h} onClose={closeSheet}>
             {sheetBody}
           </Sheet>
-          {splash ? <Splash ready={splashReady} onDone={onSplashDone} /> : null}
+          {splash ? <Splash ready={splashReady} onEnding={onSplashEnding} onDone={onSplashDone} /> : null}
           <StatusBar style={splash ? 'dark' : v.darkSky ? 'light' : 'dark'} />
         </View>
       </DayThemeProvider>

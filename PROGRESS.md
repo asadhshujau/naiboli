@@ -32,11 +32,18 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   updates won't reach that build).
 
 ### Next steps, in order
-1. **Install the dev build `035a8d18` and run the device checks.** Uninstall the old `com.anonymous.naiboli` app,
-   install the APK above, `npx expo start`, go through "Device checks" below; the user's findings become the fix
-   list. **When resuming, ask the user** whether it's installed and what they found.
-   - A future dev build that fails → logs: `npx eas-cli@latest build:list --platform android --limit 1 --json` →
-     `logFiles[0]` (signed URL, 15 min; brotli-compressed JSON lines, `msg` per line). See Gotchas.
+1. **Device test of dev build `035a8d18` (2026-11-06): everything fine except two things** (user):
+   - **Splash animation not smooth.** Fix (JS, uncommitted until the user confirms): the scene painted every frame
+     behind the opaque splash; now `SceneCanvas` is paused while the splash covers it (`splashCover` in
+     `index.tsx`, cleared by `Splash`'s `onEnding` when the fade-out starts) and always paints its first frame
+     (shader setup up front). **User to re-check**, also with release JS (below).
+   - **Weather sheet opens slower than Tide.** Not a refetch: sheets never fetch; `buildWx` also runs for Tide
+     (its eyebrow), so it's not the data building either. It's the mount: Weather is the biggest tree (~45
+     `Icon`s, each an SVG view: 24 hourly cells, 8 days, stats; arc + moon SVGs, gradients, shadows), Tide is small.
+     Dev-mode React renders several times slower than release. **Next: user checks with release JS** before any
+     change: `npx expo start --no-dev --minify` (the dev build loads a production bundle; no new build needed).
+     If still slow there: icons as a font (one Text instead of one SVG view each), then lighter hourly cells.
+     (Deferring below-the-fold content was tried and reverted in round 1: the pop-in felt slower.)
 2. **Store prep drafts** (offered by Claude, waiting for the user's go; no code): Play listing (short / long
    description), Data safety + content rating answers, privacy policy text for
    `https://naiboli.shujau.dev/privacy-policy` (must be live before release).

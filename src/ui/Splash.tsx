@@ -3,7 +3,8 @@
  * t = 80 ms: shell −150° / .25 → 0° / 1 over 1.1 s cubic-bezier(.2,.9,.25,1.12); "naib" and "li" fade in and
  * rise 12 → 0 (.6 s / .7 s, delays .35 s / .45 s); tagline fades in (.6 s, delay .7 s).
  * From 2.6 s it waits for `ready` (weather loaded, no location lookup running), at most 9 s, then fades
- * out (opacity .55 s, scale 1 → 1.05 .6 s) and calls `onDone` after 650 ms. Tap skips.
+ * out (opacity .55 s, scale 1 → 1.05 .6 s) and calls `onDone` after 650 ms. Tap skips. `onEnding` fires when the
+ * fade-out starts (the scene behind stays paused until then).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -27,10 +28,12 @@ const OUT_MS = 650;
 interface Props {
   /** weather for the island has loaded and no location lookup is running */
   ready: boolean;
+  /** the fade-out starts: the scene behind starts showing */
+  onEnding: () => void;
   onDone: () => void;
 }
 
-export function Splash({ ready, onDone }: Props) {
+export function Splash({ ready, onEnding, onDone }: Props) {
   const spin = useSharedValue(0);
   const naib = useSharedValue(0);
   const naibY = useSharedValue(0);
@@ -70,11 +73,12 @@ export function Splash({ ready, onDone }: Props) {
   const end = useCallback(() => setEnding(true), []);
   useEffect(() => {
     if (!ending) return;
+    onEnding();
     out.set(withTiming(1, { duration: 550, easing: EASE }));
     outScale.set(withTiming(1, { duration: 600, easing: EASE }));
     const t = setTimeout(onDone, OUT_MS);
     return () => clearTimeout(t);
-  }, [ending, out, outScale, onDone]);
+  }, [ending, out, outScale, onEnding, onDone]);
 
   const rootStyle = useAnimatedStyle(() => ({ opacity: 1 - out.get(), transform: [{ scale: 1 + 0.05 * outScale.get() }] }));
   const shellStyle = useAnimatedStyle(() => ({
