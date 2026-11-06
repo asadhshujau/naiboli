@@ -53,8 +53,14 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
         has `EXPO_PUBLIC_API_URL=https://naiboli.shujau.dev/api`, and on 2026-11-06 `naiboli.shujau.dev` doesn't
         resolve. Either make it live, or point `build.production.env` at `https://moodhu.dev/api` (works) and switch
         later with `npm run update:production` (JS only, no new build).
-      - **Privacy policy page about Naiboli, live.** Required by Play (location permission); reviewers open it.
-        `https://moodhu.dev/privacy-policy` is up but never mentions Naiboli. The in-app link is `<API origin>/privacy-policy`.
+      - ✅ **Privacy policy page about Naiboli, live** (2026-11-06): `https://moodhu.dev/privacy-policy`, from
+        `../moodhuapi` `resources/views/privacy.blade.php` (commit `36ce876`, deployed to staging with `./deploy.sh`).
+        Developer Asadhu Shujaau, contact jr.shujau@gmail.com (user). It states: location only on the button,
+        used once for the nearest island ≤ 10 km, never stored or logged (POST body); on-device settings; nginx
+        access logs (IP, time, URL, user agent) kept 14 days; Expo EAS Update checks (IP, platform, version, random
+        install ID); OpenWeather / MSRO get no user data; no accounts, ads, analytics or sharing. **The Data safety
+        answers must match it.** A future production server needs the same page (the in-app link is
+        `<API origin>/privacy-policy`).
    2. Play Console: create the app (Naiboli, App, Free); fill in "Set up your app": privacy policy URL, app access
       (no login), ads (none), content rating, target audience (not for children), data safety, category Weather,
       contact email, store listing (short / long description, 512² icon, 1024×500 feature graphic, phone screenshots).
