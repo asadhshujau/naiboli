@@ -44,9 +44,26 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
      change: `npx expo start --no-dev --minify` (the dev build loads a production bundle; no new build needed).
      If still slow there: icons as a font (one Text instead of one SVG view each), then lighter hourly cells.
      (Deferring below-the-fold content was tried and reverted in round 1: the pop-in felt slower.)
-2. **Store prep drafts** (offered by Claude, waiting for the user's go; no code): Play listing (short / long
-   description), Data safety + content rating answers, privacy policy text for
-   `https://naiboli.shujau.dev/privacy-policy` (must be live before release).
+2. **Google Play closed test — Android first** (user, 2026-11-06; the user has a Play Console account; iOS / App
+   Store on hold). Personal accounts created after 2023-11-13: **12+ testers opted in for 14 consecutive days**
+   on a closed track, then "Apply for production" from the Dashboard (review ≤ ~7 days; asks about tester
+   engagement, feedback, changes made). Steps:
+   1. **Blockers to decide first:**
+      - **API for the closed-test build.** Play doesn't need a "production" API, but the AAB (profile `production`)
+        has `EXPO_PUBLIC_API_URL=https://naiboli.shujau.dev/api`, and on 2026-11-06 `naiboli.shujau.dev` doesn't
+        resolve. Either make it live, or point `build.production.env` at `https://moodhu.dev/api` (works) and switch
+        later with `npm run update:production` (JS only, no new build).
+      - **Privacy policy page about Naiboli, live.** Required by Play (location permission); reviewers open it.
+        `https://moodhu.dev/privacy-policy` is up but never mentions Naiboli. The in-app link is `<API origin>/privacy-policy`.
+   2. Play Console: create the app (Naiboli, App, Free); fill in "Set up your app": privacy policy URL, app access
+      (no login), ads (none), content rating, target audience (not for children), data safety, category Weather,
+      contact email, store listing (short / long description, 512² icon, 1024×500 feature graphic, phone screenshots).
+      Claude drafts the texts (listing, data safety, content rating answers, privacy policy) on request.
+   3. Production AAB: `npx eas-cli@latest build --platform android --profile production`. Builds 4 ABIs — memory
+      risk (see Gotchas); option: `reactNativeArchitectures=armeabi-v7a,arm64-v8a` for production.
+   4. Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
+      by hand**, send for review; share the opt-in link. Later builds: `eas submit` with a Google service-account
+      key (`submit.production.android.track`).
 3. **Next native batch** — do all together right before a build, never alone (app.json and native libraries
    are in the runtime fingerprint; changing them cuts OTA updates off from the installed build):
    - ✅ iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json` (2026-11-06).
@@ -58,7 +75,7 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 ### Still open (optional, JS only — say which to do)
 - **Messages from the API:** API sends a `category` + optional message override; the app keeps its pools as the
   fallback. Needs API work first.
-- Release checklist below (accounts, listings, iOS build, release-build performance).
+- Release checklist below (listings, release-build performance). iOS / App Store: on hold (user, 2026-11-06).
 - Not wanted (user, 2026-11-05): Dhivehi copy.
 
 ### Device checks (next dev build)
@@ -140,7 +157,7 @@ App identity and config
 - [x] API URL via environment config (round 2). Before release: production API + `/privacy-policy` live.
 
 Builds
-- [ ] **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
+- [ ] ⏸ (on hold, Android first) **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
       on iOS: `BalancedText`, wordmark baseline, keyboard lift, location prompt, glass blur, performance.
 - [ ] **Release-build performance**: test a `preview` build (release JS, no dev tools) on a mid-range Android phone.
       Scene frame rate is still unmeasured on real hardware outside dev mode.
@@ -151,7 +168,7 @@ Builds
       Keep the Play upload key backed up in EAS credentials.
 
 Google Play
-- [ ] Google Play developer account. **Personal accounts created after Nov 2023 must run a closed test with at least
+- [x] Google Play developer account (user has one, 2026-11-06). **Personal accounts created after Nov 2023 must run a closed test with at least
       12 testers for 14 days before they can publish to production.** Start that early.
 - [ ] Create the app in Play Console; the **first AAB is uploaded by hand**, after that `eas submit` with a Google
       service-account key.
@@ -164,7 +181,7 @@ Google Play
 - [ ] Privacy policy URL that works: `<API origin>/privacy-policy` (in the app since round 2); the store listings need the
       production one, `https://naiboli.shujau.dev/privacy-policy`, to be live.
 
-App Store
+App Store — ⏸ on hold (user, 2026-11-06: Android first)
 - [ ] Apple Developer Program membership; App Store Connect app record (bundle ID, SKU); `ascAppId` for `eas submit`.
 - [ ] Screenshots for the required iPhone sizes, description, keywords, support URL, privacy policy URL, category.
 - [ ] **App Privacy ("nutrition label")**: Location (precise + coarse) → App Functionality, not linked to identity,
