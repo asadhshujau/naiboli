@@ -18,87 +18,86 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 ## Pending — start here when asked "what's pending?"
 
 ### Where we are (2026-11-06)
-- **⏳ First production build (for the Play closed test) is running on EAS — outcome unknown.** Build `d868054c`
-  (profile `production`, commit `1f3cc1e`, versionCode 2, runtime `c2fe716a…`, API moodhu.dev, ABIs
-  armeabi-v7a + arm64-v8a), started by the user 2026-11-06 07:27 UTC before going out. **When resuming, ask the
-  user first how this build went** (or check `npx eas-cli@latest build:list --platform android --limit 1`).
-  - Succeeded → the user downloads the `.aab` from the build page; continue with "Google Play closed test" below
-    from step 2 (create the app in Play Console) — the user is new to app publishing: walk them through each step.
-    **Point the user to `store/play/` when they reach the store listing** (step 3 of "Google Play closed test"):
-    `listing.md` has the app name, short + full description (lengths checked) and the other fields to paste;
-    `icon-512.png` and `feature-graphic.png` are ready to upload (regenerate with
-    `node scripts/gen-store-assets.mjs`). The user still takes the phone screenshots (ideas in `listing.md`).
-    The Data safety / content rating / target audience answers are in the chat walkthrough summarised in step 2
-    below: location approximate + precise = collected, not shared, processed ephemerally, optional, app
-    functionality; device or other IDs (Expo install ID) = collected, not shared, required, app functionality;
-    encrypted in transit; deletion on request by email. Content rating: all "No" (expect Everyone / 3+). Target
-    audience 13+. Ads: none. Advertising ID: no.
-  - Failed → fetch the log (see step 1 below for how) and fix; most likely memory (see Gotchas).
-- All 5 phases + fix round 1 done; Android dev build tested on device 2026-11-05: all good.
-- Round 2 is built (list under "Done in round 2" below), all JS-tested (332 tests, typecheck, lint, expo-doctor),
-  **not yet checked on a device**.
-- **The round 2 dev build failed on EAS twice** (2026-11-05, builds `b48c8a59`, `80850bda`): Gradle killed for
-  out of memory while Worklets and Skia compiled C++ side by side (see Gotchas). Fixed 2026-11-06:
-  `plugins/withEasGradleLimits.js` now runs Gradle with 1 worker on EAS. The native batch (iOS export compliance,
-  `web` block removed) rides along with this build. **Dev build `035a8d18` succeeded** (2026-11-06, 13 min with
-  1 worker): APK https://expo.dev/artifacts/eas/gyYhpLHz1ez11QqTodl0acZ-3siKAPNgDOkyrkWQ8fI.apk
-- Command: `npx eas-cli@latest build --profile development --platform android` (package `dev.shujau.naiboli`,
-  EAS-managed keystore, channel `development`). Runtime fingerprint now: `c2fe716a839dbcbdecee5fd6924703013117148e`
-  (check with `npx expo-updates runtimeversion:resolve --platform android`; if it differs from the build's, OTA
-  updates won't reach that build).
+- **✅ Production build `8f70e76e` succeeded** (2026-11-06, 25 min, versionCode 3, runtime `1ec7a72c…`, API
+  naiboli.shujau.dev, armeabi-v7a + arm64-v8a): AAB
+  https://expo.dev/artifacts/eas/zWliYofsOaaNPoffO-ls9vJvf9NqDMxyljkQ5DNcZtE.aab. The first try `d868054c` had run
+  out of memory in Skia's C++ compile; fixed by capping ninja with CMake job pools in
+  `plugins/withEasGradleLimits.js` (see Gotchas).
+- **Next: user uploads the AAB to Play** — internal testing first (no review, on the phone within minutes) to check
+  splash smoothness and Weather sheet speed on release JS (step 1 below), then the closed track (step 2.4). The
+  user is new to app publishing: walk them through each step. Play Console "Set up your app" is being filled in
+  (2026-11-06: target audience, data safety, ads ID, store settings done or in progress). Store listing material
+  is in `store/play/` (`listing.md`, `icon-512.png`, `feature-graphic.png`; the user takes the phone screenshots).
+  Answers given: data safety Yes → location approximate + precise = collected, not shared, processed ephemerally,
+  optional, app functionality; device or other IDs (Expo install ID) = collected, not shared, required, app
+  functionality; encrypted in transit; deletion on request by email. Advertising ID: No. Content rating: all
+  "No" (expect Everyone / 3+). Target audience 13–15, 16–17, 18+. Ads: none. Category Weather; contact email
+  jr.shujau@gmail.com, no phone, no website (the domain root is still Laravel's welcome page); external marketing on.
+- If a build fails again → fetch the log: `npx eas-cli@latest build:view <id> --json` → `logFiles[0]`; the file is
+  **brotli-compressed JSON lines** (`zlib.brotliDecompressSync` in node, then each line's `msg`).
+- **API: every profile uses `https://naiboli.shujau.dev/api`** (user, 2026-11-06): `.env`, `eas.json` development +
+  production, and the `DEFAULT_API` fallback. moodhu.dev is no longer used. naiboli.shujau.dev is live
+  (`/api/islands` and `/privacy-policy` answer 200, checked 2026-11-06). When the user tests new API work they say
+  so and we point `.env` at a local server for that session; the default stays naiboli.shujau.dev.
+- **Two EAS profiles only** (user, 2026-11-06): `development` (dev client APK, arm64, channel `development`) and
+  `production` (Play AAB, armeabi-v7a + arm64, channel `production`, build number auto-increment). `preview` and
+  `npm run update:preview` removed. OTA: `npm run update:production -- "message"`.
+- All 5 phases + fix rounds 1–2 done. Dev build `035a8d18` (2026-11-06) tested on device: all good except splash
+  smoothness and Weather sheet speed (step 1). It was built with moodhu.dev, but dev builds load JS (and the API
+  URL) from Metro, so `.env` applies.
+- Runtime fingerprint now: `1ec7a72c5d80786c736ca10b68e55dfd64ee66d3` (the plugin file is a fingerprint source,
+  so it changed with the job-pool fix). Check with `npx expo-updates runtimeversion:resolve --platform android`;
+  if it differs from a build's, OTA updates won't reach that build.
 
 ### Next steps, in order
 1. **Device test of dev build `035a8d18` (2026-11-06): everything fine except two things** (user):
    - **Splash animation not smooth.** Fix (JS, uncommitted until the user confirms): the scene painted every frame
      behind the opaque splash; now `SceneCanvas` is paused while the splash covers it (`splashCover` in
      `index.tsx`, cleared by `Splash`'s `onEnding` when the fade-out starts) and always paints its first frame
-     (shader setup up front). **User to re-check**, also with release JS (below).
+     (shader setup up front; commit `624a8ac`, in the next production build). **User re-checks on the production
+     build.**
    - **Weather sheet opens slower than Tide.** Not a refetch: sheets never fetch; `buildWx` also runs for Tide
      (its eyebrow), so it's not the data building either. It's the mount: Weather is the biggest tree (~45
      `Icon`s, each an SVG view: 24 hourly cells, 8 days, stats; arc + moon SVGs, gradients, shadows), Tide is small.
-     Dev-mode React renders several times slower than release. **Next: user checks with release JS** before any
-     change: `npx expo start --no-dev --minify` (the dev build loads a production bundle; no new build needed).
-     If still slow there: icons as a font (one Text instead of one SVG view each), then lighter hourly cells.
+     Dev-mode React renders several times slower than release. **Next: user checks on the production build**
+     (user, 2026-11-06) before any change. If still slow there: icons as a font (one Text instead of one SVG view each), then lighter hourly cells.
      (Deferring below-the-fold content was tried and reverted in round 1: the pop-in felt slower.)
 2. **Google Play closed test — Android first** (user, 2026-11-06; the user has a Play Console account; iOS / App
    Store on hold). Personal accounts created after 2023-11-13: **12+ testers opted in for 14 consecutive days**
    on a closed track, then "Apply for production" from the Dashboard (review ≤ ~7 days; asks about tester
    engagement, feedback, changes made). Steps:
    1. **Blockers to decide first:**
-      - ✅ **API for the closed-test build: `https://moodhu.dev/api`** (user, 2026-11-06), set in `eas.json` →
-        `build.production.env`. ⚠️ **TODO: switch to the real production API** once it exists (the URL isn't final;
-        `naiboli.shujau.dev` was the plan but didn't resolve on 2026-11-06). How: the new server serves the same
-        API **and** `/privacy-policy` (the in-app link is `<API origin>/privacy-policy`; Play listing's policy URL
-        too) → set `build.production.env.EXPO_PUBLIC_API_URL` in `eas.json` → `npm run update:production -- "Switch
-        API"` (JS only, reaches installed builds; the next builds pick it up from `eas.json`) → update the policy URL
-        in Play Console → App content → Privacy policy. Mind the API budgets in `../moodhuapi/DEPLOY.md`: two
-        servers running the scheduler can't share provider keys.
-      - ✅ **Privacy policy page about Naiboli, live** (2026-11-06): `https://moodhu.dev/privacy-policy`, from
+      - ✅ **API: `https://naiboli.shujau.dev/api`** for every profile (user, 2026-11-06), live. Privacy policy URL
+        for Play Console → App content → Privacy policy: `https://naiboli.shujau.dev/privacy-policy` (also the
+        in-app link, `<API origin>/privacy-policy`). If the API ever moves: the new server needs the same
+        `/privacy-policy` → `eas.json` env → `npm run update:production -- "Switch API"` → Play Console policy URL.
+        Mind the API budgets in `../moodhuapi/DEPLOY.md`: two servers running the scheduler can't share provider keys.
+      - ✅ **Privacy policy page about Naiboli, live** (2026-11-06): first on `https://moodhu.dev/privacy-policy`, now
+        served at `https://naiboli.shujau.dev/privacy-policy`; from
         `../moodhuapi` `resources/views/privacy.blade.php` (commit `36ce876`, deployed to staging with `./deploy.sh`).
         Developer Asadhu Shujaau, contact jr.shujau@gmail.com (user). It states: location only on the button,
         used once for the nearest island ≤ 10 km, never stored or logged (POST body); on-device settings; nginx
         access logs (IP, time, URL, user agent) kept 14 days; Expo EAS Update checks (IP, platform, version, random
         install ID); OpenWeather / MSRO get no user data; no accounts, ads, analytics or sharing. **The Data safety
-        answers must match it.** A future production server needs the same page (the in-app link is
-        `<API origin>/privacy-policy`).
+        answers must match it.**
    2. Play Console: create the app (Naiboli, App, Free); fill in "Set up your app": privacy policy URL, app access
       (no login), ads (none), content rating, target audience (not for children), data safety, category Weather,
       contact email, store listing (short / long description, 512² icon, 1024×500 feature graphic, phone screenshots).
       Claude drafts the texts (listing, data safety, content rating answers, privacy policy) on request.
    3. Production AAB: `npx eas-cli@latest build --platform android --profile production`. Phones only:
       `ORG_GRADLE_PROJECT_reactNativeArchitectures=armeabi-v7a,arm64-v8a` in `build.production.env` (user,
-      2026-11-06; no x86 / emulators), to stay within build memory (see Gotchas). No `AD_ID` permission in any
+      2026-11-06; no x86 / emulators), to stay within build memory (see Gotchas). ✅ `8f70e76e` (2026-11-06). No `AD_ID` permission in any
       library (checked 2026-11-06) → Play's advertising ID declaration: "No".
    4. Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
       by hand**, send for review; share the opt-in link. Later builds: `eas submit` with a Google service-account
       key (`submit.production.android.track`).
-3. **Next native batch** — do all together right before a build, never alone (app.json and native libraries
+3. **Next native batch** — after a successful production build (user, 2026-11-06); do all together right before a build, never alone (app.json and native libraries
    are in the runtime fingerprint; changing them cuts OTA updates off from the installed build):
    - ✅ iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json` (2026-11-06).
    - ✅ `web` block and `extra.router.asyncRoutes` removed from `app.json` (2026-11-06). Left for the user to decide:
      `react-native-web` / `react-dom` deps, the `web` npm script and `favicon.png` (from `gen-app-icons.mjs`).
-   - Crash reporting (Sentry, `@sentry/react-native`) — if wanted; before real users / the closed test. Not in the
-     build being resubmitted (more native C++ = more build memory).
+   - Crash reporting (Sentry, `@sentry/react-native`) — if wanted; before real users. Not in the production
+     build being retried (more native C++ = more build memory).
 
 ### Still open (optional, JS only — say which to do)
 - **Messages from the API:** API sends a `category` + optional message override; the app keeps its pools as the
@@ -112,8 +111,8 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 - Sheets open without delay / glitch (scene pauses behind sheets, separate animated styles, stale-height fix).
 - Day theme: scrub to dusk / night and open every sheet and bubble; morning / late-afternoon warmth; overcast day.
 - Launcher icon and themed icon (Android 13+); name under the icon reads "Naiboli".
-- Menu: no "Activity scores" row; Privacy Policy opens `https://moodhu.dev/privacy-policy` (dev build).
-- Activity sheets: no "Activity scores from moodhu.dev" line once scores load.
+- Menu: no "Activity scores" row; Privacy Policy opens `https://naiboli.shujau.dev/privacy-policy`.
+- Activity sheets: no "Activity scores from …" line once scores load.
 - Island picker: pick a few islands, reopen the picker (current + recents + popular), kill and relaunch.
 - Data refresh: airplane mode on → launch → offline line; off → data arrives within seconds (reconnect); tap
   the line → reloads at once; background / foreground while offline → no errors.
@@ -131,17 +130,16 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 - ✅ Varied, friendly-silly messages with safety-first rules; copy approved by the user; no repeats (below).
 - ✅ Data refresh: backoff retries, tap-to-retry offline line, retry on foreground (see "History").
 - ✅ Tide sheet "Beach" stat reworded: "Cosy" / "Extra sand" / "Towel room" (`beachStat`), never Narrow / Wide / Average.
-- ✅ Production API: `https://naiboli.shujau.dev/api` (user; may change → `eas.json`).
+- ✅ Production API: `https://naiboli.shujau.dev/api` (since 2026-11-06 for every profile).
 - ✅ **Environment config for the API** (2026-11-05). `EXPO_PUBLIC_API_URL` (inlined by Metro at bundle time):
-   `.env` for `expo start`, `build.<profile>.env` in `eas.json` for builds — development + preview
-   `https://moodhu.dev/api`, production `https://naiboli.shujau.dev/api` (user, may change). `src/data/api.ts`:
-   `API = apiBaseOf(env)` (trailing slash dropped, falls back to `DEFAULT_API` = moodhu.dev when unset / not a URL).
+   `.env` for `expo start`, `build.<profile>.env` in `eas.json` for builds — all `https://naiboli.shujau.dev/api` (2026-11-06; was
+   moodhu.dev for development / preview before). `src/data/api.ts`:
+   `API = apiBaseOf(env)` (trailing slash dropped, falls back to `DEFAULT_API` = naiboli.shujau.dev when unset / not a URL).
    - Activity-score source is never shown: no "Activity scores from moodhu.dev" line (the "our own estimate" notice
      still shows while scores are loading / failed — it doesn't name a source), no Menu row.
    - Privacy Policy = `PRIVACY_URL` = `<origin of API>/privacy-policy`.
    - **OTA updates bundle with the env of the machine running `eas update`**: use the `update:*` scripts (OTA entry below)
      so an update never points a production build at the wrong API.
-   - Preview builds use moodhu.dev until the production API is live; switch in `eas.json` when it is.
 - ✅ **Immersive mode** (2026-11-05, design agreed with the user). An "expand" button (`open_in_full`) on the
    bottom panel's header hides the panel; a thin glass bar takes its place (`src/ui/hud/MiniBar.tsx`): compact
    scrubber (no axis labels), back to now (when scrubbed ahead), all activities (`format_list_bulleted`), and
@@ -150,9 +148,9 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
    AsyncStorage `naiboli.immersive.v1`, read before the first render (`launchPrefs`) so it doesn't flash. Bubbles may
    go lower in immersive mode (bottom limit = bar height + 30 instead of 210). JS only.
 - ✅ **🔧 native · OTA updates** (2026-11-05): `expo-updates` ~58.0.21; `updates.url` = EAS Update for the project,
-   `runtimeVersion.policy: "fingerprint"`, channels `development` / `preview` / `production` (= profile names) in
+   `runtimeVersion.policy: "fingerprint"`, channels `development` / `production` (= profile names; `preview` removed 2026-11-06) in
    `eas.json`. Default behaviour: release builds check on launch, download in the background, apply on the next
-   cold start. **Publish with `npm run update:preview -- "message"` / `npm run update:production -- "message"`**
+   cold start. **Publish with `npm run update:production -- "message"`**
    (`scripts/eas-update.mjs`: takes `EXPO_PUBLIC_*` + channel from `eas.json` → `build.<profile>`, runs
    `npx eas-cli@latest update --channel … --environment …`; needs `eas login`). Dev builds load JS from Metro;
    an update can be opened there from the dev menu's Extensions tab. `fingerprint.config.js` skips package.json
@@ -182,13 +180,12 @@ App identity and config
       (`eas.json` production). Bump `version` per release.
 - [x] **iOS export compliance**: `usesNonExemptEncryption: false` (2026-11-06).
 - [x] Template leftovers: files and `web` block removed (web deps kept, see Pending).
-- [x] API URL via environment config (round 2). Production profile uses moodhu.dev for now — ⚠️ switch to the real
-      production API later (Pending → Google Play step 1).
+- [x] API URL via environment config (round 2). All profiles use `https://naiboli.shujau.dev/api` (2026-11-06).
 
 Builds
-- [ ] ⏸ (on hold, Android first) **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
+- [ ] ⏸ (on hold, Android first) **iOS has never been built or tested.** Needs an Apple Developer account, then a dev build. Unchecked
       on iOS: `BalancedText`, wordmark baseline, keyboard lift, location prompt, glass blur, performance.
-- [ ] **Release-build performance**: test a `preview` build (release JS, no dev tools) on a mid-range Android phone.
+- [ ] **Release-build performance**: test the production build (release JS, no dev tools; via Play internal testing) on a mid-range Android phone.
       Scene frame rate is still unmeasured on real hardware outside dev mode.
 - [x] **Production Android build** ABIs: `armeabi-v7a,arm64-v8a` (phones only, 2026-11-06). Gradle runs 1 worker
       on EAS. If it still runs out of memory: see Gotchas.
@@ -207,7 +204,7 @@ Google Play
       server logs/stores before filling it in.
 - [ ] Content rating questionnaire, target audience (not for children), ads: none.
 - [ ] Privacy policy URL that works: `<API origin>/privacy-policy` (in the app since round 2); the store listings need the
-      production one, `https://naiboli.shujau.dev/privacy-policy`, to be live.
+      production one, `https://naiboli.shujau.dev/privacy-policy` — live (2026-11-06).
 
 App Store — ⏸ on hold (user, 2026-11-06: Android first)
 - [ ] Apple Developer Program membership; App Store Connect app record (bundle ID, SKU); `ascAppId` for `eas submit`.
@@ -418,6 +415,9 @@ npx expo start                 # then open in Expo Go (everything used is in Exp
 npm test                       # unit + parity tests
 npx tsc --noEmit && npx expo lint
 npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Google Chrome)
+npx eas-cli@latest build --profile development --platform android   # dev client APK
+npx eas-cli@latest build --profile production --platform android    # Play AAB
+npm run update:production -- "What changed"                         # OTA to production builds
 ```
 
 ## Gotchas learned
@@ -434,9 +434,14 @@ npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Go
   `org.gradle.workers.max=2` and a 2 GB Kotlin daemon heap, on EAS builds only (`EAS_BUILD=true`). That passed once,
   then failed twice after expo-updates + netinfo were added (dying at `:app:configureCMakeDebug` while
   `:shopify_react-native-skia:buildCMakeDebug` and Worklets ran). EAS also sets a 4 GB Gradle heap via `GRADLE_OPTS`.
-  2026-11-06: `org.gradle.workers.max=1` — dev build passed (13 min). If it fails again (e.g. production, 4 ABIs): `kotlin.compiler.execution.strategy=in-process`
-  (drops the separate 2 GB Kotlin daemon), `resourceClass: "large"` in `eas.json` (paid plans), or limit ninja jobs
-  per CMake build (`-DCMAKE_JOB_POOLS`).
+  2026-11-06: `org.gradle.workers.max=1` — dev build passed (13 min). The production build (2 ABIs) still died, in
+  Skia's arm64 C++ compile after R8 (release only) had filled the Gradle heap: ninja runs nproc + 2 clang jobs per
+  CMake build regardless of Gradle workers. So the plugin also appends `-DCMAKE_JOB_POOLS=compile=2;link=1`,
+  `-DCMAKE_JOB_POOL_COMPILE=compile`, `-DCMAKE_JOB_POOL_LINK=link` to every module's defaultConfig CMake arguments
+  (root `build.gradle`, same hook Expo uses for `CMAKE_OBJECT_PATH_MAX`). Production build passed with it (25 min).
+  If it ever isn't enough:
+  compile pool 1, `kotlin.compiler.execution.strategy=in-process` (drops the separate 2 GB Kotlin daemon), or
+  `resourceClass: "large"` in `eas.json` (paid plans).
 - Runtime fingerprint (OTA): anything in it changing = new runtime version = updates published afterwards don't
   reach builds made before. Check with `npx expo-updates runtimeversion:resolve --platform android --debug`
   (lists the sources). The local, gitignored `android/` folder doesn't affect it (tested 2026-11-05). Default

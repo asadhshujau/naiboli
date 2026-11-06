@@ -28,7 +28,7 @@ function setup(opts: { route?: Route; saved?: ApiIsland | null } = {}) {
               : { status: 200, body: { description: 'An island', beaches: [], reefs: [], accessibilities: [] } });
   /** pending responses, released by `flush()` */
   const fetcher = jest.fn(async (url: string) => {
-    const p = String(url).replace('https://moodhu.dev/api', '');
+    const p = String(url).replace('https://naiboli.shujau.dev/api', '');
     calls.push(p);
     const r = route(p);
     if (r === 'network') throw new TypeError('Network request failed');

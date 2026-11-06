@@ -13,14 +13,20 @@ npx tsc --noEmit && npx expo lint
 ```
 
 The API base URL comes from `EXPO_PUBLIC_API_URL`: `.env` for `expo start`, `build.<profile>.env` in `eas.json`
-for builds.
+for builds. Everything points at `https://naiboli.shujau.dev/api` (also the fallback in `src/data/api.ts`); to try
+a local API, change `.env` for that session only.
 
 ## Build and update
 
+Two EAS profiles:
+
+- `development` — dev client APK (internal distribution, arm64 only), loads JS from `npx expo start`.
+- `production` — Play Store AAB (armeabi-v7a + arm64), release JS, build number auto-incremented.
+
 ```bash
 npx eas-cli@latest build --profile development --platform android
-npm run update:preview -- "What changed"       # OTA update with the preview profile's env
-npm run update:production -- "What changed"
+npx eas-cli@latest build --profile production --platform android
+npm run update:production -- "What changed"   # OTA update to production builds, with eas.json's env
 ```
 
 Native changes (new native library, native config in `app.json`, plugins, icon / splash) need a new build;

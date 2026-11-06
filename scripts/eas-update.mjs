@@ -2,7 +2,6 @@
 /**
  * Publish an OTA update with the same env as the matching EAS build profile.
  *
- *   npm run update:preview -- "Fix headline copy"
  *   npm run update:production -- "Fix headline copy"
  *
  * Why: `eas update` bundles on this machine, and Metro inlines EXPO_PUBLIC_* from the local environment / .env at

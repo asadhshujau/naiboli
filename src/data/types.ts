@@ -1,5 +1,5 @@
 /**
- * API contracts for https://moodhu.dev/api plus the parsed shapes the app works with.
+ * API contracts for https://naiboli.shujau.dev/api plus the parsed shapes the app works with.
  * Raw types only list the fields the app reads; the API returns more.
  */
 

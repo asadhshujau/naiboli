@@ -59,7 +59,7 @@ Naiboli is for planning fun, not for safety decisions at sea. Always follow offi
 | Tags (optional) | Weather, Travel |
 | Contact email | jr.shujau@gmail.com |
 | Website (optional) | leave empty for now |
-| Privacy policy (App content) | https://moodhu.dev/privacy-policy (switch with the production API; see PROGRESS.md) |
+| Privacy policy (App content) | https://naiboli.shujau.dev/privacy-policy |
 
 ## Graphics
 

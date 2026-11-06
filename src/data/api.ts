@@ -7,7 +7,7 @@ import type {
 } from './types';
 
 /** Used when `EXPO_PUBLIC_API_URL` isn't set (tests, a missing `.env`). */
-export const DEFAULT_API = 'https://moodhu.dev/api';
+export const DEFAULT_API = 'https://naiboli.shujau.dev/api';
 
 /** API base URL from the env value (trailing slashes dropped), else the default. */
 export function apiBaseOf(env: string | undefined): string {
