@@ -23,20 +23,24 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   https://expo.dev/artifacts/eas/zWliYofsOaaNPoffO-ls9vJvf9NqDMxyljkQ5DNcZtE.aab. The first try `d868054c` had run
   out of memory in Skia's C++ compile; fixed by capping ninja with CMake job pools in
   `plugins/withEasGradleLimits.js` (see Gotchas).
-- **Next: user uploads the AAB to Play** — internal testing first (no review, on the phone within minutes) to check
-  splash smoothness and Weather sheet speed on release JS (step 1 below), then the closed track (step 2.4). The
-  user is new to app publishing: walk them through each step. Play Console "Set up your app" is being filled in
-  (2026-11-06: target audience, data safety, ads ID, store settings done or in progress). Store listing material
-  is in `store/play/` (`listing.md`, `icon-512.png`, `feature-graphic.png`). **Screenshots:** the user takes them on
-  the internal-testing build and puts the raw files in `store/play/screenshots/raw/`; then run
-  `npm run store:screenshots` (`scripts/fit-screenshots.mjs`) → `store/play/screenshots/play/01.png …`, 1080×1920
-  opaque PNGs: the whole capture with rounded corners on a blurred copy of itself (`--crop` = centre crop instead).
-  Raw 20:9 captures are too tall for Play (long side > 2× short side). Look at the results before handing them over.
-  Answers given: data safety Yes → location approximate + precise = collected, not shared, processed ephemerally,
-  optional, app functionality; device or other IDs (Expo install ID) = collected, not shared, required, app
-  functionality; encrypted in transit; deletion on request by email. Advertising ID: No. Content rating: all
-  "No" (expect Everyone / 3+). Target audience 13–15, 16–17, 18+. Ads: none. Category Weather; contact email
-  jr.shujau@gmail.com, no phone, no website (the domain root is still Laravel's welcome page); external marketing on.
+- **▶ RESUME HERE (stopped 2026-11-06 evening): the closed test has NOT been started.** Done so far: production
+  build 3 is live on Play's **internal testing** track (uploaded with `eas submit`), installed and tested on the
+  user's phone (all good, two "Maybe" overflows fixed by OTA), Play screenshots made (see below), most of Play
+  Console "Set up your app" filled in. **Ask the user** whether the 8 screenshots are uploaded to the store listing
+  and whether Dashboard → "Set up your app" shows anything unfinished. Then walk them through the closed test
+  (step 2.4 below): Testing → Closed testing → track → countries (Maldives + testers' countries) → testers (email list
+  or Google Group, 12+, aim 15–20) → create release by promoting build 3 from internal testing → Publishing overview
+  → Send changes for review → when approved, share the opt-in link; testers must opt in **and install**; 14
+  consecutive days with 12+ opted in → Dashboard → Apply for production. Then: next native batch (step 3).
+- Play Console answers given (2026-11-06): data safety Yes → location approximate + precise = collected, not shared,
+  processed ephemerally, optional, app functionality; device or other IDs (Expo install ID) = collected, not
+  shared, required, app functionality; encrypted in transit; deletion on request by email. Advertising ID: No.
+  Content rating: all "No" (expect Everyone / 3+). Target audience 13–15, 16–17, 18+. Ads: none. Category Weather;
+  contact email jr.shujau@gmail.com, no phone, no website (the domain root is still Laravel's welcome page);
+  external marketing on. Store listing material: `store/play/` (`listing.md`, `icon-512.png`,
+  `feature-graphic.png`, `screenshots/`). New screenshots: raw captures in `store/play/screenshots/raw/` →
+  `npm run store:screenshots` (`scripts/fit-screenshots.mjs`) → `store/play/screenshots/play/`, 1080×1920 (raw 20:9
+  captures are too tall for Play); look at the results before handing them over.
 - If a build fails again → fetch the log: `npx eas-cli@latest build:view <id> --json` → `logFiles[0]`; the file is
   **brotli-compressed JSON lines** (`zlib.brotliDecompressSync` in node, then each line's `msg`).
 - **Production build 3 tested on device via Play internal testing (2026-11-06), user:** splash and sheets "buttery
@@ -66,18 +70,10 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   if it differs from a build's, OTA updates won't reach that build.
 
 ### Next steps, in order
-1. **Device test of dev build `035a8d18` (2026-11-06): everything fine except two things** (user):
-   - **Splash animation not smooth.** Fix (JS, uncommitted until the user confirms): the scene painted every frame
-     behind the opaque splash; now `SceneCanvas` is paused while the splash covers it (`splashCover` in
-     `index.tsx`, cleared by `Splash`'s `onEnding` when the fade-out starts) and always paints its first frame
-     (shader setup up front; commit `624a8ac`, in the next production build). **User re-checks on the production
-     build.**
-   - **Weather sheet opens slower than Tide.** Not a refetch: sheets never fetch; `buildWx` also runs for Tide
-     (its eyebrow), so it's not the data building either. It's the mount: Weather is the biggest tree (~45
-     `Icon`s, each an SVG view: 24 hourly cells, 8 days, stats; arc + moon SVGs, gradients, shadows), Tide is small.
-     Dev-mode React renders several times slower than release. **Next: user checks on the production build**
-     (user, 2026-11-06) before any change. If still slow there: icons as a font (one Text instead of one SVG view each), then lighter hourly cells.
-     (Deferring below-the-fold content was tried and reverted in round 1: the pop-in felt slower.)
+1. ✅ **Splash smoothness and Weather sheet speed** (dev build `035a8d18` reports, 2026-11-06): both fine on the
+   production build ("buttery smooth", user) — the slowness was dev mode. Splash fix `624a8ac` (scene paused behind
+   the splash) shipped in build 3. If Weather ever feels slow again: icons as a font (one Text instead of one SVG
+   view each), then lighter hourly cells.
 2. **Google Play closed test — Android first** (user, 2026-11-06; the user has a Play Console account; iOS / App
    Store on hold). Personal accounts created after 2023-11-13: **12+ testers opted in for 14 consecutive days**
    on a closed track, then "Apply for production" from the Dashboard (review ≤ ~7 days; asks about tester
@@ -104,7 +100,7 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
       `ORG_GRADLE_PROJECT_reactNativeArchitectures=armeabi-v7a,arm64-v8a` in `build.production.env` (user,
       2026-11-06; no x86 / emulators), to stay within build memory (see Gotchas). ✅ `8f70e76e` (2026-11-06). No `AD_ID` permission in any
       library (checked 2026-11-06) → Play's advertising ID declaration: "No".
-   4. Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
+   4. **⏳ NOT STARTED (2026-11-06) — next.** Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
       by hand**, send for review; share the opt-in link. Later builds: `eas submit` with a Google service-account
       key (`submit.production.android.track`).
       - Service account set up 2026-11-06: `eas-submit@naiboli.iam.gserviceaccount.com` (Google Cloud project
