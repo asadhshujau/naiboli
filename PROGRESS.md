@@ -24,7 +24,15 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   user first how this build went** (or check `npx eas-cli@latest build:list --platform android --limit 1`).
   - Succeeded → the user downloads the `.aab` from the build page; continue with "Google Play closed test" below
     from step 2 (create the app in Play Console) — the user is new to app publishing: walk them through each step.
-    Offered and not yet answered: draft the store listing texts + 512² icon + 1024×500 feature graphic.
+    **Point the user to `store/play/` when they reach the store listing** (step 3 of "Google Play closed test"):
+    `listing.md` has the app name, short + full description (lengths checked) and the other fields to paste;
+    `icon-512.png` and `feature-graphic.png` are ready to upload (regenerate with
+    `node scripts/gen-store-assets.mjs`). The user still takes the phone screenshots (ideas in `listing.md`).
+    The Data safety / content rating / target audience answers are in the chat walkthrough summarised in step 2
+    below: location approximate + precise = collected, not shared, processed ephemerally, optional, app
+    functionality; device or other IDs (Expo install ID) = collected, not shared, required, app functionality;
+    encrypted in transit; deletion on request by email. Content rating: all "No" (expect Everyone / 3+). Target
+    audience 13+. Ads: none. Advertising ID: no.
   - Failed → fetch the log (see step 1 below for how) and fix; most likely memory (see Gotchas).
 - All 5 phases + fix round 1 done; Android dev build tested on device 2026-11-05: all good.
 - Round 2 is built (list under "Done in round 2" below), all JS-tested (332 tests, typecheck, lint, expo-doctor),
