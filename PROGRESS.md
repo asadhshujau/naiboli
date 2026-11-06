@@ -18,6 +18,14 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 ## Pending — start here when asked "what's pending?"
 
 ### Where we are (2026-11-06)
+- **⏳ First production build (for the Play closed test) is running on EAS — outcome unknown.** Build `d868054c`
+  (profile `production`, commit `1f3cc1e`, versionCode 2, runtime `c2fe716a…`, API moodhu.dev, ABIs
+  armeabi-v7a + arm64-v8a), started by the user 2026-11-06 07:27 UTC before going out. **When resuming, ask the
+  user first how this build went** (or check `npx eas-cli@latest build:list --platform android --limit 1`).
+  - Succeeded → the user downloads the `.aab` from the build page; continue with "Google Play closed test" below
+    from step 2 (create the app in Play Console) — the user is new to app publishing: walk them through each step.
+    Offered and not yet answered: draft the store listing texts + 512² icon + 1024×500 feature graphic.
+  - Failed → fetch the log (see step 1 below for how) and fix; most likely memory (see Gotchas).
 - All 5 phases + fix round 1 done; Android dev build tested on device 2026-11-05: all good.
 - Round 2 is built (list under "Done in round 2" below), all JS-tested (332 tests, typecheck, lint, expo-doctor),
   **not yet checked on a device**.
