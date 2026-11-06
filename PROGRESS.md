@@ -49,10 +49,14 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
    on a closed track, then "Apply for production" from the Dashboard (review ≤ ~7 days; asks about tester
    engagement, feedback, changes made). Steps:
    1. **Blockers to decide first:**
-      - **API for the closed-test build.** Play doesn't need a "production" API, but the AAB (profile `production`)
-        has `EXPO_PUBLIC_API_URL=https://naiboli.shujau.dev/api`, and on 2026-11-06 `naiboli.shujau.dev` doesn't
-        resolve. Either make it live, or point `build.production.env` at `https://moodhu.dev/api` (works) and switch
-        later with `npm run update:production` (JS only, no new build).
+      - ✅ **API for the closed-test build: `https://moodhu.dev/api`** (user, 2026-11-06), set in `eas.json` →
+        `build.production.env`. ⚠️ **TODO: switch to the real production API** once it exists (the URL isn't final;
+        `naiboli.shujau.dev` was the plan but didn't resolve on 2026-11-06). How: the new server serves the same
+        API **and** `/privacy-policy` (the in-app link is `<API origin>/privacy-policy`; Play listing's policy URL
+        too) → set `build.production.env.EXPO_PUBLIC_API_URL` in `eas.json` → `npm run update:production -- "Switch
+        API"` (JS only, reaches installed builds; the next builds pick it up from `eas.json`) → update the policy URL
+        in Play Console → App content → Privacy policy. Mind the API budgets in `../moodhuapi/DEPLOY.md`: two
+        servers running the scheduler can't share provider keys.
       - ✅ **Privacy policy page about Naiboli, live** (2026-11-06): `https://moodhu.dev/privacy-policy`, from
         `../moodhuapi` `resources/views/privacy.blade.php` (commit `36ce876`, deployed to staging with `./deploy.sh`).
         Developer Asadhu Shujaau, contact jr.shujau@gmail.com (user). It states: location only on the button,
@@ -65,8 +69,10 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
       (no login), ads (none), content rating, target audience (not for children), data safety, category Weather,
       contact email, store listing (short / long description, 512² icon, 1024×500 feature graphic, phone screenshots).
       Claude drafts the texts (listing, data safety, content rating answers, privacy policy) on request.
-   3. Production AAB: `npx eas-cli@latest build --platform android --profile production`. Builds 4 ABIs — memory
-      risk (see Gotchas); option: `reactNativeArchitectures=armeabi-v7a,arm64-v8a` for production.
+   3. Production AAB: `npx eas-cli@latest build --platform android --profile production`. Phones only:
+      `ORG_GRADLE_PROJECT_reactNativeArchitectures=armeabi-v7a,arm64-v8a` in `build.production.env` (user,
+      2026-11-06; no x86 / emulators), to stay within build memory (see Gotchas). No `AD_ID` permission in any
+      library (checked 2026-11-06) → Play's advertising ID declaration: "No".
    4. Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
       by hand**, send for review; share the opt-in link. Later builds: `eas submit` with a Google service-account
       key (`submit.production.android.track`).
@@ -160,16 +166,16 @@ App identity and config
       (`eas.json` production). Bump `version` per release.
 - [x] **iOS export compliance**: `usesNonExemptEncryption: false` (2026-11-06).
 - [x] Template leftovers: files and `web` block removed (web deps kept, see Pending).
-- [x] API URL via environment config (round 2). Before release: production API + `/privacy-policy` live.
+- [x] API URL via environment config (round 2). Production profile uses moodhu.dev for now — ⚠️ switch to the real
+      production API later (Pending → Google Play step 1).
 
 Builds
 - [ ] ⏸ (on hold, Android first) **iOS has never been built or tested.** Needs an Apple Developer account, then a dev/preview build. Unchecked
       on iOS: `BalancedText`, wordmark baseline, keyboard lift, location prompt, glass blur, performance.
 - [ ] **Release-build performance**: test a `preview` build (release JS, no dev tools) on a mid-range Android phone.
       Scene frame rate is still unmeasured on real hardware outside dev mode.
-- [ ] **Production Android build** builds all four ABIs (only `development` is arm64-only). The Gradle limits plugin
-      applies, but watch for the out-of-memory failure; options if it happens: `resourceClass: "large"` (paid), or
-      `reactNativeArchitectures` = `armeabi-v7a,arm64-v8a` (phones only, no x86).
+- [x] **Production Android build** ABIs: `armeabi-v7a,arm64-v8a` (phones only, 2026-11-06). Gradle runs 1 worker
+      on EAS. If it still runs out of memory: see Gotchas.
 - [ ] Production profile builds an AAB (Play) / store IPA by default; signing keys are EAS-managed.
       Keep the Play upload key backed up in EAS credentials.
 
