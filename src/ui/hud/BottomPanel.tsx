@@ -80,7 +80,14 @@ export function BottomPanel({ v, offset, onHour, onScrubStart, onNow, onAll, onA
                 <View style={[s.tile, { backgroundColor: c.vBg }]}>
                   <Icon name={c.icon} size={18} color={c.vInk} fill />
                 </View>
-                <Text style={[T.bric(800, 17, { lh: 1, ls: -0.02 }), { color: c.vWord }]}>{c.v}</Text>
+                {/* "Maybe" doesn't fit next to the tile on narrower phones: shrink it rather than overflow. */}
+                <Text
+                  style={[T.bric(800, 17, { lh: 1, ls: -0.02 }), s.word, { color: c.vWord }]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}>
+                  {c.v}
+                </Text>
               </View>
               <Text style={[T.fig(700, 13, { lh: 1.15 }), { color: hud.pInk }]} numberOfLines={1} ellipsizeMode="tail">
                 {c.name}
@@ -108,4 +115,5 @@ const s = StyleSheet.create({
   card: { flex: 1, minWidth: 0, borderRadius: 18, padding: 10, gap: 8 },
   cardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 4 },
   tile: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  word: { flexShrink: 1, minWidth: 0, textAlign: 'right' },
 });

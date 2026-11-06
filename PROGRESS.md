@@ -27,7 +27,11 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   splash smoothness and Weather sheet speed on release JS (step 1 below), then the closed track (step 2.4). The
   user is new to app publishing: walk them through each step. Play Console "Set up your app" is being filled in
   (2026-11-06: target audience, data safety, ads ID, store settings done or in progress). Store listing material
-  is in `store/play/` (`listing.md`, `icon-512.png`, `feature-graphic.png`; the user takes the phone screenshots).
+  is in `store/play/` (`listing.md`, `icon-512.png`, `feature-graphic.png`). **Screenshots:** the user takes them on
+  the internal-testing build and puts the raw files in `store/play/screenshots/raw/`; then run
+  `npm run store:screenshots` (`scripts/fit-screenshots.mjs`) → `store/play/screenshots/play/01.png …`, 1080×1920
+  opaque PNGs: the whole capture with rounded corners on a blurred copy of itself (`--crop` = centre crop instead).
+  Raw 20:9 captures are too tall for Play (long side > 2× short side). Look at the results before handing them over.
   Answers given: data safety Yes → location approximate + precise = collected, not shared, processed ephemerally,
   optional, app functionality; device or other IDs (Expo install ID) = collected, not shared, required, app
   functionality; encrypted in transit; deletion on request by email. Advertising ID: No. Content rating: all
@@ -35,6 +39,18 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   jr.shujau@gmail.com, no phone, no website (the domain root is still Laravel's welcome page); external marketing on.
 - If a build fails again → fetch the log: `npx eas-cli@latest build:view <id> --json` → `logFiles[0]`; the file is
   **brotli-compressed JSON lines** (`zlib.brotliDecompressSync` in node, then each line's `msg`).
+- **Production build 3 tested on device via Play internal testing (2026-11-06), user:** splash and sheets "buttery
+  smooth" (both slowness reports were dev mode only: nothing to fix), first-run flow, icon, scene, round 2 features
+  all good. **One bug: the verdict word "Maybe" overflowed the right edge of the bottom panel's activity cards.**
+  Fixed (JS): the word shrinks to fit (`numberOfLines={1}`, `adjustsFontSizeToFit`, min scale 0.7, `flexShrink`).
+  Shipped as OTA update "Fit Maybe in activity cards" (2026-11-06, runtime `1ec7a72c…` = build 3); arrived on the
+  phone after two cold starts. **The activity detail sheet's 92 pt "Maybe." overflowed too** → same fix in
+  `ActSheet.tsx` (`verdictWord`, min scale 0.5), shipped as OTA "Fit Maybe in activity detail". ✅ Both confirmed
+  on the phone by the user (2026-11-06).
+- **Play screenshots made** (2026-11-06): 12 raw captures (864×1928) in `store/play/screenshots/raw/` →
+  `store/play/screenshots/play/01–12.png` (1080×1920). Play takes 8; suggested upload order: 04 (midday), 03 (night),
+  02 (sunrise), 05 (sea bubble), 12 (activity detail), 11 (all activities), 07 (Weather), 06 (Tide). Left out: 01
+  (splash: logo only), 08 / 09 / 10 (island picker / bubble / details).
 - **API: every profile uses `https://naiboli.shujau.dev/api`** (user, 2026-11-06): `.env`, `eas.json` development +
   production, and the `DEFAULT_API` fallback. moodhu.dev is no longer used. naiboli.shujau.dev is live
   (`/api/islands` and `/privacy-policy` answer 200, checked 2026-11-06). When the user tests new API work they say
@@ -91,6 +107,13 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
    4. Closed testing track: testers (email list or Google Group, 12+ with margin), countries, **upload the first AAB
       by hand**, send for review; share the opt-in link. Later builds: `eas submit` with a Google service-account
       key (`submit.production.android.track`).
+      - Service account set up 2026-11-06: `eas-submit@naiboli.iam.gserviceaccount.com` (Google Cloud project
+        `naiboli`, Play Android Developer API enabled, invited in Play Console with release / testing / store
+        presence permissions), key assigned in EAS credentials for `dev.shujau.naiboli` (checked via the EAS API).
+        Key JSON kept outside the repo. First `eas submit --profile production --latest` (build `8f70e76e` →
+        internal testing) **went through** (2026-11-06): the key and Play permissions work. Commands:
+        `npx eas-cli@latest submit --platform android --profile production --latest`, or
+        `npx eas-cli@latest build --platform android --profile production --auto-submit`.
 3. **Next native batch** — after a successful production build (user, 2026-11-06); do all together right before a build, never alone (app.json and native libraries
    are in the runtime fingerprint; changing them cuts OTA updates off from the installed build):
    - ✅ iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json` (2026-11-06).

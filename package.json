@@ -58,6 +58,7 @@
     "typecheck": "tsc --noEmit",
     "gen:icons": "node scripts/gen-icons.mjs",
     "scene:compare": "sh scripts/scene-compare/run.sh",
+    "store:screenshots": "node scripts/fit-screenshots.mjs",
     "update:production": "node scripts/eas-update.mjs production"
   },
   "private": true,

@@ -44,7 +44,14 @@ export function ActSheet({ d, whenLabel, actsSrc, onBack, onClose }: Props) {
           </View>
         </View>
         <View style={s.verdictRow}>
-          <Text style={[s.tx_bric800_92lh0_84lsm0_06, t.fgS(d.vWord)]}>{d.vBig}</Text>
+          {/* "Maybe." at 92 pt is wider than the hero next to the score on most phones: shrink to fit, one line. */}
+          <Text
+            style={[s.tx_bric800_92lh0_84lsm0_06, s.verdictWord, t.fgS(d.vWord)]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}>
+            {d.vBig}
+          </Text>
           <Text style={s.scoreBox}>
             <Text style={s.tx_bric700_22_ink}>{d.score}</Text>
             <Text style={s.tx_mono13_secondary}> / 10</Text>
@@ -156,6 +163,7 @@ const useS = themed((c) =>
     heroTile: { width: 48, height: 48, borderRadius: 16, backgroundColor: c.heroTile, alignItems: 'center', justifyContent: 'center' },
     heroWhen: { marginTop: 2, ...T.mono(11, { ls: 0.06, upper: true, color: c.secondary }) },
     verdictRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 12, marginTop: 14 },
+    verdictWord: { flexShrink: 1, minWidth: 0 },
     scoreBox: { paddingBottom: 8 },
     line: { marginTop: 12, ...T.fig(600, 16, { lh: 1.4, color: c.ink }) },
     cardHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 },

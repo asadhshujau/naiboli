@@ -67,6 +67,6 @@ Naiboli is for planning fun, not for safety decisions at sea. Always follow offi
 |---|---|---|
 | App icon | `icon-512.png` | 512 × 512 PNG, up to 1 MB |
 | Feature graphic | `feature-graphic.png` | 1024 × 500 PNG or JPEG, no transparency |
-| Phone screenshots | taken by you on the phone (power + volume down) | 2 to 8, PNG or JPEG, 320 to 3,840 px on each side, portrait 9:16 works |
+| Phone screenshots | taken by you on the phone (power + volume down), then `npm run store:screenshots` → `store/play/screenshots/play/` | 2 to 8, PNG or JPEG, 320 to 3,840 px on each side, long side ≤ 2× short side (a raw 20:9 phone capture is too tall) |
 
 Screenshot ideas, in this order: the island at midday with a "Go" day, the activity list, the Weather sheet, the Tide sheet, the same island at dusk or night, the island picker. Take them in the release build from the closed test, so the dev menu never shows.
