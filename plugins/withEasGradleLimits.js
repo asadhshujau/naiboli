@@ -1,13 +1,17 @@
 // Caps Gradle's parallelism and the Kotlin daemon's heap on EAS Build workers only.
 //
-// The 4 vCPU / 15.6 GB Android worker ran out of memory while Gradle ran several native (CMake) builds at once
-// (Reanimated, Worklets, Skia, expo-modules-core): each starts its own ninja/clang jobs, on top of the 4 GB
-// Gradle heap EAS sets and a Kotlin daemon that inherits it. The OOM killer took the Gradle daemon
-// ("Gradle build daemon disappeared unexpectedly"). Local builds are left alone.
+// The 4 vCPU / 15.6 GB Android worker runs out of memory while Gradle runs several native (CMake) builds at once
+// (Reanimated, Worklets, Skia, expo-modules-core): each starts its own ninja/clang jobs (nproc + 2 each), on top
+// of the 4 GB Gradle heap EAS sets (GRADLE_OPTS) and a Kotlin daemon. The OOM killer takes the Gradle process
+// ("Gradle build daemon disappeared unexpectedly").
+// - 2 workers: passed once (2026-11-05), then failed twice after expo-updates + netinfo were added, both times
+//   while Worklets and Skia compiled C++ side by side.
+// - 1 worker: one task at a time, so only one CMake build's clang jobs exist at any moment. Slower, but fits.
+// Local builds are left alone.
 const { withGradleProperties } = require('expo/config-plugins');
 
 const LIMITS = {
-  'org.gradle.workers.max': '2',
+  'org.gradle.workers.max': '1',
   'kotlin.daemon.jvmargs': '-Xmx2g -XX:MaxMetaspaceSize=512m',
 };
 

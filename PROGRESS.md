@@ -13,36 +13,40 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
 | 3 | Info bubbles and all bottom sheets | ✅ done (`d72a164`) |
 | 4 | Location / first-run flow, persistence, splash | ✅ done (`0e4e0f8`) |
 | 5 | Polish: side-by-side with the prototype, list of unmatched differences | ✅ done (this commit) |
-| — | EAS build test by the user, then the fix round | ✅ round 1 done; round 2 built, dev build queued |
+| — | EAS build test by the user, then the fix round | ✅ round 1 done; round 2 built, dev build ready for device checks |
 
 ## Pending — start here when asked "what's pending?"
 
-### Where we are (2026-11-05)
+### Where we are (2026-11-06)
 - All 5 phases + fix round 1 done; Android dev build tested on device 2026-11-05: all good.
 - Round 2 is built (list under "Done in round 2" below), all JS-tested (332 tests, typecheck, lint, expo-doctor),
   **not yet checked on a device**.
-- **A new Android dev build is queued on EAS** (free tier queue; `npx eas-cli@latest build --profile development
-  --platform android`, package `dev.shujau.naiboli`, new EAS-managed keystore, channel `development`). Runtime
-  fingerprint at submission: `e7cef1d6e0f9a048c42a11bf7adfe9b380da4bce` (check yours with
-  `npx expo-updates runtimeversion:resolve --platform android`; if it differs, OTA updates won't reach that build).
-- Everything committed after the build was submitted (immersive mode, no-repeat messages, template cleanup) is JS
-  only: it reaches the build through Metro (dev) and later through OTA updates. Nothing native is pending.
+- **The round 2 dev build failed on EAS twice** (2026-11-05, builds `b48c8a59`, `80850bda`): Gradle killed for
+  out of memory while Worklets and Skia compiled C++ side by side (see Gotchas). Fixed 2026-11-06:
+  `plugins/withEasGradleLimits.js` now runs Gradle with 1 worker on EAS. The native batch (iOS export compliance,
+  `web` block removed) rides along with this build. **Dev build `035a8d18` succeeded** (2026-11-06, 13 min with
+  1 worker): APK https://expo.dev/artifacts/eas/gyYhpLHz1ez11QqTodl0acZ-3siKAPNgDOkyrkWQ8fI.apk
+- Command: `npx eas-cli@latest build --profile development --platform android` (package `dev.shujau.naiboli`,
+  EAS-managed keystore, channel `development`). Runtime fingerprint now: `c2fe716a839dbcbdecee5fd6924703013117148e`
+  (check with `npx expo-updates runtimeversion:resolve --platform android`; if it differs from the build's, OTA
+  updates won't reach that build).
 
 ### Next steps, in order
-1. **⏳ Dev build — outcome unknown (submitted 2026-11-05, user went to sleep before it finished).**
-   **When resuming, ask the user first:** did the Android dev build finish, and is it installed on the phone — or
-   did it fail? (EAS dashboard → project `naiboli-forecast-for-fun` → Builds, or `npx eas-cli@latest build:list`.)
-   - Failed → get the error / log from the user (last time: Gradle out of memory in CMake; see Gotchas) and fix.
-   - Succeeded but not installed → uninstall the old `com.anonymous.naiboli` app, install the new one.
-   - Installed → `npx expo start`, go through "Device checks" below; the user's findings become the fix list.
+1. **Install the dev build `035a8d18` and run the device checks.** Uninstall the old `com.anonymous.naiboli` app,
+   install the APK above, `npx expo start`, go through "Device checks" below; the user's findings become the fix
+   list. **When resuming, ask the user** whether it's installed and what they found.
+   - A future dev build that fails → logs: `npx eas-cli@latest build:list --platform android --limit 1 --json` →
+     `logFiles[0]` (signed URL, 15 min; brotli-compressed JSON lines, `msg` per line). See Gotchas.
 2. **Store prep drafts** (offered by Claude, waiting for the user's go; no code): Play listing (short / long
    description), Data safety + content rating answers, privacy policy text for
    `https://naiboli.shujau.dev/privacy-policy` (must be live before release).
-3. **Next native batch** — do all together right before the next build, never alone (app.json and native libraries
+3. **Next native batch** — do all together right before a build, never alone (app.json and native libraries
    are in the runtime fingerprint; changing them cuts OTA updates off from the installed build):
-   - iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json`.
-   - Remove the unused `web` block from `app.json` (keep `assets/images/favicon.png` only if web stays).
-   - Crash reporting (Sentry, `@sentry/react-native`) — if wanted; before real users / the closed test.
+   - ✅ iOS export compliance: `ios.config.usesNonExemptEncryption: false` in `app.json` (2026-11-06).
+   - ✅ `web` block and `extra.router.asyncRoutes` removed from `app.json` (2026-11-06). Left for the user to decide:
+     `react-native-web` / `react-dom` deps, the `web` npm script and `favicon.png` (from `gen-app-icons.mjs`).
+   - Crash reporting (Sentry, `@sentry/react-native`) — if wanted; before real users / the closed test. Not in the
+     build being resubmitted (more native C++ = more build memory).
 
 ### Still open (optional, JS only — say which to do)
 - **Messages from the API:** API sends a `category` + optional message override; the app keeps its pools as the
@@ -124,8 +128,8 @@ App identity and config
 - [x] **Display name**: "Naiboli".
 - [ ] **Version policy**: `version` 1.0.0 is the user-facing version; build numbers are remote + auto-increment
       (`eas.json` production). Bump `version` per release.
-- [ ] **iOS export compliance** — Pending → "Next native batch".
-- [ ] Template leftovers: files done; `web` block → Pending "Next native batch".
+- [x] **iOS export compliance**: `usesNonExemptEncryption: false` (2026-11-06).
+- [x] Template leftovers: files and `web` block removed (web deps kept, see Pending).
 - [x] API URL via environment config (round 2). Before release: production API + `/privacy-policy` live.
 
 Builds
@@ -375,8 +379,12 @@ npm run scene:compare -- /tmp/scene   # native vs prototype pixel diff (needs Go
   4 vCPU / 15.6 GB worker. The `development` profile in `eas.json` now builds arm64-v8a only
   (`ORG_GRADLE_PROJECT_reactNativeArchitectures`). That alone still ran out of memory (parallel CMake builds of
   Reanimated / Worklets / Skia / expo-modules-core), so `plugins/withEasGradleLimits.js` sets
-  `org.gradle.workers.max=2` and a 2 GB Kotlin daemon heap, on EAS builds only (`EAS_BUILD=true`). If it still fails:
-  `resourceClass: "large"` in `eas.json` (paid plans) or limit ninja jobs per CMake build.
+  `org.gradle.workers.max=2` and a 2 GB Kotlin daemon heap, on EAS builds only (`EAS_BUILD=true`). That passed once,
+  then failed twice after expo-updates + netinfo were added (dying at `:app:configureCMakeDebug` while
+  `:shopify_react-native-skia:buildCMakeDebug` and Worklets ran). EAS also sets a 4 GB Gradle heap via `GRADLE_OPTS`.
+  2026-11-06: `org.gradle.workers.max=1` — dev build passed (13 min). If it fails again (e.g. production, 4 ABIs): `kotlin.compiler.execution.strategy=in-process`
+  (drops the separate 2 GB Kotlin daemon), `resourceClass: "large"` in `eas.json` (paid plans), or limit ninja jobs
+  per CMake build (`-DCMAKE_JOB_POOLS`).
 - Runtime fingerprint (OTA): anything in it changing = new runtime version = updates published afterwards don't
   reach builds made before. Check with `npx expo-updates runtimeversion:resolve --platform android --debug`
   (lists the sources). The local, gitignored `android/` folder doesn't affect it (tested 2026-11-05). Default
