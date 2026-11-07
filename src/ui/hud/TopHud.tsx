@@ -80,10 +80,15 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry, onRefr
         </Pressable>
       </View>
       {v.hasWarning && v.warning ? (
-        <Pressable onPress={onWarning} style={s.warn} accessibilityRole="button" accessibilityLabel={`Warning: ${v.warning.short}`}>
-          <Icon name="warning" size={19} color={C.warnChipInk} fill />
-          <Text style={[T.fig(700, 13.5), { color: C.warnChipInk }]}>{v.warning.short}</Text>
-        </Pressable>
+        // frosted like the other chips: the scene blurs behind a translucent orange
+        <GlassView id="hud-warn" blur={12} radius={18} style={s.warn}>
+          <Pressable onPress={onWarning} style={s.warnInner} accessibilityRole="button" accessibilityLabel={`Warning: ${v.warning.short}`}>
+            <Icon name="warning" size={19} color={C.warnChipInk} fill />
+            <Text style={[T.fig(700, 13.5), s.shrink, { color: C.warnChipInk }]} numberOfLines={1}>
+              {v.warning.short}
+            </Text>
+          </Pressable>
+        </GlassView>
       ) : null}
     </View>
   );
@@ -107,13 +112,10 @@ const s = StyleSheet.create({
   warn: {
     marginTop: 12,
     alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    maxWidth: '100%',
     height: 36,
-    paddingLeft: 12,
-    paddingRight: 10,
     borderRadius: 18,
-    backgroundColor: C.warnChip,
+    backgroundColor: C.warnChipGlass,
   },
+  warnInner: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, paddingLeft: 12, paddingRight: 12 },
 });

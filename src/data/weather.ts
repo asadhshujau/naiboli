@@ -1,6 +1,6 @@
 import { sunState } from './sun';
 import { clamp, dateOf, dayLabel, dirOf, fmt, hOfUnix, md24, TAU } from './time';
-import type { ApiWeatherResponse, ApiWxPoint, MoonData, Sun, Weather, WxDay, WxSample } from './types';
+import type { ApiWeatherResponse, ApiWxPoint, MoonData, Sun, Weather, WxAlert, WxDay, WxSample } from './types';
 
 // ───────────────────────── Condition ids ─────────────────────────
 
@@ -65,6 +65,15 @@ export function owmCond(id: number, day: boolean): string {
 
 // ───────────────────────── Scene drivers ─────────────────────────
 
+/**
+ * Rain amount (mm/h) → scene rain 0.2–1. Steep at the low end, where Maldivian rain usually sits, so a
+ * 0.2 mm/h drizzle and a 1.2 mm/h shower look different: 0.1 → 0.31, 0.5 → 0.45, 1 → 0.56, 2.5 → 0.77, 5+ → 1.
+ */
+export function rainAmtOfMm(mm: number): number {
+  'worklet';
+  return 0.2 + 0.8 * Math.sqrt(clamp(mm / 5, 0, 1));
+}
+
 export function rainAmtOf(s: { id: number; mm: number }): number {
   'worklet';
   return isThunder(s.id)
@@ -72,7 +81,7 @@ export function rainAmtOf(s: { id: number; mm: number }): number {
     : !isWet(s.id)
       ? 0
       : s.mm
-        ? clamp(0.25 + s.mm / 4, 0.25, 1)
+        ? rainAmtOfMm(s.mm)
         : s.id < 400
           ? 0.25
           : s.id === 500
@@ -142,9 +151,37 @@ export function procWx(j: ApiWeatherResponse | null | undefined, day0: number, n
     mr: x.moonrise ? hOfUnix(x.moonrise, day0) : null,
     ms: x.moonset ? hOfUnix(x.moonset, day0) : null,
     mp: x.moon_phase ?? null,
+    mm: typeof x.rain === 'number' && isFinite(x.rain) ? x.rain : null,
   }));
   const at = Date.parse(j.observed_at || j.updated_at || '') / 1000;
-  return { hrs, days, moon: moonOf(days), at: isNaN(at) ? null : hOfUnix(at, day0), fetched: nowMs };
+  return { hrs, days, moon: moonOf(days), at: isNaN(at) ? null : hOfUnix(at, day0), fetched: nowMs, min: minutesOf(d.minutely, day0), alerts: alertsOf(d.alerts, day0) };
+}
+
+/** The optional `alerts` block → hour-axis alerts, or `null` when there are none usable. */
+function alertsOf(a: unknown, day0: number): WxAlert[] | null {
+  if (!Array.isArray(a)) return null;
+  const out = a
+    .filter((x) => x && typeof x.start === 'number' && typeof x.end === 'number' && x.end > x.start)
+    .map((x) => ({
+      start: hOfUnix(x.start, day0),
+      end: hOfUnix(x.end, day0),
+      event: typeof x.event === 'string' ? x.event.trim() : '',
+      desc: typeof x.description === 'string' ? x.description.trim().replace(/\s+/g, ' ') : '',
+      sender: typeof x.sender_name === 'string' ? x.sender_name : '',
+      tags: Array.isArray(x.tags) ? x.tags.filter((t: unknown): t is string => typeof t === 'string') : [],
+    }))
+    .sort((p, q) => p.start - q.start);
+  return out.length ? out : null;
+}
+
+/** The optional `minutely` block → hour-axis minutes, or `null` when it's missing or unusable. */
+function minutesOf(a: unknown, day0: number): { h: number; mm: number }[] | null {
+  if (!Array.isArray(a)) return null;
+  const out = a
+    .filter((x) => x && typeof x.dt === 'number' && typeof x.precipitation === 'number' && isFinite(x.precipitation))
+    .map((x) => ({ h: hOfUnix(x.dt, day0), mm: Math.max(0, x.precipitation) }))
+    .sort((p, q) => p.h - q.h);
+  return out.length ? out : null;
 }
 
 /** `sample()` — linear interpolation between hourly samples; `deg`/`id` from the nearer one. */
@@ -386,6 +423,8 @@ export interface WeekDay {
   pop: number;
   wind: number;
   wet: boolean;
+  /** rain mm for the day, when the feed has it */
+  mm: number | null;
 }
 
 export function weekDays(W: Weather, day0: number): WeekDay[] {
@@ -417,6 +456,7 @@ export function weekDays(W: Weather, day0: number): WeekDay[] {
         pop: Math.round((d.pop || 0) / 5) * 5,
         wind: Math.round(d.wind || 0),
         wet: isWet(id) && (d.pop || 0) >= 40,
+        mm: d.mm ?? null,
       };
     });
 }

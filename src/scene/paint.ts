@@ -55,6 +55,8 @@ export interface SceneInput {
   flash: boolean;
   /** hour-axis "now" (`m.hour`) */
   hour0: number;
+  /** live rain / gloom at now from the minute forecast, when the feed has one (blended out over the next hour) */
+  now?: { rainAmt: number; gloom: number } | null;
   sun: Sun;
   tide: { v: number[]; lo: number; hi: number } | null;
   moon: MoonData;
@@ -810,8 +812,13 @@ export function tick(ctx: Ctx2D, S: SimState, I: SceneInput, offset: number, raw
   if (I.animate) S.t += dt;
   let m0: { gloom: number; rainAmt: number; wind: number; cloudN: number; deg: number; flash: boolean };
   if (I.live && I.hrs.length) {
-    const x = wxAt(I.hrs, S.hDisp ?? I.hour0 + offset);
-    m0 = { gloom: x.gloom, rainAmt: x.rainAmt, wind: x.wind, cloudN: x.cloudN, deg: x.deg, flash: x.flash };
+    const hD = S.hDisp ?? I.hour0 + offset;
+    const x = wxAt(I.hrs, hD);
+    // Near now, the minute forecast (if any) wins, fading to the hourly data an hour out.
+    const nw = I.now ? Math.max(0, Math.min(1, 1 - Math.abs(hD - I.hour0))) : 0;
+    const rainAmt = I.now ? x.rainAmt + (I.now.rainAmt - x.rainAmt) * nw : x.rainAmt;
+    const gloom = I.now ? x.gloom + (I.now.gloom - x.gloom) * nw : x.gloom;
+    m0 = { gloom, rainAmt, wind: x.wind, cloudN: x.cloudN, deg: x.deg, flash: x.flash };
   } else {
     m0 = { gloom: I.gloom, rainAmt: I.rainAmt, wind: I.wind, cloudN: I.cloudN, deg: I.deg, flash: I.flash };
   }

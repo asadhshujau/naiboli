@@ -1,22 +1,26 @@
 /** Activity detail: verdict hero, best window bars, what's shaping it, next 7 days, tip. */
 import { StyleSheet, Text, View } from 'react-native';
 
+import type { Warning } from '@/data/mood';
 import type { ActDetail } from '@/state/sheets';
 import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
 import { Icon } from '@/ui/Icon';
 
-import { Card, CardTitle, CloseButton, Press, SourceLine, TipCard, useSep } from './parts';
+import { AlertCard, Card, CardTitle, CloseButton, Press, SourceLine, TipCard, useSep } from './parts';
 
 interface Props {
   d: ActDetail;
   whenLabel: string;
   actsSrc: string;
+  /** weather alert to show on top (as on the Weather sheet) */
+  warning: Warning | null;
+  onWarning: () => void;
   onBack: () => void;
   onClose: () => void;
 }
 
-export function ActSheet({ d, whenLabel, actsSrc, onBack, onClose }: Props) {
+export function ActSheet({ d, whenLabel, actsSrc, warning, onWarning, onBack, onClose }: Props) {
   const s = useS();
   const t = useDayTheme();
   const { c } = t;
@@ -30,6 +34,7 @@ export function ActSheet({ d, whenLabel, actsSrc, onBack, onClose }: Props) {
         </Press>
         <CloseButton onPress={onClose} />
       </View>
+      {warning ? <AlertCard title={warning.title} until={warning.until} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
 
       <View style={[s.hero, t.bgS(d.headBg)]}>
         <View style={s.heroHead}>
@@ -158,6 +163,7 @@ const useS = themed((c) =>
     mt12: { marginTop: 12 },
     top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     back: { height: 38, paddingLeft: 8, paddingRight: 14, borderRadius: 19, backgroundColor: c.button, flexDirection: 'row', alignItems: 'center', gap: 2 },
+    alert: { marginTop: 16 },
     hero: { marginTop: 16, borderRadius: 28, padding: 20 },
     heroHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     heroTile: { width: 48, height: 48, borderRadius: 16, backgroundColor: c.heroTile, alignItems: 'center', justifyContent: 'center' },

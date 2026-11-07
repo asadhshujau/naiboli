@@ -28,6 +28,8 @@ export const C = {
   warnInk: '#5A1C0B',
   warnBody: '#6B2A17',
   warnChip: '#FF7350',
+  /** the HUD alert chip over frosted glass */
+  warnChipGlass: 'rgba(255,115,80,.74)',
   warnChipInk: '#2A0C03',
 
   islandHero: '#FBEBC4',

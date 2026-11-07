@@ -1,28 +1,33 @@
 /** "All activities": verdict groups (Go, Maybe, After sunrise, Skip) with reasons and scores. */
 import { StyleSheet, Text, View } from 'react-native';
 
+import type { Warning } from '@/data/mood';
 import type { ActGroup } from '@/state/sheets';
 import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
 import { Icon } from '@/ui/Icon';
 
-import { Press, SheetHeader, SourceLine, useSep } from './parts';
+import { AlertCard, Press, SheetHeader, SourceLine, useSep } from './parts';
 
 interface Props {
   whenLabel: string;
   groups: ActGroup[];
   actsSrc: string;
+  /** weather alert to show on top (as on the Weather sheet) */
+  warning: Warning | null;
+  onWarning: () => void;
   onAct: (id: string) => void;
   onClose: () => void;
 }
 
-export function ActsSheet({ whenLabel, groups, actsSrc, onAct, onClose }: Props) {
+export function ActsSheet({ whenLabel, groups, actsSrc, warning, onWarning, onAct, onClose }: Props) {
   const s = useS();
   const t = useDayTheme();
   const sep = useSep();
   return (
     <>
       <SheetHeader eyebrow={whenLabel} title="All activities" onClose={onClose} />
+      {warning ? <AlertCard title={warning.title} until={warning.until} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
       {groups.map((g) => (
         <View key={g.key}>
           <View style={s.groupHead}>
@@ -63,6 +68,7 @@ export function ActsSheet({ whenLabel, groups, actsSrc, onAct, onClose }: Props)
 
 const useS = themed((c) =>
   StyleSheet.create({
+    alert: { marginTop: 16 },
     groupHead: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 20, marginHorizontal: 4, marginBottom: 8 },
     dot: { width: 9, height: 9, borderRadius: 4.5 },
     groupTitle: { flex: 1, ...T.bric(700, 16, { color: c.ink }) },

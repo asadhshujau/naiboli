@@ -31,10 +31,20 @@ export interface Proto {
   owmCond: AnyFn;
 }
 
+/**
+ * Deliberate changes from the prototype, applied to its script before comparing (find → replace):
+ * - Scene rain from mm/h: steeper at the low end (`rainAmtOfMm` in src/data/weather.ts, 2026-11-07).
+ */
+const DEVIATIONS: [string, string][] = [['clamp(.25 + s.mm / 4, .25, 1)', '(0.2 + 0.8 * Math.sqrt(clamp(s.mm / 5, 0, 1)))']];
+
 export function loadPrototype(): Proto {
   const html = fs.readFileSync(HTML, 'utf8');
   const m = html.match(/<script type="text\/x-dc" data-dc-script[^>]*>([\s\S]*?)<\/script>/);
   if (!m) throw new Error('prototype script not found');
+  const script = DEVIATIONS.reduce((src, [from, to]) => {
+    if (!src.includes(from)) throw new Error(`prototype deviation no longer applies: ${from}`);
+    return src.replace(from, to);
+  }, m[1]);
   class DCLogic {
     props: Record<string, unknown> = {};
     state: Record<string, unknown> = {};
@@ -51,7 +61,7 @@ export function loadPrototype(): Proto {
     'DCLogic',
     'React',
     'localStorage',
-    `${m[1]}
+    `${script}
     return {
       Component, ACTS, MOODS, sunState, lightOf, tideAt, fmt, gloomOf, rainAmtOf, cloudNOf, owmIcon, owmCond,
       setDay0: (v) => { DAY0 = v; }, setSun: (r, s) => { RISE = r; SET = s; }, getSun: () => [RISE, SET], setTide: (t) => { TIDE = t; },

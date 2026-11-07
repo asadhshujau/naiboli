@@ -544,9 +544,11 @@ export interface WxView {
   sunY: number;
   sunO: number;
   sunLine: string;
-  hourly: { label: string; icon: string; temp: number; rain: string; sel: boolean; bg: string; ink: string; sub: string; ic: string; rc: string }[];
+  /** `mm`: rain amount ("0.4mm"), '' when dry or unknown; `hasMm`: show that row at all */
+  hourly: { label: string; icon: string; temp: number; rain: string; mm: string; sel: boolean; bg: string; ink: string; sub: string; ic: string; rc: string }[];
+  hasMm: boolean;
   hasWeek: boolean;
-  days: { label: string; icon: string; ic: string; rain: string; lo: number; hi: number; w: number; l: number; sep: boolean; sel: boolean }[];
+  days: { label: string; icon: string; ic: string; rain: string; mm: string; lo: number; hi: number; w: number; l: number; sep: boolean; sel: boolean }[];
   weekLine: string;
 }
 
@@ -568,11 +570,15 @@ export function buildWx(b: ViewBase, v: View, d: DataState): WxView {
     const h = m.hour + o;
     const sel = o === v.o0;
     const r = rainAt(m, h);
+    // rain amount: the minute forecast for now when there is one, else the hourly `rain.1h`
+    // (later cells: that hour's own figure, not a blend with the next hour)
+    const mm = !m.live ? 0 : o === 0 ? (m.nc ? m.nc.mm : sample(m.W.hrs, h).mm) : sample(m.W.hrs, Math.floor(h)).mm;
     return {
       label: o ? fmtHr(h) : 'Now',
-      icon: iconAt(m, h, sun),
+      icon: o === 0 && m.nc ? m.icon : iconAt(m, h, sun),
       temp: tempAt(m, h),
       rain: r + '%',
+      mm: mmText(mm),
       sel,
       bg: sel ? '#0A3346' : '#F6F1E6',
       ink: sel ? '#FFFFFF' : '#0A3346',
@@ -596,6 +602,7 @@ export function buildWx(b: ViewBase, v: View, d: DataState): WxView {
       icon: x.icon,
       ic: WX_TINT[x.key] || '#0A3346',
       rain: x.pop >= 20 ? x.pop + '%' : '',
+      mm: x.mm != null && x.pop >= 20 ? mmText(x.mm) : '',
       lo: x.lo,
       hi: x.hi,
       w,
@@ -614,14 +621,18 @@ export function buildWx(b: ViewBase, v: View, d: DataState): WxView {
       : wet.length >= wk.length - 1
         ? 'Showers about most days. Check the hourly for dry gaps.'
         : `Showers likely ${listOf(wet.map(nm3))}.${dry && !dry.wet ? ` Driest: ${nm3(dry)}.` : ''}`;
+  // With daily rain totals, name the wettest of several wet days (they often all say 100%).
+  const wettest = wet.filter((x) => x.mm != null).reduce<(typeof wk)[number] | null>((bb, x) => (!bb || (x.mm as number) > (bb.mm as number) ? x : bb), null);
+  if (wet.length >= 2 && wettest && (wettest.mm as number) >= 5) weekLine += ` Wettest: ${nm3(wettest)}.`;
   if (windy.length && wk.length) weekLine += ` Windy ${listOf(windy.map(nm3))}.`;
 
   return {
     eyebrow: `${nm} · ${isLater ? `${dayLabel(hSel, day0)} · ${fmt(Math.floor(hSel))}` : 'Now'}`,
     heroBg: WX_HERO[m.key] || '#FFF0C6',
     tint,
-    icon: iconAt(m, hSel, sun),
-    cond: condAt(m, hSel, sun),
+    // now with a minute forecast: the mood's own icon / condition (they follow the minutes)
+    icon: !isLater && m.nc ? m.icon : iconAt(m, hSel, sun),
+    cond: !isLater && m.nc ? m.cond : condAt(m, hSel, sun),
     temp,
     feels: temp + (m.feels - m.temp),
     hi: m.hi,
@@ -656,6 +667,7 @@ export function buildWx(b: ViewBase, v: View, d: DataState): WxView {
     sunO: ss.day ? 1 : 0,
     sunLine: ss.day ? `${dur(Math.max(0, untilSet))} of sun left` : `Sun's back in ${dur(untilRise)}`,
     hourly,
+    hasMm: hourly.some((x) => x.mm !== ''),
     hasWeek: wk.length > 1,
     days,
     weekLine,
@@ -822,3 +834,9 @@ export function welcomeOf(geo: GeoStatus, perm: Perm): WelcomeView {
 
 /** CSS row separator, for tests comparing against the prototype. */
 export const SEP_CSS = SEP;
+
+/** Rain amount for the Weather sheet: "0.4mm", "12mm"; '' when it's dry (under 0.1). */
+export function mmText(mm: number): string {
+  const r = Math.round(mm * 10) / 10;
+  return mm < 0.1 ? '' : r < 10 ? `${r.toFixed(1)}mm` : `${Math.round(mm)}mm`;
+}

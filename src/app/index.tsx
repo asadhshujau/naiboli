@@ -89,6 +89,8 @@ export default function SceneScreen() {
     },
     [dispatch],
   );
+  /** the alert box on the activity sheets → Weather sheet, alert in focus */
+  const openWarning = useCallback(() => openSheet({ sheet: 'wx', focus: 'warning' }), [openSheet]);
   const closeSheet = useCallback(() => dispatch({ type: 'closeSheet' }), []);
   useEffect(() => {
     if (ui.sheetOpen || !ui.sheet) return;
@@ -176,13 +178,13 @@ export default function SceneScreen() {
   const sheetBody = useMemo(() => {
     switch (ui.sheet) {
       case 'acts':
-        return <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />;
+        return <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />;
       case 'act': {
         const det = buildDetail(base, v, ui.actId);
         return det ? (
-          <ActSheet d={det} whenLabel={v.whenLabel} actsSrc={v.actsSrc} onBack={() => openSheet({ sheet: 'acts' })} onClose={closeSheet} />
+          <ActSheet d={det} whenLabel={v.whenLabel} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onBack={() => openSheet({ sheet: 'acts' })} onClose={closeSheet} />
         ) : (
-          <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />
+          <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />
         );
       }
       case 'wx':
@@ -213,7 +215,7 @@ export default function SceneScreen() {
       default:
         return null;
     }
-  }, [ui.sheet, ui.actId, ui.focus, ui.query, ui.geo, perm, base, v, d, openSheet, closeSheet, pickIsland, locate]);
+  }, [ui.sheet, ui.actId, ui.focus, ui.query, ui.geo, perm, base, v, d, openSheet, openWarning, closeSheet, pickIsland, locate]);
 
   return (
     <GlassProvider api={glass}>

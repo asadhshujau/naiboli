@@ -40,6 +40,30 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   (scores still come from it). OTA "Late-night and rain messages" published 2026-11-07 to `production`, Android
   group `6679dd58-407e-41b1-84dc-0f4e351ba977` (runtime `1ec7a72c…` = build 3). Not yet seen on the phone: ask the
   user whether it arrived (two cold starts) and how the lines read at night / in rain.
+- **Rain amounts, minute forecast, official alerts (2026-11-07, JS only, UNCOMMITTED — user checks on their phone
+  first, then commit + OTA `npm run update:production -- "Rain detail and weather alerts"`):** API route unchanged;
+  `minutely`, `rain.1h`, daily `rain` and `alerts` are all optional (missing → exactly the old behaviour).
+  - `src/data/nowcast.ts`: careful reading of `minutely` (server refreshes hourly; island rain is fickle): only the
+    next 30 min count, needs 10+ min still ahead, "now" = 5-min mean, start / stop only when it then holds 8+ min,
+    times rounded to 5 min and said as "around", hedged words; thunder ignores it. Rain words like OpenWeather:
+    light < 1 mm/h, steady, heavy ≥ 4.
+  - Now with minutes: rain on / off and drop density follow the minutes (a dry code turns rainy when it's raining
+    now; rain only turns dry when the whole half hour is dry); line under the headline, rain bubble, Weather rain
+    line and activity reasons say "Light rain, picking up" / "should ease around 5:25 PM" / "Rain likely from
+    around …"; scene blends from the minutes to the hourly data over the next hour (`SceneInput.now`).
+  - Scene rain from mm/h is steeper at the low end (`rainAmtOfMm`; prototype parity patched in `prototype.ts`
+    DEVIATIONS). Later hours: "Steady rain likely", "light rain, 80% chance". Weather sheet: mm row in the hourly
+    strip (that hour's own figure), mm under the % in the 8-day list, "Wettest: …" in the week line.
+  - Official alerts (`data.alerts`, e.g. Maldives Meteorological Service) come first in the warning chip / bubble /
+    Weather card ("Weather alert", event as the chip, description, "From the Maldives Meteorological Service",
+    until); our own "Forecast alert" otherwise. Hours inside a thunder / wind alert count as danger (calm copy);
+    rain-only alerts don't. Alert chip is now frosted glass (`GlassView`, translucent orange, no border — user doesn't want one). The same alert box as the Weather sheet's
+    (`AlertCard` in `parts.tsx`) sits on top of All activities and the activity detail; tapping it opens the Weather
+    sheet at the alert. Shown under the same rule as the Weather sheet (any warning within 24 h of now).
+  - Tests: `src/data/__tests__/nowcast.test.ts` (built on the real 890 snapshot of 16:48); parity tests map the new
+    rain wording back (`RAIN_WORDS` in sheets.parity.test.ts). **Check on device:** alert chip glass over light /
+    dark sky, chip with a long event; Weather sheet hourly mm row and 8-day mm fit; a rainy island with minutes
+    (they're rare: compare 890-like anchors right after a refresh).
 - Play Console answers given (2026-11-06): data safety Yes → location approximate + precise = collected, not shared,
   processed ephemerally, optional, app functionality; device or other IDs (Expo install ID) = collected, not
   shared, required, app functionality; encrypted in transit; deletion on request by email. Advertising ID: No.

@@ -193,6 +193,27 @@ const noFns = (o: unknown): unknown =>
       ? Object.fromEntries(Object.entries(o).filter(([, v]) => typeof v !== 'function').map(([k, v]) => [k, noFns(v)]))
       : o;
 
+/**
+ * Expected difference (2026-11-07): rain amounts from the feed (`rain.1h`, daily `rain`) add intensity words
+ * ("Steady rain likely", "light rain, 80% chance"), a "Wettest: …" week note, and mm rows in the Weather sheet.
+ * This maps the wording back to the prototype's, so everything else is still compared exactly. The new wording
+ * itself is tested in src/data/__tests__/nowcast.test.ts.
+ */
+const RAIN_WORDS: [RegExp, string][] = [
+  [/^(Light|Steady|Heavy) rain likely$/, 'Showers likely'],
+  [/^(Light|Steady|Heavy) rain possible$/, 'Could get wet'],
+  [/(by|catch:) (light|steady|heavy) rain, /, '$1 rain, '],
+  [/ Wettest: \w+\./, ''],
+];
+const unRain = (o: unknown): unknown =>
+  typeof o === 'string'
+    ? RAIN_WORDS.reduce((x, [re, to]) => x.replace(re, to), o)
+    : Array.isArray(o)
+      ? o.map(unRain)
+      : o && typeof o === 'object' && !(o instanceof Float32Array)
+        ? Object.fromEntries(Object.entries(o).map(([k, v]) => [k, typeof v === 'function' ? v : unRain(v)]))
+        : o;
+
 const OFFSETS = [0, 3, 9, 17, 23];
 const KINDS: BubbleKind[] = ['sun', 'moon', 'sky', 'rain', 'palm', 'island', 'sea', 'dhoni', 'temp', 'warning'];
 const TAPS = [
@@ -221,7 +242,7 @@ describe.each(SCENARIOS)('$name', (sc) => {
         const mine = bubbleContent(kind, base, v, d);
         const pos = bubblePos(mine, tap, { w: 402, scale: 1, top: 112, bottom: 874 - 210 });
         const b = theirs.bub;
-        expect({ icon: mine.icon, tileBg: mine.tile, title: mine.title, big: mine.big, bigColor: mine.bigColor, lines: mine.lines }).toEqual({
+        expect(unRain({ icon: mine.icon, tileBg: mine.tile, title: mine.title, big: mine.big, bigColor: mine.bigColor, lines: mine.lines })).toEqual({
           icon: b.icon,
           tileBg: b.tileBg,
           title: b.title,
@@ -249,7 +270,7 @@ describe.each(SCENARIOS)('$name', (sc) => {
       title: g.title,
       count: g.count,
       dot: g.dot,
-      items: g.items.map((a) => ({ ...a, sep: css(a.sep) })),
+      items: g.items.map((a) => unRain({ ...a, sep: css(a.sep) })),
     }));
     expect(groups).toEqual(noFns(theirs.groups));
     // Expected difference: the score source ("Activity scores from moodhu.dev, …") is never shown.
@@ -263,14 +284,14 @@ describe.each(SCENARIOS)('$name', (sc) => {
       const protoLead = a.k === 'wait' ? VC.wait.line : mine.vBig === 'Ideal.' ? 'Couldn’t ask for better.' : VC[a.k].line;
       const tl = (t.d as { line: string }).line;
       expect(tl.startsWith(protoLead + ' ')).toBe(true);
-      expect(mine.line).toBe(lead + tl.slice(protoLead.length));
+      expect(unRain(mine.line)).toBe(lead + tl.slice(protoLead.length));
       const norm = {
         ...mine,
         line: tl,
         hours: mine.hours.map((h) => ({ ...h, ring: h.ring ? '0 0 0 2px #FFFFFF, 0 0 0 3.5px #0A3346' : 'none' })),
         days: mine.days.map(({ sel, sep, ...y }) => ({ ...y, sep: css(sep), bg: sel ? 'rgba(18,181,176,.08)' : 'transparent' })),
       };
-      expect(norm).toEqual(noFns(t.d));
+      expect(unRain(norm)).toEqual(noFns(t.d));
     }
     expect(buildDetail(base, v, 'nope')).toBeNull();
   });
@@ -281,10 +302,10 @@ describe.each(SCENARIOS)('$name', (sc) => {
     const theirs = render(c, { offset: o, sheet: 'wx', focus: 'uv' });
     const wx = buildWx(base, v, d);
     const { f, r, days, hourly, ...tw } = theirs.wx;
-    const { days: md, hourly: mh, ...mw } = wx;
-    expect(mw).toEqual(tw);
-    expect(mh.map(({ sel, ...h }) => h)).toEqual(hourly);
-    expect(md.map(({ sel, sep, ...y }) => ({ ...y, sep: css(sep), bg: sel ? 'rgba(18,181,176,.08)' : 'transparent' }))).toEqual(days);
+    const { days: md, hourly: mh, hasMm, ...mw } = wx;
+    expect(unRain(mw)).toEqual(tw);
+    expect(mh.map(({ sel, mm, ...h }) => h)).toEqual(hourly);
+    expect(md.map(({ sel, sep, mm, ...y }) => ({ ...y, sep: css(sep), bg: sel ? 'rgba(18,181,176,.08)' : 'transparent' }))).toEqual(days);
     expect(f.uv).toBe(true);
     expect(r.uv).toBe('0 0 0 2.5px #0A3346');
 

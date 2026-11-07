@@ -127,6 +127,7 @@ export function WxSheet({ wx, focus, onClose }: Props) {
               <Icon name={hr.icon} size={22} color={t.fg(hr.ic)} fill />
               <Text style={[s.tx_bric700_16, t.fgS(hr.ink)]}>{hr.temp}°</Text>
               <Text style={[s.tx_mono10_5, t.fgS(hr.rc)]}>{hr.rain}</Text>
+              {wx.hasMm ? <Text style={[s.hourMm, t.fgS(hr.sub)]}>{hr.mm || ' '}</Text> : null}
             </View>
           ))}
         </ScrollView>
@@ -146,7 +147,10 @@ export function WxSheet({ wx, focus, onClose }: Props) {
               <View style={s.w24}>
                 <Icon name={dy.icon} size={22} color={t.fg(dy.ic)} fill />
               </View>
-              <Text style={s.dayRain}>{dy.rain}</Text>
+              <View style={s.dayRainCol}>
+                <Text style={s.dayRain}>{dy.rain}</Text>
+                {dy.mm ? <Text style={s.dayMm}>{dy.mm}</Text> : null}
+              </View>
               <Text style={s.dayLo}>{dy.lo}°</Text>
               <View style={s.range}>
                 <View style={[s.rangeFill, { left: `${dy.l}%`, width: `${dy.w}%` }]} />
@@ -251,13 +255,16 @@ const useS = themed((c, t) =>
     hourCard: { marginTop: 12, paddingHorizontal: 0 },
     hours: { gap: 6, paddingTop: 12, paddingHorizontal: 12 },
     hour: { width: 52, alignItems: 'center', gap: 7, paddingVertical: 10, borderRadius: 16 },
+    hourMm: { marginTop: -4, ...T.mono(9.5) },
     week: { marginTop: 12, borderRadius: 24, backgroundColor: c.card, overflow: 'hidden', boxShadow: c.cardShadow },
     weekHead: { paddingTop: 16, paddingHorizontal: 16, paddingBottom: 10 },
     weekLine: { marginTop: 3, ...T.fig(500, 13, { lh: 1.4, color: c.secondary }) },
     day: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 16 },
     daySel: { backgroundColor: c.selectedRow },
     dayLabel: { width: 56, ...T.fig(700, 14, { color: c.ink }) },
-    dayRain: { width: 34, ...T.mono(10.5, { color: t.fg(C.rainBlue) }) },
+    dayRainCol: { width: 34 },
+    dayRain: T.mono(10.5, { color: t.fg(C.rainBlue) }),
+    dayMm: { marginTop: 1, ...T.mono(9.5, { color: c.secondary }) },
     dayLo: { width: 28, textAlign: 'right', ...T.fig(600, 14, { color: c.secondary }) },
     range: { flex: 1, minWidth: 0, height: 6, borderRadius: 3, backgroundColor: c.button },
     rangeFill: { position: 'absolute', top: 0, bottom: 0, borderRadius: 3, backgroundImage: 'linear-gradient(90deg, #7FD3CF, #FFC83D)' },

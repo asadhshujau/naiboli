@@ -109,6 +109,14 @@ export function rainOf(key: WxKey, chance: number): Rain {
   return key === 'rainy' || chance >= 70 ? 'wet' : chance >= 40 ? 'damp' : null;
 }
 
+/**
+ * Rain now when the minute forecast is in: raining now → wet; a start or on-and-off in the next half hour →
+ * damp; a dry half hour → dry, unless the hour is still very likely wet (damp, to stay careful).
+ */
+export function rainNow(nc: { wetNow: boolean; kind: string }, chance: number): Rain {
+  return nc.wetNow ? 'wet' : nc.kind === 'starting' || nc.kind === 'patchy' || chance >= 70 ? 'damp' : null;
+}
+
 /** Candidate lines for the scrubbed-hour headline (exported for tests). Danger, then late night, then rain. */
 export function hourPool(word: HourWord, c: HourCond): { cat: string; lines: string[] } {
   if (c.danger) return { cat: 'hour:danger', lines: HOUR_DANGER };

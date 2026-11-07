@@ -63,10 +63,28 @@ export interface ApiWxDaily {
   wind_speed?: number;
   clouds?: number;
   weather?: ApiWeatherCondition[];
+  /** rain mm for the day (only when it rains) */
+  rain?: number;
+}
+
+/** OpenWeather minute forecast entry: precipitation in mm/h. Optional and often missing. */
+export interface ApiWxMinute {
+  dt: number;
+  precipitation: number;
+}
+
+/** Official weather alert passed through by OpenWeather (in the Maldives: the Maldives Meteorological Service). */
+export interface ApiWxAlert {
+  sender_name?: string;
+  event?: string;
+  start?: number;
+  end?: number;
+  description?: string;
+  tags?: string[];
 }
 
 export interface ApiWeatherResponse {
-  data?: { current?: ApiWxPoint; hourly?: ApiWxPoint[]; daily?: ApiWxDaily[] } | null;
+  data?: { current?: ApiWxPoint; minutely?: ApiWxMinute[]; hourly?: ApiWxPoint[]; daily?: ApiWxDaily[]; alerts?: ApiWxAlert[] } | null;
   observed_at?: string | null;
   updated_at?: string | null;
 }
@@ -158,6 +176,8 @@ export interface WxDay {
   mr: number | null;
   ms: number | null;
   mp: number | null;
+  /** rain mm for the day, when the feed has it */
+  mm: number | null;
 }
 
 export interface MoonData {
@@ -173,8 +193,24 @@ export interface Weather {
   moon: MoonData;
   /** observation time on the hour axis */
   at: number | null;
+  /**
+   * Minute forecast (mm/h) for the hour after the snapshot, on the hour axis. Often missing (`null`);
+   * read it through `nowcastOf`, which ignores it when too little of it is still ahead.
+   */
+  min?: { h: number; mm: number }[] | null;
+  /** official alerts (start / end on the hour axis); often none */
+  alerts?: WxAlert[] | null;
   /** Date.now() at parse time */
   fetched: number;
+}
+
+export interface WxAlert {
+  start: number;
+  end: number;
+  event: string;
+  desc: string;
+  sender: string;
+  tags: string[];
 }
 
 export interface TideExtreme {

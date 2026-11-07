@@ -79,6 +79,33 @@ export function TipCard({ text, style }: { text: string; style?: StyleProp<ViewS
 }
 
 /** Footer note under the activity sheets (shown only while scores are our own estimate). */
+/**
+ * The weather alert box, as on the Weather sheet; also on All activities and the activity detail.
+ * `onPress`: open the Weather sheet at the alert.
+ */
+export function AlertCard({ title, until, body, onPress, style }: { title: string; until: string; body: string; onPress?: () => void; style?: StyleProp<ViewStyle> }) {
+  const p = usePartStyles();
+  const { c } = useDayTheme();
+  const inner = (
+    <>
+      <Icon name="warning" size={22} color={c.warnIcon} fill />
+      <View style={p.alertText}>
+        <Text style={p.alertTitle}>
+          {title} · until {until}
+        </Text>
+        <Text style={p.alertBody}>{body}</Text>
+      </View>
+    </>
+  );
+  return onPress ? (
+    <Press onPress={onPress} style={[p.alert, style]} accessibilityRole="button" accessibilityLabel={`${title} until ${until}. ${body} Weather details`}>
+      {inner}
+    </Press>
+  ) : (
+    <View style={[p.alert, style]}>{inner}</View>
+  );
+}
+
 export function SourceLine({ text, mt }: { text: string; mt: number }) {
   return <Text style={[usePartStyles().source, { marginTop: mt }]}>{text}</Text>;
 }
@@ -132,6 +159,10 @@ export const usePartStyles = themed((c) =>
     statLabel: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     tip: { marginTop: 12, padding: 16, borderRadius: 24, backgroundColor: c.tipBg, flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
     tipText: { flex: 1, ...T.fig(500, 14, { lh: 1.45, color: c.tipText }) },
+    alert: { padding: 16, borderRadius: 24, backgroundColor: c.warnBg, flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+    alertText: { flexShrink: 1 },
+    alertTitle: T.bric(700, 16, { color: c.warnInk }),
+    alertBody: { marginTop: 4, ...T.fig(500, 14, { lh: 1.45, color: c.warnBody }) },
     source: { marginHorizontal: 4, ...T.fig(500, 12.5, { lh: 1.45, color: c.secondary }) },
     sep: { borderTopWidth: 1, borderTopColor: c.sep },
   }),

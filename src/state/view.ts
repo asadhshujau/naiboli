@@ -3,9 +3,10 @@
  * HUD, bottom panel and scene input; bubble and sheet values are in `./sheets`.
  */
 import { actAt, actDefs, apiAt, makeScorer, SAIL_INDEX, type ActDefLive, type Scorer } from '@/data/activities';
-import { bestBet, hourHead, isLate, rainOf, weatherHead, type CopyKey, type HourCond, type Rain } from '@/data/copy';
+import { bestBet, hourHead, isLate, rainNow, rainOf, weatherHead, type CopyKey, type HourCond, type Rain } from '@/data/copy';
 import { labelOf, wxKey } from '@/data/islands';
-import { hourView, rainAt, resolveMood, tempAt, windAt, type Mood } from '@/data/mood';
+import { alertDangerAt, hourView, rainAt, resolveMood, tempAt, windAt, type Mood } from '@/data/mood';
+import { DRY_BELOW, nowcastReason, rainWord } from '@/data/nowcast';
 import { sunState } from '@/data/sun';
 import { tideView, type TideView } from '@/data/tide';
 import { dayLabel, fmt, fmtHr, hOfUnix, md24 } from '@/data/time';
@@ -90,6 +91,8 @@ export function buildSceneInput(b: ViewBase, signName: string, animate: boolean)
     deg: m.deg,
     flash: m.flash,
     hour0: m.hour,
+    // minute forecast for now: the scene eases from this to the hourly data within the next hour
+    now: m.live && m.nc ? { rainAmt: m.rainAmt, gloom: m.gloom } : null,
     sun: b.sun,
     tide: b.tide ? { v: b.tide.v, lo: b.tide.lo, hi: b.tide.hi } : null,
     moon: moonDataFor(m.live ? m.W : null, b.day0, b.sun),
@@ -171,11 +174,18 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   const temp = tempAt(m, hSel);
   const tide = tideView(hSel, b.tide);
   const rainSel = isLater ? rainAt(m, hSel) : m.rain;
+  // How hard it rains at a later hour (hourly `rain.1h`, when the feed has it): "Steady rain likely".
+  const mmSel = isLater && m.live ? sample(m.W.hrs, Math.floor(hSel)).mm : 0;
+  const rainW = mmSel >= DRY_BELOW ? rainWord(mmSel) : null;
   const rainLine = isLater
     ? rainSel >= 70
-      ? 'Showers likely'
+      ? rainW
+        ? `${rainW} rain likely`
+        : 'Showers likely'
       : rainSel >= 40
-        ? 'Could get wet'
+        ? rainW
+          ? `${rainW} rain possible`
+          : 'Could get wet'
         : rainSel >= 15
           ? 'Small chance of a shower'
           : 'Should stay dry'
@@ -195,7 +205,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
     f === 'wind'
       ? `wind, ${wind} km/h`
       : f === 'rain'
-        ? `rain, ${rainSel}% chance`
+        ? (!isLater && m.nc && nowcastReason(m.nc)) || `${rainW && rainSel >= 20 ? rainW.toLowerCase() + ' ' : ''}rain, ${rainSel}% chance`
         : f === 'uv'
           ? `strong sun, UV ${uvNow}`
           : f === 'visibility'
@@ -239,10 +249,11 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   // Varied copy (src/data/copy): seeded by island, local date and hour; sample moods keep their canned line.
   const keyAt = (h: number): CopyKey => ({ island: d.island.id, day: Math.round(day0 / 86400) + Math.floor(h / 24), hour: Math.floor(md24(h)) });
   const copyKey = keyAt(hSel);
-  const danger = m.flash || m.gust >= 50;
+  // thunder, strong gusts, or an official thunder / wind alert in effect at that hour
+  const danger = m.flash || m.gust >= 50 || (m.live && alertDangerAt(m.W, hSel));
   // Late night (11:30 PM – 4 AM) and rain change the tone; danger still comes first (src/data/copy).
   const late = isLate(hSel);
-  const rain = rainOf(m.key, rainSel);
+  const rain = !isLater && m.nc ? rainNow(m.nc, rainSel) : rainOf(m.key, rainSel);
   const cond: HourCond = { danger, late, rain };
   const head = isLater
     ? hourHead(word, cond, fmt(Math.floor(hSel)).replace(':00', ''), copyKey)

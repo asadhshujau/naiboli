@@ -8,7 +8,7 @@ import { liveMood, MOODS, resolveMood } from '../mood';
 import { DEFAULT_SUN, sunOf, sunState } from '../sun';
 import { extrema, procTide, tideAt, tideSrc, tideView } from '../tide';
 import { fmt } from '../time';
-import type { Tide } from '../types';
+import type { Tide, Weather } from '../types';
 import { cloudNOf, gloomOf, keyOf, moonDataFor, moonInfo, owmCond, owmIcon, phrasesOf, procWx, rainAmtOf, sample, weekDays } from '../weather';
 import { acts1069, DAY0, islandsQuarter, islandsSmall, NOW_MS, stormyWeather, synthTide, tideHead1069, weather1069 } from './fixtures';
 import { loadPrototype, type Proto } from './prototype';
@@ -17,6 +17,11 @@ let P: Proto;
 const strip = <T extends { fetched?: number }>(x: T) => {
   const { fetched, ...rest } = x;
   return rest;
+};
+/** Weather minus what the prototype never had: the minute forecast, official alerts and daily rain mm. */
+const stripWx = (W: Weather) => {
+  const { fetched, min, alerts, ...rest } = W;
+  return { ...rest, days: rest.days.map(({ mm, ...d }) => d) };
 };
 
 beforeAll(() => {
@@ -32,13 +37,13 @@ describe('weather', () => {
   it('procWx matches on the real payload', () => {
     const c = P.make();
     const mine = procWx(weather1069, DAY0, NOW_MS)!;
-    expect(strip(mine)).toEqual(strip(c.procWx(weather1069)));
+    expect(stripWx(mine)).toEqual(strip(c.procWx(weather1069)));
     expect(mine.fetched).toBe(NOW_MS);
   });
 
   it('procWx matches on the stormy payload', () => {
     const j = stormyWeather();
-    expect(strip(procWx(j, DAY0, NOW_MS)!)).toEqual(strip(P.make().procWx(j)));
+    expect(stripWx(procWx(j, DAY0, NOW_MS)!)).toEqual(strip(P.make().procWx(j)));
   });
 
   it('sample, keyOf, phrasesOf and the scene drivers match across 50 h', () => {
@@ -99,7 +104,7 @@ describe('weather', () => {
       const sun = sunOf(W);
       expect([sun.rise, sun.set]).toEqual(P.getSun());
       const mine = liveMood(W, (NOW_MS / 1000 - DAY0) / 3600, sun);
-      const { loading, offline, ...rest } = mine;
+      const { loading, offline, nc, ...rest } = mine;
       expect(rest).toEqual(theirs);
     }
     // across 40 h of "now" values (prototype reads the clock)
@@ -111,7 +116,7 @@ describe('weather', () => {
         (Date.now as jest.Mock).mockReturnValue(t);
         P.setSun(DEFAULT_SUN.rise, DEFAULT_SUN.set);
         const theirs = P.make().liveMood(W);
-        const { loading, offline, ...rest } = liveMood(W, (t / 1000 - DAY0) / 3600, sun);
+        const { loading, offline, nc, ...rest } = liveMood(W, (t / 1000 - DAY0) / 3600, sun);
         expect(rest).toEqual(theirs);
       }
     }
@@ -134,7 +139,7 @@ describe('weather', () => {
     c.state.wx = { 27: 'loading' };
     const theirs = c.mood();
     const mine = resolveMood({ W: 'loading', lastW: null, label: 'K. Malé', nowH: h, prevSun: DEFAULT_SUN }).mood;
-    const { warning, flash, updated, ...rest } = mine as any;
+    const { warning, flash, updated, nc, ...rest } = mine as any;
     expect(rest).toEqual({ ...theirs, hour: theirs.hour });
     expect(MOODS.partly.headEn).toBe(theirs.headEn);
   });
@@ -158,7 +163,7 @@ describe('weather', () => {
 
   it('weekDays matches', () => {
     const W = procWx(weather1069, DAY0, NOW_MS)!;
-    expect(weekDays(W, DAY0)).toEqual(P.make().weekDays({ live: true, W }));
+    expect(weekDays(W, DAY0).map(({ mm, ...d }) => d)).toEqual(P.make().weekDays({ live: true, W }));
   });
 });
 

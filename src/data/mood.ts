@@ -2,13 +2,15 @@
  * "Mood" = the conditions summary that drives the HUD and scene: either live (from weather)
  * or a canned sample mood shown while weather loads / when the feed is unreachable.
  */
+import { nowcastLine, nowcastOf, nowcastTail, type Nowcast } from './nowcast';
 import { sunOf, sunState } from './sun';
 import { clamp, dirOf, fmt, md24, TAU } from './time';
-import type { Sun, Weather } from './types';
+import type { Sun, Weather, WxAlert, WxSample } from './types';
 import {
   cloudNOf,
   gloomOf,
   isThunder,
+  isWet,
   keyOf,
   owmCond,
   owmIcon,
@@ -57,6 +59,8 @@ interface MoodFields {
   warning: Warning | null;
   /** showing older data while a fetch is in flight */
   loading: boolean;
+  /** rain in the next half hour from the minute forecast (live "now" only, when the feed has it) */
+  nc: Nowcast | null;
 }
 
 export interface LiveMood extends MoodFields {
@@ -76,7 +80,7 @@ export interface SampleMood extends MoodFields {
 
 export type Mood = LiveMood | SampleMood;
 
-type SampleDef = Omit<MoodFields, 'key' | 'hour' | 'loading' | 'flash' | 'warning'> & {
+type SampleDef = Omit<MoodFields, 'key' | 'hour' | 'loading' | 'flash' | 'warning' | 'nc'> & {
   scores: number[];
   flash?: boolean;
   warning?: Warning;
@@ -135,6 +139,7 @@ export function sampleMood(label: string, hour: number, wxState: 'loading' | 'er
     hour,
     flash: !!d.flash,
     warning: d.warning ?? null,
+    nc: null,
     live: false,
     updated: '',
     loading: wxState !== 'err',
@@ -144,7 +149,10 @@ export function sampleMood(label: string, hour: number, wxState: 'loading' | 'er
 
 /** `liveMood()` — summary at hour `h` from live weather. */
 export function liveMood(W: Weather, h: number, sun: Sun): LiveMood {
-  const s = sample(W.hrs, h);
+  const s0 = sample(W.hrs, h);
+  // Minute forecast, when there is one (never in thunder): it decides whether it's raining now and how hard.
+  const nc = isThunder(s0.id) ? null : nowcastOf(W, h);
+  const s = nc ? withNowcast(s0, nc) : s0;
   const D = W.days.find((x) => x.h >= 0 && x.h < 24) || W.days[0];
   const day = sunState(h, sun).el > 0;
   const key = keyOf(s, h, sun);
@@ -159,7 +167,7 @@ export function liveMood(W: Weather, h: number, sun: Sun): LiveMood {
     partly: 'Sun between the clouds.',
     windy: `Blowy at ${wind} km/h. Surfers, this one’s yours.`,
     overcast: 'Soft light, easy on the skin.',
-    rainy: 'Showers about. Pick your gaps.',
+    rainy: nc ? nowcastTail(nc, isWet(s0.id)) : 'Showers about. Pick your gaps.',
     stormy: `Thunder and gusts to ${gust} km/h.`,
     night: s.clouds < 40 ? 'Calm and starry.' : 'Warm and quiet.',
     golden: `Sunset at ${fmt(sun.set)}.`,
@@ -191,17 +199,73 @@ export function liveMood(W: Weather, h: number, sun: Sun): LiveMood {
     flash: isThunder(s.id),
     tempWord: feels >= 38 ? 'Hot and sticky' : feels >= 34 ? 'Warm and humid' : feels >= 30 ? 'Warm' : 'Pleasantly mild',
     headEn: base.headEn,
-    sub: `${cond}, feels like ${feels}°. ${tail}`,
-    phrases: phrasesOf(s),
+    sub: `${cond}, feels like ${feels}°. ${nc && key !== 'rainy' && (nc.kind === 'starting' || nc.kind === 'patchy') ? `${nowcastLine(nc, false)}.` : tail}`,
+    phrases: nc ? { ...phrasesOf(s), rain: nowcastLine(nc, isWet(s0.id)) } : phrasesOf(s),
     warning: warningOf(W, h),
     updated: W.at != null ? fmt(W.at) : '',
     loading: false,
     offline: false,
+    nc,
   };
 }
 
-/** Thunder or ≥50 km/h gusts within the next 24 h. */
+/**
+ * "Now" as the minute forecast sees it: its rain amount, and rain on / off when the minutes clearly say so —
+ * raining now (5-minute mean) flips a dry code to rain; a dry code is only restored when the whole half hour is
+ * dry. Anything in between keeps the observed code.
+ */
+function withNowcast(s: WxSample, nc: Nowcast): WxSample {
+  let id = s.id;
+  if (nc.wetNow && !isWet(id)) id = nc.mm >= 1 ? 501 : 500;
+  else if (nc.kind === 'dry' && isWet(id)) id = s.clouds >= 85 ? 804 : s.clouds >= 50 ? 803 : 802;
+  return { ...s, id, mm: nc.mm };
+}
+
+/**
+ * The warning chip / bubble / Weather card: an official alert (active, or starting within 24 h) first, else
+ * our own "Forecast alert" for thunder or ≥50 km/h gusts within the next 24 h.
+ */
 export function warningOf(W: Weather, h: number): Warning | null {
+  return officialWarning(W, h) ?? forecastWarning(W, h);
+}
+
+/** Official alerts in effect at `h` or starting within 24 h, earliest first. */
+export function alertsAhead(W: Weather, h: number): WxAlert[] {
+  return (W.alerts ?? []).filter((a) => a.end > h && a.start < h + 24);
+}
+
+/** An official alert about thunder or wind is in effect at hour `h` (playful copy stays out, like gusts). */
+export function alertDangerAt(W: Weather, h: number): boolean {
+  return (W.alerts ?? []).some(
+    (a) => a.start <= h && h < a.end && (a.tags.some((t) => /thunder|wind/i.test(t)) || /thunder|storm|gust|wind/i.test(a.event)),
+  );
+}
+
+const MAX_DESC = 180;
+
+function officialWarning(W: Weather, h: number): Warning | null {
+  const a = alertsAhead(W, h)[0];
+  if (!a) return null;
+  const byTag = (re: RegExp) => a.tags.some((t) => re.test(t));
+  const short =
+    a.event && a.event.length <= 32
+      ? a.event
+      : byTag(/thunder/i)
+        ? 'Thunderstorm alert'
+        : byTag(/wind/i)
+          ? 'Strong wind alert'
+          : byTag(/rain|flood/i)
+            ? 'Heavy rain alert'
+            : 'Weather alert';
+  let desc = a.desc || a.event || 'Official weather alert.';
+  if (desc.length > MAX_DESC) desc = desc.slice(0, desc.lastIndexOf(' ', MAX_DESC - 1)) + '…';
+  else if (!/[.!?…]$/.test(desc)) desc += '.';
+  const from = a.start > h + 0.05 ? `From ${fmt(a.start)}. ` : '';
+  const by = /meteorology\.gov\.mv/i.test(a.sender) ? ' From the Maldives Meteorological Service.' : '';
+  return { short, title: 'Weather alert', until: fmt(a.end), body: `${from}${desc}${by} Stay ashore while it’s on.` };
+}
+
+function forecastWarning(W: Weather, h: number): Warning | null {
   const ahead = W.hrs.filter((x) => x.h >= h - 0.5 && x.h <= h + 24 && (isThunder(x.id) || x.gust >= 50));
   if (!ahead.length) return null;
   const th = ahead.some((x) => isThunder(x.id));
@@ -243,6 +307,8 @@ export function hourView(W: Weather, h: number, sun: Sun) {
     rainAmt: rainAmtOf(s),
     flash: isThunder(s.id),
     phrases: phrasesOf(s),
+    // the minute forecast is about now only
+    nc: null,
   };
 }
 
