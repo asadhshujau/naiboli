@@ -40,8 +40,9 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   (scores still come from it). OTA "Late-night and rain messages" published 2026-11-07 to `production`, Android
   group `6679dd58-407e-41b1-84dc-0f4e351ba977` (runtime `1ec7a72c…` = build 3). Not yet seen on the phone: ask the
   user whether it arrived (two cold starts) and how the lines read at night / in rain.
-- **Rain amounts, minute forecast, official alerts (2026-11-07, JS only, UNCOMMITTED — user checks on their phone
-  first, then commit + OTA `npm run update:production -- "Rain detail and weather alerts"`):** API route unchanged;
+- **Rain amounts, minute forecast, official alerts (2026-11-07, JS only, ✅ commit `011a984`, shipped as OTA "Rain
+  detail and weather alerts", Android group `221ba07a-7914-4d03-b650-81a8f84ef1a0`, runtime `1ec7a72c…` = build 3;
+  user checked it on their phone first):** API route unchanged;
   `minutely`, `rain.1h`, daily `rain` and `alerts` are all optional (missing → exactly the old behaviour).
   - `src/data/nowcast.ts`: careful reading of `minutely` (server refreshes hourly; island rain is fickle): only the
     next 30 min count, needs 10+ min still ahead, "now" = 5-min mean, start / stop only when it then holds 8+ min,
