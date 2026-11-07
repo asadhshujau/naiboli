@@ -238,8 +238,15 @@ describe.each(SCENARIOS)('$name', (sc) => {
     const v = buildView(base, d, o);
     for (const kind of KINDS) {
       for (const tap of TAPS) {
-        const theirs = render(c, { offset: o, bubble: { kind, ...tap }, bubbleOpen: true, sheet: null });
         const mine = bubbleContent(kind, base, v, d);
+        // Expected difference: the alert follows the selected hour (now: any official alert, else ours within 24 h,
+        // with its start time; scrubbed: only inside its hours). The prototype showed now's alert at every hour.
+        if (kind === 'warning') {
+          const w = v.warning;
+          expect(mine.lines).toEqual([w?.body || '', w?.from ? `From ${w.from} until ${w.until}` : `Until ${w?.until || 'later'}`]);
+          continue;
+        }
+        const theirs = render(c, { offset: o, bubble: { kind, ...tap }, bubbleOpen: true, sheet: null });
         const pos = bubblePos(mine, tap, { w: 402, scale: 1, top: 112, bottom: 874 - 210 });
         const b = theirs.bub;
         expect(unRain({ icon: mine.icon, tileBg: mine.tile, title: mine.title, big: mine.big, bigColor: mine.bigColor, lines: mine.lines })).toEqual({
@@ -302,8 +309,11 @@ describe.each(SCENARIOS)('$name', (sc) => {
     const theirs = render(c, { offset: o, sheet: 'wx', focus: 'uv' });
     const wx = buildWx(base, v, d);
     const { f, r, days, hourly, ...tw } = theirs.wx;
-    const { days: md, hourly: mh, hasMm, ...mw } = wx;
-    expect(unRain(mw)).toEqual(tw);
+    const { days: md, hourly: mh, hasMm, warnFrom, ...mw } = wx;
+    // Expected difference: the alert box follows the selected hour (see the bubbles).
+    const warnSel = { hasWarning: tw.hasWarning, warnTitle: tw.warnTitle, warnUntil: tw.warnUntil, warnBody: tw.warnBody };
+    expect(unRain({ ...mw, ...warnSel })).toEqual(tw);
+    expect([mw.hasWarning, mw.warnBody, warnFrom]).toEqual([!!v.warning, v.warning?.body || '', v.warning?.from ?? null]);
     expect(mh.map(({ sel, mm, ...h }) => h)).toEqual(hourly);
     expect(md.map(({ sel, sep, mm, ...y }) => ({ ...y, sep: css(sep), bg: sel ? 'rgba(18,181,176,.08)' : 'transparent' }))).toEqual(days);
     expect(f.uv).toBe(true);
@@ -346,6 +356,8 @@ describe('varied copy in the view', () => {
     const storm = setup(SCENARIOS[1]);
     for (const o of OFFSETS) {
       const v = buildView(storm.base, storm.d, o);
+      // now: calm "stay ashore" whenever an alert shows (our own thunder alert reaches 24 h ahead)
+      if (o === 0) expect(v.warning).not.toBeNull();
       if (o === 0) expect(v.head.toLowerCase()).toContain('ashore');
       if (v.danger) expect(v.head.toLowerCase()).toContain('ashore');
       for (const a of v.acts) {

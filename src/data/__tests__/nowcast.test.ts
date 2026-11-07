@@ -1,10 +1,14 @@
 import { rainNow } from '../copy';
-import { alertDangerAt, alertsAhead, liveMood, warningOf } from '../mood';
+import { alertDangerAt, alertFor, alertsAhead, liveMood, warningOf } from '../mood';
 import { DRY_BELOW, nowcastLine, nowcastOf, nowcastReason, nowcastTail, rainWord } from '../nowcast';
 import { sunOf } from '../sun';
-import type { ApiWeatherResponse, ApiWxPoint, Weather } from '../types';
+import type { ApiIsland, ApiWeatherResponse, ApiWxPoint, Weather } from '../types';
 import { procWx, rainAmtOf, rainAmtOfMm, weekDays } from '../weather';
 import { mmText } from '../../state/sheets';
+import type { DataState } from '../../state/store';
+import { buildBase, buildView } from '../../state/view';
+import { islandsSmall } from './fixtures';
+import { wxKey } from '../islands';
 
 /** Local midnight 2026-11-07 (MVT); 17:00 = 1794052800. */
 const DAY0 = 1794052800 - 17 * 3600;
@@ -250,6 +254,51 @@ describe('official alerts', () => {
     expect(w.body).toMatch(/… Stay ashore/);
   });
 
+  const NOW = H(17, 5);
+  const wind = (start: number, end: number) => [{ event: 'Strong wind', start, end, description: 'Strong winds expected', tags: ['Wind'] }];
+
+  it('scrubbed hour: only inside the alert\'s hours (official first, then our own thunder / gust hours)', () => {
+    const W = wx({ minutely: null, alerts: wind(at(19), at(23)) });
+    expect(alertFor(W, H(18, 5), NOW, DAY0)).toBeNull();
+    expect(alertFor(W, H(20, 5), NOW, DAY0)).toEqual({ short: 'Strong wind', title: 'Weather alert', until: '11:00 PM', body: 'Strong winds expected. Stay ashore while it’s on.', from: null });
+    expect(alertFor(W, H(23), NOW, DAY0)).toBeNull(); // the end hour is outside
+    const T = { ...W, alerts: null, hrs: W.hrs.map((x) => (x.h >= 20 && x.h < 21.5 ? { ...x, id: 211 } : x)) };
+    expect(alertFor(T, H(18), NOW, DAY0)).toBeNull();
+    expect(alertFor(T, H(20, 5), NOW, DAY0)).toMatchObject({ title: 'Forecast alert', from: null });
+  });
+
+  it('now: any official alert from the feed until it ends, however far ahead, with its start time', () => {
+    const W = wx({ minutely: null, alerts: wind(at(19), at(23)) });
+    expect(alertFor(W, NOW, NOW, DAY0)).toEqual({ short: 'Strong wind', title: 'Weather alert', until: '11:00 PM', body: 'Strong winds expected. Stay ashore while it’s on.', from: '7:00 PM' });
+    expect(alertFor(W, H(9), H(9), DAY0)!.from).toBe('7:00 PM'); // 10 h ahead: still shown
+    expect(alertFor(W, H(19, 30), H(19, 30), DAY0)!.from).toBeNull(); // in effect
+    expect(alertFor(W, H(23, 10), H(23, 10), DAY0)).toBeNull(); // ended
+  });
+
+  it('times carry the day when it is not today', () => {
+    const T = wx({ minutely: null, alerts: wind(at(43), at(47)) }); // tomorrow 7 PM – 11 PM
+    expect(alertFor(T, NOW, NOW, DAY0)).toMatchObject({ from: 'tomorrow 7:00 PM', until: '11:00 PM' });
+    const O = wx({ minutely: null, alerts: wind(at(16), at(26)) }); // in effect, ends 2 AM tomorrow
+    expect(alertFor(O, NOW, NOW, DAY0)).toMatchObject({ from: null, until: 'tomorrow 2:00 AM' });
+    const L = wx({ minutely: null, alerts: wind(at(67), at(70)) }); // Mon (2026-11-09) 7 PM
+    expect(alertFor(L, NOW, NOW, DAY0)!.from).toBe('Mon 7:00 PM');
+  });
+
+  it('our own forecast alert: within 24 h at now, with its start time', () => {
+    const W = wx({ minutely: null, alerts: [] });
+    const T = { ...W, alerts: null, hrs: W.hrs.map((x) => (x.h >= 20 && x.h < 21.5 ? { ...x, id: 211 } : x)) };
+    const f = alertFor(T, NOW, NOW, DAY0)!;
+    expect(f).toMatchObject({ title: 'Forecast alert', from: '8:00 PM' });
+    expect(f.body).not.toMatch(/from/); // the start time is in `from`, not repeated in the text
+  });
+
+  it('the now headline goes calm whenever an alert shows', () => {
+    const { bv } = viewAt(wind(at(19), at(23)));
+    expect(bv(H(9)).warning?.from).toBe('7:00 PM');
+    expect(bv(H(9)).head.toLowerCase()).toContain('ashore');
+    expect(viewAt([]).bv(H(9)).warning).toBeNull();
+  });
+
   it('thunder / wind alerts make their hours "danger" (calm copy); a rain-only alert does not', () => {
     const W = wx();
     expect(alertDangerAt(W, H(18))).toBe(true);
@@ -273,3 +322,15 @@ describe('rain amounts', () => {
     expect([0, 0.09, 0.42, 1.32, 9.96, 15.22, 26.49].map(mmText)).toEqual(['', '', '0.4mm', '1.3mm', '10mm', '15mm', '26mm']);
   });
 });
+
+/** Main-screen view of the 890 snapshot (no minutes) with these alerts, at a given "now". */
+function viewAt(alerts: unknown[]) {
+  const male = islandsSmall.find((i) => i.id === 1069) as ApiIsland;
+  const bv = (h: number) => {
+    const now = (DAY0 + h * 3600) * 1000;
+    const W = procWx(payload890({ minutely: null, alerts }), DAY0, now)!;
+    const d = { day0: DAY0, island: male, firstRun: false, islands: islandsSmall, recents: [], wx: { [wxKey(male)]: W }, tides: {}, isle: {}, acts: { 1069: 'err' }, lastW: W, lastTide: null, sun: sunOf(W), refreshing: false, clock: now } as unknown as DataState;
+    return buildView(buildBase(d, now), d, 0);
+  };
+  return { bv };
+}

@@ -1,7 +1,7 @@
 /** Activity detail: verdict hero, best window bars, what's shaping it, next 7 days, tip. */
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Warning } from '@/data/mood';
+import type { ShownAlert } from '@/data/mood';
 import type { ActDetail } from '@/state/sheets';
 import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
@@ -14,7 +14,7 @@ interface Props {
   whenLabel: string;
   actsSrc: string;
   /** weather alert to show on top (as on the Weather sheet) */
-  warning: Warning | null;
+  warning: ShownAlert | null;
   onWarning: () => void;
   onBack: () => void;
   onClose: () => void;
@@ -34,7 +34,7 @@ export function ActSheet({ d, whenLabel, actsSrc, warning, onWarning, onBack, on
         </Press>
         <CloseButton onPress={onClose} />
       </View>
-      {warning ? <AlertCard title={warning.title} until={warning.until} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
+      {warning ? <AlertCard title={warning.title} until={warning.until} from={warning.from} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
 
       <View style={[s.hero, t.bgS(d.headBg)]}>
         <View style={s.heroHead}>

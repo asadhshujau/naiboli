@@ -4,7 +4,7 @@
  */
 import { nowcastLine, nowcastOf, nowcastTail, type Nowcast } from './nowcast';
 import { sunOf, sunState } from './sun';
-import { clamp, dirOf, fmt, md24, TAU } from './time';
+import { clamp, dateOf, dirOf, fmt, md24, TAU } from './time';
 import type { Sun, Weather, WxAlert, WxSample } from './types';
 import {
   cloudNOf,
@@ -243,9 +243,44 @@ export function alertDangerAt(W: Weather, h: number): boolean {
 
 const MAX_DESC = 180;
 
+/** An alert as shown (chip, bubble, Weather and activity sheets): `from` = its start time while not yet in effect. */
+export interface ShownAlert extends Warning {
+  from: string | null;
+}
+
+/**
+ * The alert to show for hour `h` (`nowH` = the real now).
+ * - Now: any official alert the feed sends that hasn't ended, however far ahead (safety first); `from` = its start
+ *   while it isn't in effect yet. Else our own forecast alert for thunder / ≥50 km/h gusts within 24 h.
+ * - A scrubbed hour: only an alert whose hours include it (official first, then our own).
+ * Times carry the day when it isn't today ("tomorrow 7:00 PM", "Mon 7:00 PM"); `day0` = local midnight (unix s).
+ */
+export function alertFor(W: Weather, h: number, nowH: number, day0: number): ShownAlert | null {
+  const now = h <= nowH + 1e-6;
+  const at = (t: number) => {
+    const dd = Math.floor(t / 24) - Math.floor(nowH / 24);
+    return dd === 0 ? fmt(t) : dd === 1 ? `tomorrow ${fmt(t)}` : `${dateOf(t, day0).dow} ${fmt(t)}`;
+  };
+  const sameDay = (p: number, q: number) => Math.floor(p / 24) === Math.floor(q / 24);
+  const a = (W.alerts ?? []).find((x) => (now ? x.end > h : x.start <= h && h < x.end));
+  if (a) {
+    const ahead = a.start > h + 0.05;
+    const until = ahead && sameDay(a.end, a.start) ? fmt(a.end) : at(a.end);
+    return { ...officialOf(a, Math.max(h, a.start)), until, from: ahead ? at(a.start) : null };
+  }
+  const danger = (x: WxSample) => isThunder(x.id) || x.gust >= 50;
+  const start = danger(sample(W.hrs, h)) ? h : now ? W.hrs.find((x) => x.h > h && x.h <= h + 24 && danger(x))?.h : undefined;
+  if (start == null) return null;
+  const w = forecastWarning(W, start);
+  return w ? { ...w, from: start > h + 0.05 ? at(start) : null } : null;
+}
+
 function officialWarning(W: Weather, h: number): Warning | null {
   const a = alertsAhead(W, h)[0];
-  if (!a) return null;
+  return a ? officialOf(a, h) : null;
+}
+
+function officialOf(a: WxAlert, h: number): Warning {
   const byTag = (re: RegExp) => a.tags.some((t) => re.test(t));
   const short =
     a.event && a.event.length <= 32

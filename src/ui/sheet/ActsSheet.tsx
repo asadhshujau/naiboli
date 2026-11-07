@@ -1,7 +1,7 @@
 /** "All activities": verdict groups (Go, Maybe, After sunrise, Skip) with reasons and scores. */
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Warning } from '@/data/mood';
+import type { ShownAlert } from '@/data/mood';
 import type { ActGroup } from '@/state/sheets';
 import { themed, useDayTheme } from '@/ui/dayTheme';
 import { T } from '@/ui/fonts';
@@ -14,7 +14,7 @@ interface Props {
   groups: ActGroup[];
   actsSrc: string;
   /** weather alert to show on top (as on the Weather sheet) */
-  warning: Warning | null;
+  warning: ShownAlert | null;
   onWarning: () => void;
   onAct: (id: string) => void;
   onClose: () => void;
@@ -27,7 +27,7 @@ export function ActsSheet({ whenLabel, groups, actsSrc, warning, onWarning, onAc
   return (
     <>
       <SheetHeader eyebrow={whenLabel} title="All activities" onClose={onClose} />
-      {warning ? <AlertCard title={warning.title} until={warning.until} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
+      {warning ? <AlertCard title={warning.title} until={warning.until} from={warning.from} body={warning.body} onPress={onWarning} style={s.alert} /> : null}
       {groups.map((g) => (
         <View key={g.key}>
           <View style={s.groupHead}>

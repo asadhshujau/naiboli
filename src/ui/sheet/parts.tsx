@@ -83,7 +83,23 @@ export function TipCard({ text, style }: { text: string; style?: StyleProp<ViewS
  * The weather alert box, as on the Weather sheet; also on All activities and the activity detail.
  * `onPress`: open the Weather sheet at the alert.
  */
-export function AlertCard({ title, until, body, onPress, style }: { title: string; until: string; body: string; onPress?: () => void; style?: StyleProp<ViewStyle> }) {
+export function AlertCard({
+  title,
+  until,
+  from,
+  body,
+  onPress,
+  style,
+}: {
+  title: string;
+  until: string;
+  /** start time while the alert isn't in effect yet */
+  from?: string | null;
+  body: string;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const when = from ? `${from} to ${until}` : `until ${until}`;
   const p = usePartStyles();
   const { c } = useDayTheme();
   const inner = (
@@ -91,14 +107,14 @@ export function AlertCard({ title, until, body, onPress, style }: { title: strin
       <Icon name="warning" size={22} color={c.warnIcon} fill />
       <View style={p.alertText}>
         <Text style={p.alertTitle}>
-          {title} · until {until}
+          {title} · {when}
         </Text>
         <Text style={p.alertBody}>{body}</Text>
       </View>
     </>
   );
   return onPress ? (
-    <Press onPress={onPress} style={[p.alert, style]} accessibilityRole="button" accessibilityLabel={`${title} until ${until}. ${body} Weather details`}>
+    <Press onPress={onPress} style={[p.alert, style]} accessibilityRole="button" accessibilityLabel={`${title}, ${when}. ${body} Weather details`}>
       {inner}
     </Press>
   ) : (

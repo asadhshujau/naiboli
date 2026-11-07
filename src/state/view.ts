@@ -5,7 +5,7 @@
 import { actAt, actDefs, apiAt, makeScorer, SAIL_INDEX, type ActDefLive, type Scorer } from '@/data/activities';
 import { bestBet, hourHead, isLate, rainNow, rainOf, weatherHead, type CopyKey, type HourCond, type Rain } from '@/data/copy';
 import { labelOf, wxKey } from '@/data/islands';
-import { alertDangerAt, hourView, rainAt, resolveMood, tempAt, windAt, type Mood } from '@/data/mood';
+import { alertDangerAt, alertFor, hourView, rainAt, resolveMood, tempAt, windAt, type Mood, type ShownAlert } from '@/data/mood';
 import { DRY_BELOW, nowcastReason, rainWord } from '@/data/nowcast';
 import { sunState } from '@/data/sun';
 import { tideView, type TideView } from '@/data/tide';
@@ -124,7 +124,11 @@ export interface View {
   rain: Rain;
   /** the sub line is the offline message: tapping it retries */
   retry: boolean;
-  warning: Mood['warning'];
+  /**
+   * The alert shown on the HUD chip, warning bubble, Weather and activity sheets (`alertFor`): now → any official
+   * alert not yet ended (`from` = its start while ahead), else our own within 24 h; scrubbed → only inside its hours.
+   */
+  warning: ShownAlert | null;
   hasWarning: boolean;
   whenLabel: string;
   acts: ActRow[];
@@ -249,6 +253,8 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   // Varied copy (src/data/copy): seeded by island, local date and hour; sample moods keep their canned line.
   const keyAt = (h: number): CopyKey => ({ island: d.island.id, day: Math.round(day0 / 86400) + Math.floor(h / 24), hour: Math.floor(md24(h)) });
   const copyKey = keyAt(hSel);
+  // The alert for the selected hour (View.warning); sample moods only have a canned one, for now.
+  const warning: ShownAlert | null = m.live ? alertFor(m.W, hSel, m.hour, day0) : !isLater && m.warning ? { ...m.warning, from: null } : null;
   // thunder, strong gusts, or an official thunder / wind alert in effect at that hour
   const danger = m.flash || m.gust >= 50 || (m.live && alertDangerAt(m.W, hSel));
   // Late night (11:30 PM – 4 AM) and rain change the tone; danger still comes first (src/data/copy).
@@ -258,7 +264,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   const head = isLater
     ? hourHead(word, cond, fmt(Math.floor(hSel)).replace(':00', ''), copyKey)
     : m.live
-      ? weatherHead({ key: m.key, temp: m.temp, feels: m.feels, wind: m.wind, warning: !!m.warning, island: d.island.english_name, late }, keyAt(m.hour))
+      ? weatherHead({ key: m.key, temp: m.temp, feels: m.feels, wind: m.wind, warning: !!warning, island: d.island.english_name, late }, keyAt(m.hour))
       : m.headEn;
   const sub = isLater
     ? `${bestBet(best?.name ?? '', cond, copyKey)} ${temp}°, ${rainSel >= 40 ? `rain ${rainSel}%, ` : ''}wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.`
@@ -310,8 +316,8 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
     danger,
     rain,
     retry: !isLater && m.offline,
-    warning: m.warning,
-    hasWarning: !!m.warning && !isLater,
+    warning,
+    hasWarning: !!warning,
     whenLabel,
     acts,
     top3,

@@ -96,7 +96,7 @@ export function WxSheet({ wx, focus, onClose }: Props) {
           <Icon name="warning" size={22} color={c.warnIcon} fill />
           <View style={s.flexShrink}>
             <Text style={s.tx_bric700_16_warnInk}>
-              {wx.warnTitle} · until {wx.warnUntil}
+              {wx.warnTitle} · {wx.warnFrom ? `${wx.warnFrom} to ${wx.warnUntil}` : `until ${wx.warnUntil}`}
             </Text>
             <Text style={s.warnBody}>{wx.warnBody}</Text>
           </View>

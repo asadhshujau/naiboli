@@ -332,10 +332,10 @@ export function bubbleContent(kind: BubbleKind, b: ViewBase, v: View, d: DataSta
       return {
         icon: 'warning',
         tile: '#FFE0D6',
-        title: m.warning?.title || 'Heads up',
+        title: v.warning?.title || 'Heads up',
         big: 'Stay ashore',
         bigColor: '#E2522F',
-        lines: [m.warning?.body || '', `Until ${m.warning?.until || 'later'}`],
+        lines: [v.warning?.body || '', v.warning?.from ? `From ${v.warning.from} until ${v.warning.until}` : `Until ${v.warning?.until || 'later'}`],
         action: wxGo('warning'),
       };
   }
@@ -519,6 +519,8 @@ export interface WxView {
   hasWarning: boolean;
   warnTitle: string;
   warnUntil: string;
+  /** start time while the alert isn't in effect yet */
+  warnFrom: string | null;
   warnBody: string;
   rise: string;
   set: string;
@@ -638,10 +640,12 @@ export function buildWx(b: ViewBase, v: View, d: DataState): WxView {
     hi: m.hi,
     lo: m.lo,
     tempWord: m.tempWord,
-    hasWarning: !!m.warning,
-    warnTitle: m.warning?.title || 'Heads up',
-    warnUntil: m.warning?.until || 'later',
-    warnBody: m.warning?.body || '',
+    // now: any official alert not yet ended (else our own within 24 h); scrubbed: only inside its hours (View.warning)
+    hasWarning: !!v.warning,
+    warnTitle: v.warning?.title || 'Heads up',
+    warnUntil: v.warning?.until || 'later',
+    warnFrom: v.warning?.from ?? null,
+    warnBody: v.warning?.body || '',
     rise: fmt(sun.rise),
     set: fmt(sun.set),
     moon: mi,

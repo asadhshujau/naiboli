@@ -82,16 +82,21 @@ export function TopHud({ v, onMenu, onIsland, onTemp, onWarning, onRetry, onRefr
       {v.hasWarning && v.warning ? (
         // frosted like the other chips: the scene blurs behind a translucent orange
         <GlassView id="hud-warn" blur={12} radius={18} style={s.warn}>
-          <Pressable onPress={onWarning} style={s.warnInner} accessibilityRole="button" accessibilityLabel={`Warning: ${v.warning.short}`}>
+          <Pressable onPress={onWarning} style={s.warnInner} accessibilityRole="button" accessibilityLabel={`Warning: ${chipText(v.warning)}`}>
             <Icon name="warning" size={19} color={C.warnChipInk} fill />
             <Text style={[T.fig(700, 13.5), s.shrink, { color: C.warnChipInk }]} numberOfLines={1}>
-              {v.warning.short}
+              {chipText(v.warning)}
             </Text>
           </Pressable>
         </GlassView>
       ) : null}
     </View>
   );
+}
+
+/** "From 7 PM · Strong wind" while the alert hasn't started yet, else just the alert. */
+function chipText(w: { short: string; from: string | null }): string {
+  return w.from ? `From ${w.from.replace(':00', '')} · ${w.short}` : w.short;
 }
 
 const s = StyleSheet.create({

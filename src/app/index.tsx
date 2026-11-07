@@ -178,13 +178,13 @@ export default function SceneScreen() {
   const sheetBody = useMemo(() => {
     switch (ui.sheet) {
       case 'acts':
-        return <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />;
+        return <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />;
       case 'act': {
         const det = buildDetail(base, v, ui.actId);
         return det ? (
-          <ActSheet d={det} whenLabel={v.whenLabel} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onBack={() => openSheet({ sheet: 'acts' })} onClose={closeSheet} />
+          <ActSheet d={det} whenLabel={v.whenLabel} actsSrc={v.actsSrc} warning={v.warning} onWarning={openWarning} onBack={() => openSheet({ sheet: 'acts' })} onClose={closeSheet} />
         ) : (
-          <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.m.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />
+          <ActsSheet whenLabel={v.whenLabel} groups={buildGroups(v)} actsSrc={v.actsSrc} warning={v.warning} onWarning={openWarning} onAct={(id) => openSheet({ sheet: 'act', actId: id })} onClose={closeSheet} />
         );
       }
       case 'wx':
