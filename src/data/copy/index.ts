@@ -5,12 +5,15 @@
  *   while you look and varies across hours, days and islands.
  * - Safety first: storms, alerts, strong gusts and safety-related "skip"s use calm pools only. The factual
  *   sub-lines, the forecast alert and the safety tips are never replaced.
+ * - Then late night (11:30 PM – 4 AM: "Don’t you sleep?", "Best bet: sleep."), then rain (brutal-funny: rain is
+ *   never "looks nice", whatever the activity scores say), then the usual pools.
  */
 import type { Factor } from '../types';
 import type { WxKey } from '../weather';
-import { CAUTION, DANGER_FACTORS, GO, GO_ACT, IDEAL, MAYBE, MAYBE_FACTOR, SKIP, SKIP_FUN, SKIP_SAFE, WAIT } from './activities';
+import { md24 } from '../time';
+import { CAUTION, DANGER_FACTORS, GO, GO_ACT, GO_WET, IDEAL, MAYBE, MAYBE_FACTOR, MAYBE_WET, SKIP, SKIP_FUN, SKIP_SAFE, WAIT } from './activities';
 import { fill, hash } from './pick';
-import { BREEZY, HEAD, HOT, HOUR, HOUR_DANGER, ISLAND, MORNING, STORM, WARN } from './weather';
+import { BET_WET, BREEZY, HEAD, HOT, HOUR, HOUR_DAMP, HOUR_DANGER, HOUR_LATE, HOUR_WET, ISLAND, LATE, LATE_RAIN, MORNING, STORM, WARN } from './weather';
 
 /** Last line shown per category, and for which island / date / hour (`seed`). Persisted by the app. */
 export type CopyMemory = Record<string, { seed: string; line: string }>;
@@ -55,6 +58,14 @@ export interface HeadArgs {
   /** a forecast alert is showing */
   warning: boolean;
   island: string;
+  /** it's 11:30 PM – 4 AM (`isLate`) */
+  late?: boolean;
+}
+
+/** 11:30 PM – 4 AM: time for the late-night lines. `h` = hours since local midnight (any day). */
+export function isLate(h: number): boolean {
+  const t = md24(h);
+  return t >= 23.5 || t < 4;
 }
 
 const DAY_KEYS: WxKey[] = ['sunny', 'partly', 'windy', 'overcast'];
@@ -64,11 +75,12 @@ const MILD_KEYS: WxKey[] = ['sunny', 'partly', 'overcast'];
 export function headPool(a: HeadArgs, hour: number): { cat: string; lines: string[] } {
   if (a.key === 'stormy') return { cat: 'storm', lines: STORM };
   if (a.warning) return { cat: 'warn', lines: WARN };
+  if (a.late) return { cat: 'late', lines: a.key === 'rainy' ? [...LATE, ...LATE_RAIN] : LATE };
   const lines = [...HEAD[a.key]];
   if (a.feels >= 36 && DAY_KEYS.includes(a.key)) lines.push(...HOT);
   if (a.wind >= 20 && MILD_KEYS.includes(a.key)) lines.push(...BREEZY);
   if (hour >= 5 && hour < 10 && MILD_KEYS.includes(a.key)) lines.push(...MORNING);
-  lines.push(...ISLAND);
+  if (a.key !== 'rainy') lines.push(...ISLAND);
   return { cat: 'head:' + a.key, lines };
 }
 
@@ -80,10 +92,46 @@ export function weatherHead(a: HeadArgs, k: CopyKey): string {
 
 export type HourWord = keyof typeof HOUR;
 
-/** Scrubbed-hour headline ("3 PM looks good."). `danger` = thunder or gusts ≥ 50 km/h at that hour. */
-export function hourHead(word: HourWord, danger: boolean, hourLabel: string, k: CopyKey): string {
-  const lines = danger ? HOUR_DANGER : HOUR[word];
-  return fill(choose(lines, danger ? 'hour:danger' : 'hour:' + word, k), { hour: hourLabel });
+/** What the scrubbed hour is like, beyond the verdict word. */
+export interface HourCond {
+  /** thunder or gusts ≥ 50 km/h at that hour */
+  danger: boolean;
+  /** 11:30 PM – 4 AM (`isLate`) */
+  late: boolean;
+  /** `rainOf`: raining or ≥ 70 % ('wet'), 40–69 % ('damp') */
+  rain: Rain;
+}
+
+export type Rain = 'wet' | 'damp' | null;
+
+/** Rain at an hour, from its mood key and rain chance (%). */
+export function rainOf(key: WxKey, chance: number): Rain {
+  return key === 'rainy' || chance >= 70 ? 'wet' : chance >= 40 ? 'damp' : null;
+}
+
+/** Candidate lines for the scrubbed-hour headline (exported for tests). Danger, then late night, then rain. */
+export function hourPool(word: HourWord, c: HourCond): { cat: string; lines: string[] } {
+  if (c.danger) return { cat: 'hour:danger', lines: HOUR_DANGER };
+  if (c.late) return { cat: 'hour:late', lines: HOUR_LATE };
+  if (c.rain === 'wet') return { cat: 'hour:wet', lines: HOUR_WET };
+  if (c.rain === 'damp' && (word === 'brilliant' || word === 'good')) return { cat: 'hour:damp', lines: HOUR_DAMP };
+  return { cat: 'hour:' + word, lines: HOUR[word] };
+}
+
+/** Scrubbed-hour headline ("3 PM looks good."). */
+export function hourHead(word: HourWord, c: HourCond, hourLabel: string, k: CopyKey): string {
+  const { cat, lines } = hourPool(word, c);
+  return fill(choose(lines, cat, k), { hour: hourLabel });
+}
+
+/**
+ * "Best bet: Snorkeling." at the start of the scrubbed hour's sub line (the facts follow). Late night: sleep.
+ * Rain (not danger: storms keep the plain line): a brutal-funny line from `BET_WET`.
+ */
+export function bestBet(activity: string, c: HourCond, k: CopyKey): string {
+  if (c.late) return 'Best bet: sleep.';
+  if (c.rain === 'wet' && !c.danger) return fill(choose(BET_WET, 'bet:wet', k), { activity });
+  return `Best bet: ${activity}.`;
 }
 
 export interface LeadArgs {
@@ -95,6 +143,8 @@ export interface LeadArgs {
   lim: Factor | string | null | undefined;
   /** thunder or gusts ≥ 50 km/h at that hour */
   danger: boolean;
+  /** raining at that hour, or ≥ 70 % chance (`rainOf` = 'wet') */
+  wet?: boolean;
 }
 
 /** Candidate lines for the activity detail's verdict sentence (exported for tests). */
@@ -107,6 +157,7 @@ export function leadPool(a: LeadArgs): { cat: string; lines: string[]; safe: boo
     return { cat: 'skip:' + (lim || ''), lines: [...SKIP, ...((lim && SKIP_FUN[lim]) || [])], safe: false };
   }
   if (a.danger) return { cat: 'caution', lines: CAUTION, safe: true };
+  if (a.wet && a.act !== 'rainwalk') return a.verdict === 'maybe' ? { cat: 'wet:maybe', lines: MAYBE_WET, safe: false } : { cat: 'wet:go', lines: GO_WET, safe: false };
   if (a.verdict === 'maybe') return { cat: 'maybe:' + (lim || ''), lines: [...MAYBE, ...((lim && MAYBE_FACTOR[lim]) || [])], safe: false };
   const acts = GO_ACT[a.act] || [];
   return a.ideal ? { cat: 'ideal:' + a.act, lines: [...IDEAL, ...acts], safe: false } : { cat: 'go:' + a.act, lines: [...GO, ...acts], safe: false };

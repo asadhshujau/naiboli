@@ -473,7 +473,7 @@ export function buildDetail(b: ViewBase, v: View, actId: string | null): ActDeta
       sel: y.di === dSel,
     };
   });
-  const lead = actLead({ verdict: A.k, ideal, act: A.id, activity: A.name, lim: lim0, danger: v.danger }, v.copyKey);
+  const lead = actLead({ verdict: A.k, ideal, act: A.id, activity: A.name, lim: lim0, danger: v.danger, wet: v.rain === 'wet' }, v.copyKey);
   return {
     ...A,
     headBg: vc.head,

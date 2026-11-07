@@ -8,7 +8,10 @@
  */
 import type { WxKey } from '../weather';
 
-/** Current-weather headline per mood key (the first line is the prototype's). */
+/**
+ * Current-weather headline per mood key (the first line is the prototype's, except `rainy`: rain gets the
+ * brutal-funny treatment, never "looks nice"; island hellos are left out of it too).
+ */
 export const HEAD: Record<Exclude<WxKey, 'stormy'>, string[]> = {
   sunny: [
     'Glorious out there.',
@@ -51,14 +54,16 @@ export const HEAD: Record<Exclude<WxKey, 'stormy'>, string[]> = {
     'Easy on the eyes today.',
   ],
   rainy: [
-    'Bring a towel.',
-    'Showers about.',
-    'Wet, but warm.',
-    'Free rinse included.',
-    'Umbrella’s turn today.',
-    'Rain on, rain off.',
-    'Damp, but {temp}°.',
-    'The plants are thrilled.',
+    'Yeah, it’s raining.',
+    'Soggy. Very soggy.',
+    'The sky is leaking.',
+    'Rain: 1. Your plans: 0.',
+    'Wet. Everywhere. Sorry.',
+    'Cancel the beach. Sorry.',
+    'Even the fish are wet.',
+    'Damp and {temp}°. Lovely. Not.',
+    'Bad news: it’s raining.',
+    'Indoor day, sadly.',
   ],
   night: [
     'Night owls only.',
@@ -107,6 +112,24 @@ export const BREEZY: string[] = ['Nice breeze today.', 'Breeze on the house.', '
 /** Extra lines in the morning (5–10 AM) on sunny / partly / overcast days. */
 export const MORNING: string[] = ['Morning! Looking good.', 'Early start? Good call.', 'Good morning, {island}.'];
 
+/** Late at night (11:30 PM – 4 AM, now), any weather but storms and alerts: go to bed. */
+export const LATE: string[] = [
+  'Don’t you sleep?',
+  'What you doing up so late?',
+  'Shouldn’t you be asleep?',
+  'It’s late. Go to bed.',
+  'Still up? Bold.',
+  'The fish are asleep. Are you?',
+  'Bed. Now. Please.',
+  'Sleep is free, you know.',
+  'Even the crabs went to bed.',
+  'Counting waves won’t help.',
+  'Weather check at this hour?',
+];
+
+/** Extra late-night lines when it's raining. */
+export const LATE_RAIN: string[] = ['Rain and no sleep. Rough.', 'Listen to the rain. Then sleep.'];
+
 /** Island lines, any weather but storms and alerts. Friendly to every island alike: no ranking, no teasing. */
 export const ISLAND: string[] = ['Hello from {island}.', '{island}, reporting in.', '{island} says hi.'];
 
@@ -117,6 +140,47 @@ export const HOUR: Record<'brilliant' | 'good' | 'so-so' | 'grim', string[]> = {
   'so-so': ['{hour} looks so-so.', '{hour}: meh, but fine.', '{hour} is a maybe.', '{hour}: could be worse.', '{hour}, fifty-fifty.'],
   grim: ['{hour} looks grim.', '{hour}: maybe stay in.', '{hour}: snack o’clock.', '{hour} is a pass.', '{hour}? Hard pass.'],
 };
+
+/** Scrubbed hour between 11:30 PM and 4 AM. Every line names {hour}. */
+export const HOUR_LATE: string[] = [
+  '{hour}? You should be asleep.',
+  '{hour}: prime sleeping time.',
+  '{hour}? Bed. Obviously.',
+  '{hour}: pillow o’clock.',
+  '{hour}? Even the fish sleep.',
+  '{hour}: dream about the beach.',
+  'Up at {hour}? Why, though?',
+];
+
+/** Scrubbed hour with rain (raining, or ≥ 70 % chance), whatever the scores say. Brutal, but funny. */
+export const HOUR_WET: string[] = [
+  '{hour} looks nice. Kidding. Rain.',
+  '{hour}: soggy. Sorry.',
+  '{hour}? It’s raining. So, no.',
+  '{hour}: bring a boat.',
+  '{hour}: rain, rain, more rain.',
+  '{hour}? Wet. Very wet.',
+  '{hour}. Not great, is it?',
+  '{hour}: the sky’s leaking.',
+];
+
+/** Scrubbed hour with a 40–69 % rain chance that would otherwise read "brilliant" / "good". */
+export const HOUR_DAMP: string[] = [
+  '{hour} could get wet.',
+  '{hour}: good, if it stays dry.',
+  '{hour}? Maybe. Pack a towel.',
+  '{hour}: a coin toss with rain.',
+  '{hour} looks fine. Ish.',
+];
+
+/** "Best bet" in the sub line when the scrubbed hour has rain. Slot {activity}; the facts follow it. */
+export const BET_WET: string[] = [
+  'Best bet: {activity}, if you like wet.',
+  'Best bet: staying dry. Or {activity}.',
+  'Best bet: {activity}. Soggy, though.',
+  'Best bet: {activity}. In the rain. Hmm.',
+  'Best bet: {activity}. Not great, is it?',
+];
 
 /** Thunder or gusts ≥ 50 km/h at the scrubbed hour. Calm, always "stay ashore". */
 export const HOUR_DANGER: string[] = [

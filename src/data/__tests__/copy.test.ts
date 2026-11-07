@@ -1,5 +1,5 @@
 import { ACTS } from '../activities';
-import { actLead, beachNow, beachStat, headPool, initCopyMemory, type CopyMemory, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type LeadArgs } from '../copy';
+import { actLead, beachNow, beachStat, bestBet, headPool, hourPool, initCopyMemory, isLate, rainOf, type CopyMemory, hourHead, leadPool, spotTag, weatherHead, type HeadArgs, type HourCond, type LeadArgs } from '../copy';
 import * as A from '../copy/activities';
 import { fill, hash, pickLine, slotsOf } from '../copy/pick';
 import * as W from '../copy/weather';
@@ -9,9 +9,10 @@ const KEY = { island: 1069, day: 20397, hour: 14 };
 const SLOTS = { temp: 30, feels: 36, wind: 34, gust: 50, hour: '3 PM', island: 'Funadhooviligillaa', activity: 'Snorkeling' };
 const all = (o: Record<string, string[] | undefined>) => Object.values(o).flatMap((x) => x ?? []);
 
-const headlines = [...all(W.HEAD), ...W.STORM, ...W.WARN, ...W.HOT, ...W.BREEZY, ...W.MORNING, ...W.ISLAND];
-const hourLines = [...all(W.HOUR), ...W.HOUR_DANGER];
-const leads = [...A.GO, ...all(A.GO_ACT), ...A.IDEAL, ...A.MAYBE, ...all(A.MAYBE_FACTOR), ...A.SKIP, ...all(A.SKIP_FUN), ...all(A.SKIP_SAFE), ...A.CAUTION, ...A.WAIT];
+const headlines = [...all(W.HEAD), ...W.STORM, ...W.WARN, ...W.HOT, ...W.BREEZY, ...W.MORNING, ...W.ISLAND, ...W.LATE, ...W.LATE_RAIN];
+const hourLines = [...all(W.HOUR), ...W.HOUR_DANGER, ...W.HOUR_LATE, ...W.HOUR_WET, ...W.HOUR_DAMP];
+const leads = [...A.GO, ...all(A.GO_ACT), ...A.IDEAL, ...A.MAYBE, ...all(A.MAYBE_FACTOR), ...A.SKIP, ...all(A.SKIP_FUN), ...all(A.SKIP_SAFE), ...A.CAUTION, ...A.WAIT, ...A.GO_WET, ...A.MAYBE_WET];
+const NO: HourCond = { danger: false, late: false, rain: null };
 
 /** Calm pools: shown for storms, alerts, strong gusts and safety-related skips. */
 const SAFE = [...W.STORM, ...W.WARN, ...W.HOUR_DANGER, ...all(A.SKIP_SAFE), ...A.CAUTION];
@@ -51,6 +52,10 @@ describe('copy pools', () => {
     for (const l of headlines) for (const k of slotsOf(l)) expect(['temp', 'feels', 'wind', 'island']).toContain(k);
     for (const l of hourLines) expect(slotsOf(l)).toEqual(['hour']);
     for (const l of leads) for (const k of slotsOf(l)) expect(k).toBe('activity');
+    for (const l of W.BET_WET) {
+      expect(slotsOf(l)).toEqual(['activity']);
+      expect(l).toMatch(/^Best bet: .*[.!?]$/);
+    }
   });
 
   it('headlines stay short enough for the 40 pt headline', () => {
@@ -58,7 +63,7 @@ describe('copy pools', () => {
   });
 
   it('lines are unique within a pool and end with punctuation', () => {
-    for (const p of [...Object.values(W.HEAD), ...Object.values(W.HOUR), W.STORM, W.WARN, A.GO, A.SKIP, A.MAYBE, ...Object.values(A.GO_ACT)]) {
+    for (const p of [...Object.values(W.HEAD), ...Object.values(W.HOUR), W.STORM, W.WARN, W.LATE, W.HOUR_LATE, W.HOUR_WET, W.HOUR_DAMP, W.BET_WET, A.GO, A.SKIP, A.MAYBE, A.GO_WET, A.MAYBE_WET, ...Object.values(A.GO_ACT)]) {
       expect(new Set(p).size).toBe(p.length);
     }
     for (const l of [...headlines, ...hourLines, ...leads]) expect(l).toMatch(/[.!?]$/);
@@ -85,7 +90,7 @@ describe('safety first', () => {
 
   it('the scrubbed hour uses the calm pool when it has thunder or strong gusts', () => {
     for (let h = 0; h < 24; h++) {
-      const line = hourHead('brilliant', true, '3 PM', { ...KEY, hour: h });
+      const line = hourHead('brilliant', { danger: true, late: h < 4, rain: 'wet' }, '3 PM', { ...KEY, hour: h });
       expect(W.HOUR_DANGER.map((l) => fill(l, { hour: '3 PM' }))).toContain(line);
     }
   });
@@ -105,8 +110,73 @@ describe('safety first', () => {
     expect(leadPool(lead({ verdict: 'go', ideal: true })).lines).toEqual([...A.IDEAL, ...A.GO_ACT.snorkel]);
   });
 
+  it('storms and alerts beat the late-night lines; danger beats late night and rain', () => {
+    expect(headPool(head({ key: 'stormy', late: true }), 1).lines).toBe(W.STORM);
+    expect(headPool(head({ key: 'night', warning: true, late: true }), 1).lines).toBe(W.WARN);
+    expect(hourPool('brilliant', { danger: true, late: true, rain: 'wet' }).lines).toBe(W.HOUR_DANGER);
+    expect(leadPool(lead({ verdict: 'go', danger: true, wet: true })).lines).toBe(A.CAUTION);
+    // storms keep the plain best-bet line, no rain jokes
+    expect(bestBet('Fishing', { danger: true, late: false, rain: 'wet' }, KEY)).toBe('Best bet: Fishing.');
+  });
+
   it('wind, haze and darkness "maybe" lines stay plain too', () => {
     for (const f of A.DANGER_FACTORS) for (const l of A.MAYBE_FACTOR[f] ?? []) expect(l).not.toMatch(JOKEY);
+  });
+});
+
+describe('late night', () => {
+  it('runs from 11:30 PM to 4 AM, any day', () => {
+    for (const h of [23.5, 23.9, 0, 1.5, 3.99, 24.2, 47.6]) expect(isLate(h)).toBe(true);
+    for (const h of [23.49, 4, 12, 22, 28]) expect(isLate(h)).toBe(false);
+  });
+
+  it('headline, scrubbed hour and best bet go to bed', () => {
+    expect(headPool(head({ key: 'night', late: true }), 1).lines).toBe(W.LATE);
+    expect(headPool(head({ key: 'rainy', late: true }), 1).lines).toEqual([...W.LATE, ...W.LATE_RAIN]);
+    expect(W.LATE).toContain('Don’t you sleep?');
+    expect(hourPool('brilliant', { danger: false, late: true, rain: 'wet' }).lines).toBe(W.HOUR_LATE);
+    expect(bestBet('Fishing', { danger: false, late: true, rain: null }, KEY)).toBe('Best bet: sleep.');
+    expect(bestBet('Fishing', { danger: false, late: true, rain: 'wet' }, KEY)).toBe('Best bet: sleep.');
+  });
+});
+
+describe('rain', () => {
+  it('raining or ≥ 70 % is wet, 40–69 % damp', () => {
+    expect(rainOf('rainy', 0)).toBe('wet');
+    expect(rainOf('sunny', 70)).toBe('wet');
+    expect(rainOf('partly', 40)).toBe('damp');
+    expect(rainOf('partly', 65)).toBe('damp');
+    expect(rainOf('sunny', 35)).toBeNull();
+  });
+
+  it('a wet hour never "looks brilliant", whatever the scores', () => {
+    for (const w of ['brilliant', 'good', 'so-so', 'grim'] as const) expect(hourPool(w, { ...NO, rain: 'wet' }).lines).toBe(W.HOUR_WET);
+    expect(hourPool('brilliant', { ...NO, rain: 'damp' }).lines).toBe(W.HOUR_DAMP);
+    expect(hourPool('good', { ...NO, rain: 'damp' }).lines).toBe(W.HOUR_DAMP);
+    expect(hourPool('grim', { ...NO, rain: 'damp' }).lines).toBe(W.HOUR.grim);
+    expect(hourPool('good', NO).lines).toBe(W.HOUR.good);
+  });
+
+  it('best bet in the rain is a rain line naming the activity', () => {
+    const line = bestBet('Fishing', { ...NO, rain: 'wet' }, KEY);
+    expect(W.BET_WET.map((l) => fill(l, { activity: 'Fishing' }))).toContain(line);
+    expect(bestBet('Fishing', { ...NO, rain: 'damp' }, KEY)).toBe('Best bet: Fishing.');
+    expect(bestBet('Fishing', NO, KEY)).toBe('Best bet: Fishing.');
+  });
+
+  it('rainy headline: no cheerful island hello', () => {
+    const p = headPool(head({ key: 'rainy' }), 14).lines;
+    expect(p).toEqual(W.HEAD.rainy);
+    for (const l of W.ISLAND) expect(p).not.toContain(l);
+  });
+
+  it('activity "go" / "maybe" in the rain admit it is raining; the rain walk and skips keep theirs', () => {
+    expect(leadPool(lead({ verdict: 'go', wet: true })).lines).toBe(A.GO_WET);
+    expect(leadPool(lead({ verdict: 'go', ideal: true, wet: true })).lines).toBe(A.GO_WET);
+    expect(leadPool(lead({ verdict: 'maybe', wet: true })).lines).toBe(A.MAYBE_WET);
+    expect(leadPool(lead({ verdict: 'go', act: 'rainwalk', wet: true })).lines).toEqual([...A.GO, ...A.GO_ACT.rainwalk]);
+    expect(leadPool(lead({ verdict: 'skip', lim: 'wind', wet: true })).lines).toBe(A.SKIP_SAFE.wind);
+    expect(leadPool(lead({ verdict: 'wait', wet: true })).lines).toBe(A.WAIT);
   });
 });
 
@@ -162,7 +232,7 @@ describe('no repeats', () => {
   it('works for scrubbed hours and activity lines too, per category', () => {
     let last = '';
     for (let h = 0; h < 48; h++) {
-      const line = hourHead('good', false, 'H', { ...KEY, hour: h % 24, day: KEY.day + Math.floor(h / 24) });
+      const line = hourHead('good', NO, 'H', { ...KEY, hour: h % 24, day: KEY.day + Math.floor(h / 24) });
       expect(line).not.toBe(last);
       last = line;
     }

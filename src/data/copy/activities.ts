@@ -55,7 +55,7 @@ export const MAYBE_FACTOR: Partial<Record<Factor, string[]>> = {
   uv: ['Doable. Sunscreen is not optional.', 'Fine, if you like shade breaks.'],
   temp: ['Doable. Hydrate like it’s your job.', 'Warm work. Pace yourself.'],
   tide: ['Doable. Time it with the tide.', 'The tide’s a bit off. Plan around it.'],
-  rain: ['Doable, if you don’t mind wet.', 'Some rain about. Pick your gaps.'],
+  rain: ['Doable, if you don’t mind wet.', 'Some rain about. Pick your gaps.', 'Doable. Soggy, but doable.'],
   wind: ['Doable, but the wind is up. Stay close to shore.', 'Breezy. Stay close to shore.'],
   visibility: ['Doable, but the water’s hazy. Stay close.'],
   daylight: ['Doable. Mind the light.'],
@@ -75,8 +75,28 @@ export const SKIP_FUN: Partial<Record<Factor, string[]>> = {
   uv: ['Too much sun. Shade and a cold drink.', 'The sun’s winning. Retreat to shade.'],
   temp: ['Too hot. Be a lizard later.', 'Too toasty. Try when it cools.'],
   tide: ['The tide says no. Try another hour.', 'Wrong tide. Check back later.'],
-  rain: ['Too soggy. Try another hour.', 'Wet blanket weather. Try later.'],
+  rain: ['Too soggy. Try another hour.', 'Wet blanket weather. Try later.', 'It’s raining. That’s the review.', 'Rain wins this round.'],
 };
+
+/**
+ * "Go" / "ideal" while it's raining at that hour (raining, or ≥ 70 % chance), any activity but the rain walk.
+ * The score may say yes; the copy says what it'll actually feel like.
+ */
+export const GO_WET: string[] = [
+  'Technically yes. It’s raining, though.',
+  'The score says go. The sky says lol.',
+  'Go, if you don’t mind getting soaked.',
+  'Sure. You’ll be wet. Very wet.',
+  'Fine on paper. Wet in real life.',
+];
+
+/** "Maybe" while it's raining at that hour. */
+export const MAYBE_WET: string[] = [
+  'Maybe. If you enjoy being rained on.',
+  'Doable, if soggy is your thing.',
+  'Possible. Damp. Not pleasant.',
+  'Could work. Bring a towel. Or two.',
+];
 
 /** Factors where a "skip" is about safety: no jokes. */
 export const DANGER_FACTORS: Factor[] = ['wind', 'visibility', 'daylight'];

@@ -3,7 +3,7 @@
  * HUD, bottom panel and scene input; bubble and sheet values are in `./sheets`.
  */
 import { actAt, actDefs, apiAt, makeScorer, SAIL_INDEX, type ActDefLive, type Scorer } from '@/data/activities';
-import { hourHead, weatherHead, type CopyKey } from '@/data/copy';
+import { bestBet, hourHead, isLate, rainOf, weatherHead, type CopyKey, type HourCond, type Rain } from '@/data/copy';
 import { labelOf, wxKey } from '@/data/islands';
 import { hourView, rainAt, resolveMood, tempAt, windAt, type Mood } from '@/data/mood';
 import { sunState } from '@/data/sun';
@@ -117,6 +117,8 @@ export interface View {
   copyKey: CopyKey;
   /** thunder or gusts ≥ 50 km/h at the selected hour: playful copy stays out */
   danger: boolean;
+  /** rain at the selected hour (`rainOf`): rain copy is brutal-funny, never "looks nice" */
+  rain: Rain;
   /** the sub line is the offline message: tapping it retries */
   retry: boolean;
   warning: Mood['warning'];
@@ -238,13 +240,17 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
   const keyAt = (h: number): CopyKey => ({ island: d.island.id, day: Math.round(day0 / 86400) + Math.floor(h / 24), hour: Math.floor(md24(h)) });
   const copyKey = keyAt(hSel);
   const danger = m.flash || m.gust >= 50;
+  // Late night (11:30 PM – 4 AM) and rain change the tone; danger still comes first (src/data/copy).
+  const late = isLate(hSel);
+  const rain = rainOf(m.key, rainSel);
+  const cond: HourCond = { danger, late, rain };
   const head = isLater
-    ? hourHead(word, danger, fmt(Math.floor(hSel)).replace(':00', ''), copyKey)
+    ? hourHead(word, cond, fmt(Math.floor(hSel)).replace(':00', ''), copyKey)
     : m.live
-      ? weatherHead({ key: m.key, temp: m.temp, feels: m.feels, wind: m.wind, warning: !!m.warning, island: d.island.english_name }, keyAt(m.hour))
+      ? weatherHead({ key: m.key, temp: m.temp, feels: m.feels, wind: m.wind, warning: !!m.warning, island: d.island.english_name, late }, keyAt(m.hour))
       : m.headEn;
   const sub = isLater
-    ? `Best bet: ${best?.name}. ${temp}°, wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.`
+    ? `${bestBet(best?.name ?? '', cond, copyKey)} ${temp}°, ${rainSel >= 40 ? `rain ${rainSel}%, ` : ''}wind ${wind} km/h, tide ${tide.dirText.toLowerCase()}.`
     : m.offline
       ? 'Couldn’t reach the live feed. Showing sample conditions. Tap to try again.'
       : !m.live && m.loading
@@ -291,6 +297,7 @@ export function buildView(b: ViewBase, d: DataState, offsetH: number): View {
     sub,
     copyKey,
     danger,
+    rain,
     retry: !isLater && m.offline,
     warning: m.warning,
     hasWarning: !!m.warning && !isLater,
