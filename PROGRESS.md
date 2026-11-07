@@ -32,13 +32,14 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   or Google Group, 12+, aim 15–20) → create release by promoting build 3 from internal testing → Publishing overview
   → Send changes for review → when approved, share the opt-in link; testers must opt in **and install**; 14
   consecutive days with 12+ opted in → Dashboard → Apply for production. Then: next native batch (step 3).
-- **Late-night + rain copy (2026-11-07, JS only, NOT published yet):** 11:30 PM – 4 AM (`isLate`) → headline
+- **Late-night + rain copy (2026-11-07, JS only, ✅ shipped as OTA, commit `092b529`):** 11:30 PM – 4 AM (`isLate`) → headline
   from `LATE` ("Don’t you sleep?"), scrubbed hour `HOUR_LATE`, sub "Best bet: sleep.". Rain (`rainOf`: rainy key
   or ≥ 70 % = wet, 40–69 % = damp) → brutal-funny `HEAD.rainy` (no island hellos), `HOUR_WET` whatever the scores,
   `HOUR_DAMP` instead of "brilliant/good", `BET_WET` best bet, rain % in the sub when ≥ 40 %, activity detail
   `GO_WET` / `MAYBE_WET` (not the rain walk). Order: storm / alert / danger → late → rain → usual. API untouched
-  (scores still come from it). Runtime unchanged (`1ec7a72c…`) → ship with
-  `npm run update:production -- "Late-night and rain messages"` once the user OKs it.
+  (scores still come from it). OTA "Late-night and rain messages" published 2026-11-07 to `production`, Android
+  group `6679dd58-407e-41b1-84dc-0f4e351ba977` (runtime `1ec7a72c…` = build 3). Not yet seen on the phone: ask the
+  user whether it arrived (two cold starts) and how the lines read at night / in rain.
 - Play Console answers given (2026-11-06): data safety Yes → location approximate + precise = collected, not shared,
   processed ephemerally, optional, app functionality; device or other IDs (Expo install ID) = collected, not
   shared, required, app functionality; encrypted in transit; deletion on request by email. Advertising ID: No.
