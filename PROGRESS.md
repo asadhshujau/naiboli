@@ -40,8 +40,8 @@ spec: `design_handoff_naiboli/README.md`. Work is in 5 phases with a review stop
   (scores still come from it). OTA "Late-night and rain messages" published 2026-11-07 to `production`, Android
   group `6679dd58-407e-41b1-84dc-0f4e351ba977` (runtime `1ec7a72c…` = build 3). Not yet seen on the phone: ask the
   user whether it arrived (two cold starts) and how the lines read at night / in rain.
-- **Alerts follow the selected hour (2026-11-07, JS only, UNCOMMITTED — user checks on their phone first, then
-  commit + OTA):** one rule for the HUD alert chip, warning bubble, Weather sheet box and both activity sheets
+- **Alerts follow the selected hour (2026-11-07, JS only, ✅ commit `c84bc4d`, shipped as OTA "Alerts follow the
+  selected hour", Android group `3e4f91ca-913c-453c-ae9f-6d2b7b84069a`, runtime `1ec7a72c…` = build 3):** one rule for the HUD alert chip, warning bubble, Weather sheet box and both activity sheets
   (`alertFor` in `mood.ts`, `View.warning`). **Now** → any official alert the API sends, until it ends, however far
   ahead (user, for the public release: safer); while it hasn't started, its start time shows (chip "From 7 PM ·
   Strong wind", box "Weather alert · 7:00 PM to 11:00 PM", bubble "From 7:00 PM until 11:00 PM"); with no official
